@@ -1,0 +1,67 @@
+10  READ num
+5
+12  CALL fib(num)
+6
+11  PRINT num
+1
+19  HALT!9
+0   num             START RECURSIVE FIB
+0   result
+1   cte 1
+1   LOAD num    --- start                -----------------------------------------
+-5
+15  SUB 1
+-5
+4   JPG
+5 -> return = fib(n - 1) + fib(n - 2)          if n == 0 or n == 1
+1   LOAD 1
+-9                                                 return 1;
+2   STORE 1 -> result
+-12
+13  RET                                  -----------------------------------------
+8   PUSH num
+-16
+8   PUSH result
+-17
+1   LOAD num
+-20
+15  SUB 1
+-20
+2   STORE num
+-24
+12  CALL fat(n-1)
+-23
+1   LOAD result
+-27
+9   POP result
+-29
+14  ADD result_n + result_n-1
+-31
+2   STORE result
+-33
+9   POP num
+-36
+1   LOAD num
+-38
+8   PUSH num
+-40
+15  SUB 1
+-40
+15  SUB 1
+-42
+2   STORE num
+-46
+8   PUSH num
+-46
+12  CALL fat(n-2)
+-47
+2   LOAD result
+-51
+8   POP result
+-53
+14  ADD result_n + result_n-1
+-55
+2   STORE result
+-57
+13  RET
+

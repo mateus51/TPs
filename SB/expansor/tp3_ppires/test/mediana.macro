@@ -1,0 +1,81 @@
+READ a
+READ b
+READ c
+READ d
+READ e
+READ f
+READ g
+CALL sort()
+WRITE d
+HALT
+sort(): test_a b
+test_a c
+test_a d
+test_a e
+test_a f
+test_a g
+test_b c
+test_b d
+test_b e
+test_b f
+test_b g
+test_c d
+test_c e
+test_c f
+test_c g
+test_d e
+test_d f
+test_d g
+RET
+test_a: BEGINMACRO x
+LOAD a
+SUB x
+JPL 12
+LOAD x
+STORE aux
+LOAD a
+STORE x
+LOAD aux
+STORE a
+ENDMACRO
+test_b: BEGINMACRO x
+LOAD b
+SUB x
+JPL 12
+LOAD x
+STORE aux
+LOAD b
+STORE x
+LOAD aux
+STORE b
+ENDMACRO
+test_c: BEGINMACRO x
+LOAD c
+SUB x
+JPL 12
+LOAD x
+STORE aux
+LOAD c
+STORE x
+LOAD aux
+STORE c
+ENDMACRO
+test_d: BEGINMACRO x
+LOAD d
+SUB x
+JPL 12
+LOAD x
+STORE aux
+LOAD d
+STORE x
+LOAD aux
+STORE d
+ENDMACRO
+a: WORD 0
+b: WORD 0
+c: WORD 0
+d: WORD 0
+e: WORD 0
+f: WORD 0
+g: WORD 0
+aux: WORD 0

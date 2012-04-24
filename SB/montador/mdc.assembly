@@ -1,0 +1,46 @@
+READ a
+READ b
+CALL mdc()
+WRITE mdc_result
+HALT
+mdc(): CALL set_greatest_a()
+LOAD b
+JPE mdc_end
+LOAD a
+SUB b
+STORE a
+JMP mdc()
+mdc_end: LOAD a
+STORE mdc_result
+RET
+set_greatest_a(): LOAD a
+STORE grt1
+LOAD b
+STORE grt2
+CALL greatest()
+LOAD grt_result
+STORE a
+LOAD lwr_result
+STORE b
+RET
+greatest(): LOAD grt1
+SUB grt2
+JPG save1
+LOAD grt2
+STORE grt_result
+LOAD grt1
+STORE lwr_result
+JMP grt_end
+save1: LOAD grt1
+STORE grt_result
+LOAD grt2
+STORE lwr_result
+grt_end: RET
+grt1: WORD 0
+grt2: WORD 0
+grt_result: WORD 0
+lwr_result: WORD 0
+a: WORD 0
+b: WORD 0
+mdc_result: WORD 0
+END

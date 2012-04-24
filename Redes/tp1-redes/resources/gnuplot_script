@@ -1,0 +1,10 @@
+set terminal png
+set border 3
+set nokey
+set xtics nomirror
+set ytics nomirror
+set xrange [0:65600]
+set ylabel "Tempo (segundos)"
+set xlabel "Tamanho (bytes)"
+set output "localhost_1024.png"
+plot 'localhost_1024.txt' with lines

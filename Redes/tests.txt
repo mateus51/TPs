@@ -1,0 +1,146 @@
+Server    -> localhost:3000
+buffer    -> 1024
+file size -> 3MB
+
+581.14 kbps (3154944 bytes em 5.30 s)
+3154944 bytes sent!
+
+Buffer =  1024 byte(s),  118527.18 kbps (3154944 bytes em 0.03 s)
+3154944 bytes sent!
+
+Buffer =  1024 byte(s),   71778.14 kbps (3154944 bytes em 0.04 s)
+3154944 bytes sent!
+
+===================
+
+Server    -> localhost:3000
+buffer    -> 256
+file size -> 3MB
+
+Buffer =   256 byte(s),   75799.42 kbps (3182592 bytes em 0.04 s)
+3182592 bytes sent!
+
+Buffer =   256 byte(s),   69514.72 kbps (3182592 bytes em 0.04 s)
+3182592 bytes sent!
+
+==================
+
+Server    -> jaguar.dcc.ufmg.br:3000
+buffer    -> 1024
+file size -> 3MB
+
+Buffer =  1024 byte(s),    1103.37 kbps (3154944 bytes em 2.79 s)
+3154944 bytes sent!
+
+Buffer =  1024 byte(s),     789.06 kbps (3154944 bytes em 3.90 s)
+3154944 bytes sent!
+
+=================
+
+Server    -> jaguar.dcc.ufmg.br:3000
+buffer    -> 256
+file size -> 3MB
+
+Buffer =   256 byte(s),    1145.40 kbps (3182592 bytes em 2.71 s)
+3182592 bytes sent!
+
+Buffer =   256 byte(s),    1325.52 kbps (3182592 bytes em 2.34 s)
+3182592 bytes sent!
+
+=================
+
+Server    -> jaguar.dcc.ufmg.br:3000
+buffer    -> 128
+file size -> 3M
+
+Buffer =   128 byte(s),    1260.53 kbps (3219456 bytes em 2.49 s)
+3219456 bytes sent!
+
+Buffer =   128 byte(s),    1222.97 kbps (3219456 bytes em 2.57 s)
+3219456 bytes sent!
+
+==================
+
+Server    -> localhost:3000
+buffer    -> 1024
+file size -> 2^16 (64kB)
+
+Buffer =  1024 byte(s),   44634.24 kbps (65728 bytes em 0.00 s)
+65728 bytes sent!
+
+Buffer =  1024 byte(s),   27955.82 kbps (65728 bytes em 0.00 s)
+65728 bytes sent!
+
+===================
+
+Server -> localhost:3000
+Buffer =  1024 byte(s),       2.96 kbps (2 bytes em 0.000660 s)
+Buffer =  1024 byte(s),       8.74 kbps (4 bytes em 0.000447 s)
+Buffer =  1024 byte(s),      15.56 kbps (8 bytes em 0.000502 s)
+Buffer =  1024 byte(s),      30.45 kbps (16 bytes em 0.000513 s)
+Buffer =  1024 byte(s),      73.86 kbps (32 bytes em 0.000423 s)
+Buffer =  1024 byte(s),     151.67 kbps (64 bytes em 0.000412 s)
+Buffer =  1024 byte(s),     290.72 kbps (128 bytes em 0.000430 s)
+Buffer =  1024 byte(s),     568.05 kbps (256 bytes em 0.000440 s)
+Buffer =  1024 byte(s),    1031.11 kbps (512 bytes em 0.000485 s)
+Buffer =  1024 byte(s),    1752.76 kbps (1025 bytes em 0.000571 s)
+Buffer =  1024 byte(s),    3735.14 kbps (2050 bytes em 0.000536 s)
+Buffer =  1024 byte(s),    6903.22 kbps (4100 bytes em 0.000580 s)
+Buffer =  1024 byte(s),   17220.90 kbps (8200 bytes em 0.000465 s)
+Buffer =  1024 byte(s),   23073.89 kbps (16400 bytes em 0.000694 s)
+Buffer =  1024 byte(s),   27902.31 kbps (32800 bytes em 0.001148 s)
+Buffer =  1024 byte(s),   34739.20 kbps (65600 bytes em 0.001844 s)
+
+Server -> localhost:3000
+Buffer =   512 byte(s),       3.81 kbps (2 bytes em 0.000513 s)
+Buffer =   512 byte(s),       8.82 kbps (4 bytes em 0.000443 s)
+Buffer =   512 byte(s),      17.13 kbps (8 bytes em 0.000456 s)
+Buffer =   512 byte(s),      34.72 kbps (16 bytes em 0.000450 s)
+Buffer =   512 byte(s),      70.53 kbps (32 bytes em 0.000443 s)
+Buffer =   512 byte(s),     112.41 kbps (64 bytes em 0.000556 s)
+Buffer =   512 byte(s),     287.37 kbps (128 bytes em 0.000435 s)
+Buffer =   512 byte(s),     467.25 kbps (256 bytes em 0.000535 s)
+Buffer =   512 byte(s),     974.63 kbps (513 bytes em 0.000514 s)
+Buffer =   512 byte(s),    2082.61 kbps (1026 bytes em 0.000481 s)
+Buffer =   512 byte(s),    4132.10 kbps (2052 bytes em 0.000485 s)
+Buffer =   512 byte(s),    7872.43 kbps (4104 bytes em 0.000509 s)
+Buffer =   512 byte(s),    5318.95 kbps (8208 bytes em 0.001507 s)
+Buffer =   512 byte(s),   13552.00 kbps (16416 bytes em 0.001183 s)
+Buffer =   512 byte(s),   27313.10 kbps (32832 bytes em 0.001174 s)
+Buffer =   512 byte(s),   28350.20 kbps (65664 bytes em 0.002262 s)
+
+Server -> jaguar.dcc.ufmg.br:3000
+Buffer =  1024 byte(s),       0.08 kbps (2 bytes em 0.024966 s)
+Buffer =  1024 byte(s),       0.17 kbps (4 bytes em 0.023357 s)
+Buffer =  1024 byte(s),       0.37 kbps (8 bytes em 0.021021 s)
+Buffer =  1024 byte(s),       0.50 kbps (16 bytes em 0.031431 s)
+Buffer =  1024 byte(s),       2.45 kbps (32 bytes em 0.012742 s)
+Buffer =  1024 byte(s),       3.94 kbps (64 bytes em 0.015855 s)
+Buffer =  1024 byte(s),       7.34 kbps (128 bytes em 0.017032 s)
+Buffer =  1024 byte(s),       3.69 kbps (256 bytes em 0.067662 s)
+Buffer =  1024 byte(s),      17.82 kbps (512 bytes em 0.028061 s)
+Buffer =  1024 byte(s),      34.63 kbps (1025 bytes em 0.028904 s)
+Buffer =  1024 byte(s),     128.22 kbps (2050 bytes em 0.015613 s)
+Buffer =  1024 byte(s),      99.45 kbps (4100 bytes em 0.040260 s)
+Buffer =  1024 byte(s),     227.38 kbps (8200 bytes em 0.035217 s)
+Buffer =  1024 byte(s),     316.18 kbps (16400 bytes em 0.050653 s)
+Buffer =  1024 byte(s),     535.60 kbps (32800 bytes em 0.059804 s)
+Buffer =  1024 byte(s),     227.60 kbps (65600 bytes em 0.281471 s)
+
+Server -> jaguar.dcc.ufmg.br:3000
+Buffer =   512 byte(s),       0.46 kbps (2 bytes em 0.004266 s)
+Buffer =   512 byte(s),       0.84 kbps (4 bytes em 0.004624 s)
+Buffer =   512 byte(s),       1.57 kbps (8 bytes em 0.004963 s)
+Buffer =   512 byte(s),       4.18 kbps (16 bytes em 0.003742 s)
+Buffer =   512 byte(s),       8.03 kbps (32 bytes em 0.003894 s)
+Buffer =   512 byte(s),      16.34 kbps (64 bytes em 0.003826 s)
+Buffer =   512 byte(s),      25.62 kbps (128 bytes em 0.004879 s)
+Buffer =   512 byte(s),      42.58 kbps (256 bytes em 0.005871 s)
+Buffer =   512 byte(s),     113.63 kbps (513 bytes em 0.004409 s)
+Buffer =   512 byte(s),     142.18 kbps (1026 bytes em 0.007047 s)
+Buffer =   512 byte(s),     210.92 kbps (2052 bytes em 0.009501 s)
+Buffer =   512 byte(s),     431.13 kbps (4104 bytes em 0.009296 s)
+Buffer =   512 byte(s),     473.99 kbps (8208 bytes em 0.016911 s)
+Buffer =   512 byte(s),     777.54 kbps (16416 bytes em 0.020618 s)
+Buffer =   512 byte(s),     998.12 kbps (32832 bytes em 0.032123 s)
+Buffer =   512 byte(s),     783.93 kbps (65664 bytes em 0.081799 s)

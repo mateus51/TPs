@@ -1,0 +1,42 @@
+#TOTAL_LINES 33
+pow() 1
+pow_start 7
+pow_end 25
+pow1 30
+pow2 31
+pow_result 32
+powRA 33
+#END_SYMBOL_TABLE
+9
+30
+9
+26
+9
+23
+1
+22
+15
+cte1
+2
+18
+6
+10
+8
+15
+8
+11
+12
+mult()
+9
+9
+3
+-18
+8
+5
+8
+4
+13
+0
+0
+1
+0

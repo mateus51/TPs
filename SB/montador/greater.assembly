@@ -1,0 +1,24 @@
+READ grt1
+READ grt2
+CALL greatest()
+WRITE grt_result
+WRITE lwr_result
+HALT
+greatest(): LOAD grt1
+SUB grt2
+JPG save1
+LOAD grt2
+STORE grt_result
+LOAD grt1
+STORE lwr_result
+JMP end
+save1: LOAD grt1
+STORE grt_result
+LOAD grt2
+STORE lwr_result
+end: RET
+grt1: WORD 0
+grt2: WORD 0
+grt_result: WORD 0
+lwr_result: WORD 0
+END

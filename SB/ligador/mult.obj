@@ -1,0 +1,48 @@
+#TOTAL_LINES 39
+mult() 1
+mult_start 11
+mult_end 31
+mult1 36
+mult2 37
+mult_result 38
+multRA 39
+#END_SYMBOL_TABLE
+1
+cte0
+2
+33
+9
+32
+9
+27
+9
+26
+1
+24
+15
+cte1
+6
+14
+1
+19
+14
+15
+2
+15
+1
+12
+15
+cte1
+2
+8
+3
+-20
+8
+5
+8
+4
+13
+0
+0
+0
+0

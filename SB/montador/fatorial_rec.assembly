@@ -1,0 +1,44 @@
+READ num            ; asdasdasd
+CALL fat()
+WRITE fat_result                ;asdasdas
+HALT
+
+fat(): LOAD num
+SUB cte1
+JPNE not_equal
+RET
+not_equal: PUSH num              ;dsfgdsfhf sdfifu siuuifuisdfisdfusfhos hfiusiuf shiu
+LOAD num
+SUB cte1
+STORE num
+CALL fat();sdfsdfsd
+POP num
+LOAD num
+STORE mult2
+LOAD fat_result
+STORE mult1           ;dsfsdf
+CALL mult()
+LOAD mult_result
+STORE fat_result
+RET
+mult(): LOAD cte0
+STORE mult_result
+start: LOAD mult2
+SUB cte1;dsfsdfd
+JPL end
+LOAD mult_result
+ADD mult1
+STORE mult_result
+LOAD mult2
+SUB cte1
+STORE mult2
+JMP start
+end: RET
+mult1:       WORD 0              ;dsfsfsdfdsf
+mult2:       WORD 0              ;sdfsdfsdf
+num:         WORD 0
+fat_result:  WORD 1
+cte1:        WORD 1
+cte0:        WORD 0
+mult_result: WORD 0
+END

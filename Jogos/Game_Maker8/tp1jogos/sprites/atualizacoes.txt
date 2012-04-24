@@ -1,0 +1,6 @@
+30/03:
+Ibraim: Coloquei a tela de abertura com os botões funcionando também com teclado. Podemos melhorar essa parte ainda.
+	Coloquei também a parte das vidas, quando um barco passa a vida-=1.
+
+29/03:
+Ibraim: Coloquei os pisos para que as torres não fiquem sobrepostas, e sejam colocadas apenas sobre os pisos.

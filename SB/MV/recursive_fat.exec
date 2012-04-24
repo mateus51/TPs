@@ -1,0 +1,76 @@
+10  READ num
+5
+12  CALL fat(num)
+6
+11  WRITE result
+2
+19  HALT!
+0   num    ---      START RECURSIVE FAT (result = num!)
+1   result
+1   cte 1
+1   LOAD num    -- start
+-5
+15  SUB 1
+-5
+7   JMP NOT EQUAL 0
+1
+13  RET        if num == 1 return 1
+8   PUSH num
+-12
+1   LOAD num
+-14
+15  SUB 1
+-14
+2   STORE num - 1
+-18
+12  CALL FAT(num - 1)
+-17
+9   POP num
+-22
+1   LOAD num
+-24
+2   STORE num -> num2
+12
+1   LOAD result
+-27
+2   STORE result -> num1
+7
+12  CALL MULTIPLY PROC
+9
+1   LOAD mult_result
+6
+2   STORE mult_result -> result
+-35
+13  RET
+0   num1       START MULTIPLY (result = num1 * num2)
+0   num2
+1   cte 1
+0   result
+1   -- start                ---
+-4
+15
+-6
+2
+-7
+1   LOAD num2
+-11
+15  SUB 1
+-12
+6   JPL
+14
+1   LOAD result
+-15
+14  ADD num1
+-20
+2   STORE result
+-19
+1   LOAD num2
+-23
+15  SUB 1
+-24
+2   STORE num2
+-27
+3
+-20                       ---
+13  RET        END MULTIPLY
+

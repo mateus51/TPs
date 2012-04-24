@@ -1,0 +1,40 @@
+10  LOAD num1
+7
+10  LOAD num2
+6
+12  CALL num1 * num2
+7
+11  PRINT result
+4
+19  HALT!
+0   num1       START MULTIPLY (result = num1 * num2)
+0   num2
+1   cte 1
+0   result
+1   -- start                ---
+-4
+15                            result = 0
+-6
+2                           
+-7                          ---
+1   LOAD num2
+-11
+15  SUB 1
+-12
+6   JPL
+14
+1   LOAD result             if (num2 - 1) < 0
+-15                             return result
+14  ADD num1                else
+-20                             result += num1
+2   STORE result                num2--
+-19
+1   LOAD num2
+-23
+15  SUB 1
+-24
+2   STORE num2
+-27
+3   JMP inicio
+-20                       ---
+13  RET        END MULTIPLY

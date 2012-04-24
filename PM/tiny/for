@@ -1,0 +1,65 @@
+proc rec(x)
+  if x 0 > then
+    writeStr("*");
+    call rec(x 1 -);
+  endif
+endproc
+
+proc main()
+  local a;
+  read(a);
+  call rec(a); writeln;
+endproc
+endp
+
+
+
+
+
+
+global z;
+
+proc imprime_asteriscos (n)
+  local i;
+  for i:= 1 to n do
+    writeStr("*")
+  endfor
+  writeln;
+endproc
+
+proc imprime_dolar (n)
+  if n 0 > then
+    writeStr("$");
+    call imprime_dolar(n 1 -);
+  else
+    writeln;
+  endif
+endproc
+
+proc soma(x, y)
+  z:= x y +;
+endproc
+
+proc main()
+  local x,y;
+  writeStr("Insira um número: "); read(x);
+  call imprime_asteriscos(x);
+  writeStr("Insira outro número: "); read(y);
+  call imprime_dolar(y);
+  call soma(x,y);
+  call writeVar(z);
+endproc
+endp
+
+global a, b;
+proc sum()
+  local c;
+  a := b b +;
+endproc
+proc main()
+  writeStr("1: "); read(b);
+  a := 999;
+  call sum();
+  writeVar(a); writeln;
+endproc
+endp

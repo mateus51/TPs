@@ -1,0 +1,44 @@
+READ fatn
+CALL fat()
+WRITE fat_result
+HALT
+fat(): LOAD cte1; Calcula o fatorial do número fatn
+STORE fat_result
+STORE i
+for: LOAD fatn
+SUB i
+JPL fat_end
+LOAD fat_result
+STORE mult1
+LOAD i
+STORE mult2
+CALL mult()
+LOAD mult_result
+STORE fat_result
+LOAD i
+ADD cte1
+STORE i
+JMP for
+fat_end: RET
+mult(): LOAD cte0; Multiplica dois números
+STORE mult_result
+mult_start: LOAD mult2
+SUB cte1
+JPL mult_end
+LOAD mult_result
+ADD mult1
+STORE mult_result
+LOAD mult2
+SUB cte1
+STORE mult2
+JMP mult_start
+mult_end: RET
+mult1:       WORD 0
+mult2:       WORD 0
+mult_result: WORD 0
+fatn:        WORD 0
+fat_result:  WORD 0
+i:           WORD 0
+cte1:        WORD 1
+cte0:        WORD 0
+END

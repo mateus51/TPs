@@ -1,0 +1,44 @@
+READ a
+READ b
+CALL pow()
+WRITE pow_result
+HALT
+pow(): SUB1 b
+JPL pow_end
+multiply a
+JMP pow()
+pow_end: RET
+multiply: BEGINMACRO x
+LOAD pow_result
+STORE mult1
+LOAD x
+STORE mult2
+MULT
+LOAD mult_result
+STORE pow_result
+ENDMACRO
+MULT: BEGINMACRO 
+LOAD cte0; Multiplica dois números
+STORE mult_result
+mult_start: SUB1 mult2
+JPL mult_end
+LOAD mult_result
+ADD mult1
+STORE mult_result
+JMP mult_start
+mult_end: JMP 0
+ENDMACRO
+SUB1: BEGINMACRO a
+LOAD a
+SUB cte1
+STORE a
+ENDMACRO
+mult1:       WORD 0
+mult2:       WORD 0
+mult_result: WORD 0
+a:           WORD 0
+b:           WORD 0
+pow_result:  WORD 1
+cte0:        WORD 0
+cte1:		 WORD 1
+END

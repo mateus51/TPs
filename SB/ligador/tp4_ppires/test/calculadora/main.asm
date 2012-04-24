@@ -1,0 +1,41 @@
+READ A
+READ B
+READ C
+PUSH A
+PUSH C
+LOAD B
+SUB cte1
+JPE SOMA
+SUB cte1
+JPE SUBTRACAO
+SUB cte1
+JPE MULTIPLICACAO
+SUB cte1
+JPE DIVISAO
+SUB cte1
+JPE POW
+HALT
+SOMA: CALL sum()
+JMP end
+SUBTRACAO: CALL sub()
+JMP end
+MULTIPLICACAO: CALL mult()
+JMP end
+DIVISAO: CALL div()
+JMP div_end
+POW: CALL pow()
+end: POP result
+WRITE result
+HALT
+div_end: POP result
+WRITE result
+POP result
+WRITE result
+HALT
+A: WORD 0
+B: WORD 0
+C: WORD 0
+result: WORD 0
+cte0: WORD 0
+cte1: WORD 1
+END
