@@ -5,12 +5,15 @@
 	int yydebug=1;
 %}
 
+%debug
+
 %union 
 {
 	int integer;
 	float real;
 	char *string;
 }
+
 %token COMMA 
 %token COLON
 %token SEMICOLON
@@ -52,7 +55,6 @@
 %token LT
 %token GE
 %token LE
-%token PROCEDURE
 %token <integer> ADDOP
 %token <integer> MULOP
 %token <string> ID
@@ -65,7 +67,7 @@
 
 /* rules */
 program    :       PROGRAM ID SEMICOLON decl_list compound_stmt
-						{ printf("recognized!\n"); }
+						{ printf("reduced program\n"); }
            ;
 decl_list   :       decl_list SEMICOLON decl
             |       decl
@@ -83,7 +85,8 @@ type	:		INTEGER
 		|		BOOLEAN
 		|		CHAR
 		;
-dcl_proc    :       tipo_retornado PROCEDURE ID espec_parametros corpo
+dcl_proc    :       tipo_retornado PROC ID espec_parametros corpo
+								{ printf("reduced proc declaration"); }
             ;
 vazio   :
         ;

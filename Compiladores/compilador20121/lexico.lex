@@ -1,9 +1,7 @@
 %{
 #include <string.h>
 
-
-
-//#include "y.tab.h"
+#include "y.tab.h"
 extern YYSTYPE yylval;
 
 typedef struct Token {
@@ -61,55 +59,55 @@ NEWLINE             \n
 SPACES             [\ \t\b\012]+
 LT				   <
 %%
-{NEWLINE}               ECHO; linha_atual++; coluna_atual = 0;
-{SPACES}                ECHO; coluna_atual += strlen(yytext);
-{COMMA}                 ECHO; coluna_atual += strlen(yytext); return(COMMA);
-{COLON}                 ECHO; coluna_atual += strlen(yytext); return(COLON);
-{SEMICOLON}             ECHO; coluna_atual += strlen(yytext); return(SEMICOLON);
-PROCEDURE               ECHO; coluna_atual += strlen(yytext); return(PROC);
-sin                     ECHO; coluna_atual += strlen(yytext); return(SIN);
-log                     ECHO; coluna_atual += strlen(yytext); return(LOG);
-cos                     ECHO; coluna_atual += strlen(yytext); return(COS);
-ord                     ECHO; coluna_atual += strlen(yytext); return(ORD);
-abs                     ECHO; coluna_atual += strlen(yytext); return(ABS);
-sqrt                    ECHO; coluna_atual += strlen(yytext); return(SQRT);
-exp                     ECHO; coluna_atual += strlen(yytext); return(EXP);
-eof                     ECHO; coluna_atual += strlen(yytext); return(EOFILE);
-eoln                    ECHO; coluna_atual += strlen(yytext); return(EOLN);
-program                 ECHO; coluna_atual += strlen(yytext); return(PROGRAM);
-integer                 ECHO; coluna_atual += strlen(yytext); return(INTEGER);
-real                    ECHO; coluna_atual += strlen(yytext); return(REAL);
-boolean                 ECHO; coluna_atual += strlen(yytext); return(BOOLEAN);
-char                    ECHO; coluna_atual += strlen(yytext); return(CHAR);
-value                   ECHO; coluna_atual += strlen(yytext); return(VALUE);
-reference               ECHO; coluna_atual += strlen(yytext); return(REFERENCE);
-begin                   ECHO; coluna_atual += strlen(yytext); return(BEGIN_TOK);
-end                     ECHO; coluna_atual += strlen(yytext); return(END);
-if                      ECHO; coluna_atual += strlen(yytext); return(IF);
-then                    ECHO; coluna_atual += strlen(yytext); return(THEN);
-else                    ECHO; coluna_atual += strlen(yytext); return(ELSE);
-repeat                  ECHO; coluna_atual += strlen(yytext); return(REPEAT);
-until                   ECHO; coluna_atual += strlen(yytext); return(UNTIL);
-read                    ECHO; coluna_atual += strlen(yytext); return(READ);
-write                   ECHO; coluna_atual += strlen(yytext); return(WRITE);
-false                   ECHO; coluna_atual += strlen(yytext); return(FALSE);
-true                    ECHO; coluna_atual += strlen(yytext); return(TRUE);
-:=                      ECHO; coluna_atual += strlen(yytext); return(ATRIB);
-\(                      ECHO; coluna_atual += strlen(yytext); return(LPAR);
-\)                      ECHO; coluna_atual += strlen(yytext); return(RPAR);
-NOT                     ECHO; coluna_atual += strlen(yytext); return(NOT);
-\<						ECHO; coluna_atual += strlen(yytext); return(LT);
->						ECHO; coluna_atual += strlen(yytext); return(GT);
->=						ECHO; coluna_atual += strlen(yytext); return(GE);
-\<=						ECHO; coluna_atual += strlen(yytext); return(LE);
-=						ECHO; coluna_atual += strlen(yytext); return(EQ);
-!=						ECHO; coluna_atual += strlen(yytext); return(NE);
-{ADDOP}                 ECHO; coluna_atual += strlen(yytext); yylval.integer = yytext[0]; return(ADDOP);
-{MULOP}                 ECHO; coluna_atual += strlen(yytext); yylval.integer = yytext[0]; return(MULOP);
-{INTEGER_CONSTANT}      ECHO; coluna_atual += strlen(yytext); yylval.integer = atoi(yytext); return(INTEGER_CONSTANT);
-{REAL_CONSTANT}         ECHO; coluna_atual += strlen(yytext); yylval.real = (int) atof(yytext); return(REAL_CONSTANT);
-{CHAR_CONSTANT}         ECHO; coluna_atual += strlen(yytext); yylval.integer = yytext[0]; return(CHAR_CONSTANT);
-{ID}                    ECHO; coluna_atual += strlen(yytext); yylval.string = strdup(yytext); return(ID);
+{NEWLINE}
+{SPACES}
+{COMMA}                  return(COMMA);
+{COLON}                  return(COLON);
+{SEMICOLON}              return(SEMICOLON);
+PROCEDURE                return(PROC);
+sin                      return(SIN);
+log                      return(LOG);
+cos                      return(COS);
+ord                      return(ORD);
+abs                      return(ABS);
+sqrt                     return(SQRT);
+exp                      return(EXP);
+eof                      return(EOFILE);
+eoln                     return(EOLN);
+program                  return(PROGRAM);
+integer                  return(INTEGER);
+real                     return(REAL);
+boolean                  return(BOOLEAN);
+char                     return(CHAR);
+value                    return(VALUE);
+reference                return(REFERENCE);
+begin                    return(BEGIN_TOK);
+end                      return(END);
+if                       return(IF);
+then                     return(THEN);
+else                     return(ELSE);
+repeat                   return(REPEAT);
+until                    return(UNTIL);
+read                     return(READ);
+write                    return(WRITE);
+false                    return(FALSE);
+true                     return(TRUE);
+:=                       return(ATRIB);
+\(                       return(LPAR);
+\)                       return(RPAR);
+NOT                      return(NOT);
+\<						 return(LT);
+>						 return(GT);
+>=						 return(GE);
+\<=						 return(LE);
+=						 return(EQ);
+!=						 return(NE);
+{ADDOP}                  yylval.integer = yytext[0]; return(ADDOP);
+{MULOP}                  yylval.integer = yytext[0]; return(MULOP);
+{INTEGER_CONSTANT}       yylval.integer = atoi(yytext); return(INTEGER_CONSTANT);
+{REAL_CONSTANT}          yylval.real = (int) atof(yytext); return(REAL_CONSTANT);
+{CHAR_CONSTANT}          yylval.integer = yytext[0]; return(CHAR_CONSTANT);
+{ID}                     yylval.string = strdup(yytext); return(ID);
 %%
 #ifndef yywrap
 yywrap() { return 1; }

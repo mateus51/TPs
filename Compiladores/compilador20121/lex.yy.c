@@ -558,8 +558,10 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "lexico.lex"
 #line 2 "lexico.lex"
-//#include "y.tab.h"
-extern int yylval;
+#include <string.h>
+
+#include "y.tab.h"
+extern YYSTYPE yylval;
 
 typedef struct Token {
     char *token;
@@ -595,7 +597,7 @@ void printTokens() {
         printf("%16s %16s %16d %16d\n", tokens[i]->token, tokens[i]->lexema, tokens[i]->linha, tokens[i]->coluna);
     }
 }
-#line 599 "lex.yy.c"
+#line 601 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -782,9 +784,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 59 "lexico.lex"
+#line 61 "lexico.lex"
 
-#line 788 "lex.yy.c"
+#line 790 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -870,256 +872,256 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 60 "lexico.lex"
-ECHO; linha_atual++; coluna_atual = 0;
+#line 62 "lexico.lex"
+
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 61 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext);
+#line 63 "lexico.lex"
+
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 62 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(COMMA);
+#line 64 "lexico.lex"
+return(COMMA);
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 63 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(COLON);
+#line 65 "lexico.lex"
+return(COLON);
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 64 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(SEMICOLON);
+#line 66 "lexico.lex"
+return(SEMICOLON);
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 65 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(PROC);
+#line 67 "lexico.lex"
+return(PROC);
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 66 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(SIN);
+#line 68 "lexico.lex"
+return(SIN);
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 67 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(LOG);
+#line 69 "lexico.lex"
+return(LOG);
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 68 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(COS);
+#line 70 "lexico.lex"
+return(COS);
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 69 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(ORD);
+#line 71 "lexico.lex"
+return(ORD);
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 70 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(ABS);
+#line 72 "lexico.lex"
+return(ABS);
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 71 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(SQRT);
+#line 73 "lexico.lex"
+return(SQRT);
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 72 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(EXP);
+#line 74 "lexico.lex"
+return(EXP);
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 73 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(EOFILE);
+#line 75 "lexico.lex"
+return(EOFILE);
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 74 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(EOLN);
+#line 76 "lexico.lex"
+return(EOLN);
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 75 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(PROGRAM);
+#line 77 "lexico.lex"
+return(PROGRAM);
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 76 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(INTEGER);
+#line 78 "lexico.lex"
+return(INTEGER);
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 77 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(REAL);
+#line 79 "lexico.lex"
+return(REAL);
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 78 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(BOOLEAN);
+#line 80 "lexico.lex"
+return(BOOLEAN);
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 79 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(CHAR);
+#line 81 "lexico.lex"
+return(CHAR);
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 80 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(VALUE);
+#line 82 "lexico.lex"
+return(VALUE);
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 81 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(REFERENCE);
+#line 83 "lexico.lex"
+return(REFERENCE);
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 82 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(BEGIN_TOK);
+#line 84 "lexico.lex"
+return(BEGIN_TOK);
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 83 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(END);
+#line 85 "lexico.lex"
+return(END);
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 84 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(IF);
+#line 86 "lexico.lex"
+return(IF);
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 85 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(THEN);
+#line 87 "lexico.lex"
+return(THEN);
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 86 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(ELSE);
+#line 88 "lexico.lex"
+return(ELSE);
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 87 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(REPEAT);
+#line 89 "lexico.lex"
+return(REPEAT);
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 88 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(UNTIL);
+#line 90 "lexico.lex"
+return(UNTIL);
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 89 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(READ);
+#line 91 "lexico.lex"
+return(READ);
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 90 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(WRITE);
+#line 92 "lexico.lex"
+return(WRITE);
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 91 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(FALSE);
+#line 93 "lexico.lex"
+return(FALSE);
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 92 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(TRUE);
+#line 94 "lexico.lex"
+return(TRUE);
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 93 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(ATRIB);
+#line 95 "lexico.lex"
+return(ATRIB);
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 94 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(LPAR);
+#line 96 "lexico.lex"
+return(LPAR);
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 95 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(RPAR);
+#line 97 "lexico.lex"
+return(RPAR);
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 96 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(NOT);
+#line 98 "lexico.lex"
+return(NOT);
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 97 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(LT);
+#line 99 "lexico.lex"
+return(LT);
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 98 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(GT);
+#line 100 "lexico.lex"
+return(GT);
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 99 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(GE);
+#line 101 "lexico.lex"
+return(GE);
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 100 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(LE);
+#line 102 "lexico.lex"
+return(LE);
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 101 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(EQ);
+#line 103 "lexico.lex"
+return(EQ);
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 102 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); return(NE);
+#line 104 "lexico.lex"
+return(NE);
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 103 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); yylval = yytext[0]; return(ADDOP);
+#line 105 "lexico.lex"
+yylval.integer = yytext[0]; return(ADDOP);
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 104 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); yylval = yytext[0]; return(MULOP);
+#line 106 "lexico.lex"
+yylval.integer = yytext[0]; return(MULOP);
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 105 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); yylval = atoi(yytext); return(INTEGER_CONSTANT);
+#line 107 "lexico.lex"
+yylval.integer = atoi(yytext); return(INTEGER_CONSTANT);
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 106 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); yylval = (int) atof(yytext); return(REAL_CONSTANT);
+#line 108 "lexico.lex"
+yylval.real = (int) atof(yytext); return(REAL_CONSTANT);
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 107 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); yylval = yytext[0]; return(CHAR_CONSTANT);
+#line 109 "lexico.lex"
+yylval.integer = yytext[0]; return(CHAR_CONSTANT);
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 108 "lexico.lex"
-ECHO; coluna_atual += strlen(yytext); yylval = yytext[0]; return(ID);
+#line 110 "lexico.lex"
+yylval.string = strdup(yytext); return(ID);
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 109 "lexico.lex"
+#line 111 "lexico.lex"
 ECHO;
 	YY_BREAK
-#line 1123 "lex.yy.c"
+#line 1125 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2117,7 +2119,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 109 "lexico.lex"
+#line 111 "lexico.lex"
 
 
 #ifndef yywrap
