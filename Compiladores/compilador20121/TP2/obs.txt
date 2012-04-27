@@ -1,0 +1,10 @@
+- na regra "lista_de_parametros ::= parametro | lista_de_parametros , parametros", eu mudei
+  de acordo com a recomendação do manual do yacc, para fazer recursão à esquerda.
+
+ - Modificamos todos os operadores de comparação, para ter um para cada token, pois não seria possível determinar no yacc qual operador era
+ 
+ - macro BEGIN já existia, assim com EOF. Tiveram de ser renomeadas.
+ 
+ - Tivemos q adicionar as funções built-in na definição de function_ref_par
+ 
+ 

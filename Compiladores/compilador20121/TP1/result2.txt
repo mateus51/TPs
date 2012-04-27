@@ -1,0 +1,96 @@
+program asdf;
+  n : integer;
+  ret : boolean;
+begin
+  read(n)
+  ret := is_power_of_2(n)
+  write(ret)
+end
+
+boolean PROCEDURE is_power_of_2(reference integer:v):
+  a : integer;
+  ret : boolean;
+begin
+  a := v
+  repeat
+    a := a / 2
+  until a <= 1
+  ret := a = 1;
+end ret
+
+total_tokens = 73
+           TOKEN           LEXEMA            LINHA           COLUNA
+
+         PROGRAM          program                0                0
+              ID             asdf                0                8
+       SEMICOLON                ;                0               12
+              ID                n                0               16
+           COLON                :                0               18
+         INTEGER          integer                0               20
+       SEMICOLON                ;                0               27
+              ID              ret                0               31
+           COLON                :                0               35
+         BOOLEAN          boolean                0               37
+       SEMICOLON                ;                0               44
+           BEGIN            begin                1                0
+            READ             read                1                8
+            LPAR                (                1               12
+              ID                n                1               13
+            RPAR                )                1               14
+              ID              ret                1               18
+           ATRIB               :=                1               22
+              ID               is                1               25
+              ID            power                1               27
+              ID               of                1               32
+INTEGER_CONSTANT                2                1               34
+            LPAR                (                1               35
+              ID                n                1               36
+            RPAR                )                1               37
+           WRITE            write                1               41
+            LPAR                (                1               46
+              ID              ret                1               47
+            RPAR                )                1               50
+             END              end                2                0
+         BOOLEAN          boolean                2                5
+            PROC        PROCEDURE                2               13
+              ID               is                2               23
+              ID            power                2               25
+              ID               of                2               30
+INTEGER_CONSTANT                2                2               32
+            LPAR                (                2               33
+       REFERENCE        reference                2               34
+         INTEGER          integer                2               44
+           COLON                :                2               51
+              ID                v                2               52
+            RPAR                )                2               53
+           COLON                :                2               54
+              ID                a                2               58
+           COLON                :                2               60
+         INTEGER          integer                2               62
+       SEMICOLON                ;                2               69
+              ID              ret                2               73
+           COLON                :                2               77
+         BOOLEAN          boolean                2               79
+       SEMICOLON                ;                2               86
+           BEGIN            begin                3                0
+              ID                a                3                8
+           ATRIB               :=                3               10
+              ID                v                3               13
+          REPEAT           repeat                3               17
+              ID                a                3               28
+           ATRIB               :=                3               30
+              ID                a                3               33
+           MULOP                /                3               35
+INTEGER_CONSTANT                2                3               37
+           UNTIL            until                3               41
+              ID                a                3               47
+           RELOP               <=                3               49
+INTEGER_CONSTANT                1                3               52
+              ID              ret                3               56
+           ATRIB               :=                3               60
+              ID                a                3               63
+           RELOP                =                3               65
+INTEGER_CONSTANT                1                3               67
+       SEMICOLON                ;                3               68
+             END              end                4                0
+              ID              ret                4                4
