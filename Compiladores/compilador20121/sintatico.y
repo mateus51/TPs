@@ -71,6 +71,7 @@ program    :       PROGRAM ID SEMICOLON decl_list compound_stmt
            ;
 decl_list   :       decl_list SEMICOLON decl
             |       decl
+            |		vazio
             ;
 decl    :       dcl_var
         |       dcl_proc
@@ -86,7 +87,6 @@ type	:		INTEGER
 		|		CHAR
 		;
 dcl_proc    :       tipo_retornado PROC ID espec_parametros corpo
-								{ printf("reduced proc declaration"); }
             ;
 vazio   :
         ;
@@ -107,7 +107,7 @@ espec_parametros    :       LPAR lista_parametros RPAR
 lista_parametros	:		parametro
                     |		lista_parametros COMMA parametro
                     ;
-parametro	:		modo type SEMICOLON ID
+parametro	:		modo type COLON ID
 			;
 modo	:		VALUE
 		|		REFERENCE
@@ -193,15 +193,12 @@ boolean_constant	:		TRUE
 %%
 /* programs */
 #include "lex.yy.c"
-/*
 main() {
    yyparse();
-   printTokens();
    return 0;
 }
 
 yyerror(s) char *s; {
 	fprintf( stderr, "%s\n", s );
 }
-*/
 

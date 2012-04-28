@@ -1,7 +1,6 @@
 %{
 #include <string.h>
 
-#include "y.tab.h"
 extern YYSTYPE yylval;
 
 typedef struct Token {
