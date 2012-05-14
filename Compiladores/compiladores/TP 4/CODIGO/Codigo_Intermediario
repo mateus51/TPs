@@ -1,0 +1,14 @@
+L1:	x = 100
+L3:	i = 1
+L4:	iffalse x < 20 goto L8
+L7:	x = x - 1
+L10:	if x > 0 goto L7
+L9:	i = i * 2
+	goto L6
+L8:	x = x - 1
+L11:	i = i / 2
+L6:	iffalse x == 10000 goto L5
+L12:	x = i
+L13:	goto L2
+L5:	goto L4
+L2:

@@ -1,0 +1,13 @@
+L1:	b = false
+L3:	i = 0
+L4:	iffalse b == true goto L8
+L7:	t1 = i * 8
+	t [ t1 ] = 1
+	goto L6
+L8:	t2 = i * 8
+	t [ t2 ] = 200
+L6:	iffalse i > 10 goto L9
+L10:	b = true
+L9:	i = i + 1
+L5:	goto L4
+L2:

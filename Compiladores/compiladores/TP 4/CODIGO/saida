@@ -1,0 +1,350 @@
+./COMPILA_TP2
+./TP3 entrada saida1
+Interpretador : java teste.Main < entrada > Codigo_Intermediario
+linha = L1:L
+Quadrupla L1      
+linha = L3:	
+Quadrupla L3      
+linha = i = i + 1
+ OP 0 :: i;
+INDICE 2		: 9
+ OP 1 :: =;
+INDICE 4		: 9
+ OP 2 :: i;
+INDICE 6		: 9
+ OP 3 :: +;
+INDICE 8		: 9
+ OP 4 :: 1;
+Quadrupla +  i  1  i
+linha = L5:	
+Quadrupla L5      
+linha = t1 = i * 8
+ OP 0 :: t1;
+INDICE 3		: 10
+ OP 1 :: =;
+INDICE 5		: 10
+ OP 2 :: i;
+INDICE 7		: 10
+ OP 3 :: *;
+INDICE 9		: 10
+ OP 4 :: 8;
+Quadrupla *  i  8  t1
+linha = 	t2 = a [ t1 ]
+ OP 0 :: t2;
+INDICE 4		: 14
+ OP 1 :: =;
+INDICE 6		: 14
+ OP 2 :: a;
+INDICE 8		: 14
+ OP 3 :: [;
+INDICE 10		: 14
+ OP 4 :: t1;
+INDICE 13		: 14
+ OP 5 :: ];
+Quadrupla LOAD  a  t1  t2
+linha = 	if t2 < v goto L3
+ OP 0 :: if;
+INDICE 4		: 18
+ OP 1 :: t2;
+INDICE 7		: 18
+ OP 2 :: <;
+INDICE 9		: 18
+ OP 3 :: v;
+INDICE 11		: 18
+ OP 4 :: goto;
+INDICE 16		: 18
+ OP 5 :: L3;
+Quadrupla <  t2  v  L3
+linha = L4:	
+Quadrupla L4      
+linha = j = j - 1
+ OP 0 :: j;
+INDICE 2		: 9
+ OP 1 :: =;
+INDICE 4		: 9
+ OP 2 :: j;
+INDICE 6		: 9
+ OP 3 :: -;
+INDICE 8		: 9
+ OP 4 :: 1;
+Quadrupla -  j  1  j
+linha = L7:	
+Quadrupla L7      
+linha = t3 = j * 8
+ OP 0 :: t3;
+INDICE 3		: 10
+ OP 1 :: =;
+INDICE 5		: 10
+ OP 2 :: j;
+INDICE 7		: 10
+ OP 3 :: *;
+INDICE 9		: 10
+ OP 4 :: 8;
+Quadrupla *  j  8  t3
+linha = 	t4 = a [ t3 ]
+ OP 0 :: t4;
+INDICE 4		: 14
+ OP 1 :: =;
+INDICE 6		: 14
+ OP 2 :: a;
+INDICE 8		: 14
+ OP 3 :: [;
+INDICE 10		: 14
+ OP 4 :: t3;
+INDICE 13		: 14
+ OP 5 :: ];
+Quadrupla LOAD  a  t3  t4
+linha = 	if t4 > v goto L4
+ OP 0 :: if;
+INDICE 4		: 18
+ OP 1 :: t4;
+INDICE 7		: 18
+ OP 2 :: >;
+INDICE 9		: 18
+ OP 3 :: v;
+INDICE 11		: 18
+ OP 4 :: goto;
+INDICE 16		: 18
+ OP 5 :: L4;
+Quadrupla >  t4  v  L4
+linha = L6:	
+Quadrupla L6      
+linha = iffalse i >= j goto L8
+ OP 0 :: iffalse;
+INDICE 8		: 22
+ OP 1 :: i;
+INDICE 10		: 22
+ OP 2 :: >=;
+INDICE 13		: 22
+ OP 3 :: j;
+INDICE 15		: 22
+ OP 4 :: goto;
+INDICE 20		: 22
+ OP 5 :: L8;
+Quadrupla >=  i  j  L8
+linha = L9:	
+Quadrupla L9      
+linha = goto L2
+ OP 0 :: goto;
+INDICE 5		: 7
+ OP 1 :: L2;
+Quadrupla goto  L2    
+linha = L8:	
+Quadrupla L8      
+linha = t5 = i * 8
+ OP 0 :: t5;
+INDICE 3		: 10
+ OP 1 :: =;
+INDICE 5		: 10
+ OP 2 :: i;
+INDICE 7		: 10
+ OP 3 :: *;
+INDICE 9		: 10
+ OP 4 :: 8;
+Quadrupla *  i  8  t5
+linha = 	x = a [ t5 ]
+ OP 0 :: x;
+INDICE 3		: 13
+ OP 1 :: =;
+INDICE 5		: 13
+ OP 2 :: a;
+INDICE 7		: 13
+ OP 3 :: [;
+INDICE 9		: 13
+ OP 4 :: t5;
+INDICE 12		: 13
+ OP 5 :: ];
+Quadrupla LOAD  a  t5  x
+linha = L10:	
+Quadrupla L10      
+linha = t6 = i * 8
+ OP 0 :: t6;
+INDICE 3		: 10
+ OP 1 :: =;
+INDICE 5		: 10
+ OP 2 :: i;
+INDICE 7		: 10
+ OP 3 :: *;
+INDICE 9		: 10
+ OP 4 :: 8;
+Quadrupla *  i  8  t6
+linha = 	t7 = j * 8
+ OP 0 :: t7;
+INDICE 4		: 11
+ OP 1 :: =;
+INDICE 6		: 11
+ OP 2 :: j;
+INDICE 8		: 11
+ OP 3 :: *;
+INDICE 10		: 11
+ OP 4 :: 8;
+Quadrupla *  j  8  t7
+linha = 	t8 = a [ t7 ]
+ OP 0 :: t8;
+INDICE 4		: 14
+ OP 1 :: =;
+INDICE 6		: 14
+ OP 2 :: a;
+INDICE 8		: 14
+ OP 3 :: [;
+INDICE 10		: 14
+ OP 4 :: t7;
+INDICE 13		: 14
+ OP 5 :: ];
+Quadrupla LOAD  a  t7  t8
+linha = 	a [ t6 ] = t8
+ OP 0 :: a;
+INDICE 3		: 14
+ OP 1 :: [;
+INDICE 5		: 14
+ OP 2 :: t6;
+INDICE 8		: 14
+ OP 3 :: ];
+INDICE 10		: 14
+ OP 4 :: =;
+INDICE 12		: 14
+ OP 5 :: t8;
+Quadrupla STORE  t6  t8  a
+linha = L11:	
+Quadrupla L11      
+linha = t9 = j * 8
+ OP 0 :: t9;
+INDICE 3		: 10
+ OP 1 :: =;
+INDICE 5		: 10
+ OP 2 :: j;
+INDICE 7		: 10
+ OP 3 :: *;
+INDICE 9		: 10
+ OP 4 :: 8;
+Quadrupla *  j  8  t9
+linha = 	a [ t9 ] = x
+ OP 0 :: a;
+INDICE 3		: 13
+ OP 1 :: [;
+INDICE 5		: 13
+ OP 2 :: t9;
+INDICE 8		: 13
+ OP 3 :: ];
+INDICE 10		: 13
+ OP 4 :: =;
+INDICE 12		: 13
+ OP 5 :: x;
+Quadrupla STORE  t9  x  a
+linha = 	goto L1
+ OP 0 :: goto;
+INDICE 6		: 8
+ OP 1 :: L1;
+Quadrupla goto  L1    
+
+Impressao das quadruplas
+---------------------
+OP			ARG_1			ARG_2			RESULT
+L1									
+L3									
++			i			1			i
+L5									
+*			i			8			t1
+LOAD			a			t1			t2
+<			t2			v			L3
+L4									
+-			j			1			j
+L7									
+*			j			8			t3
+LOAD			a			t3			t4
+>			t4			v			L4
+L6									
+>=			i			j			L8
+L9									
+goto			L2						
+L8									
+*			i			8			t5
+LOAD			a			t5			x
+L10									
+*			i			8			t6
+*			j			8			t7
+LOAD			a			t7			t8
+STORE			t6			t8			a
+L11									
+*			j			8			t9
+STORE			t9			x			a
+goto			L1						
+---------------------
+
+
+Entrada no nivel  2
+
+Este item ja foi inserido
+Tabela de Simbolos cheia
+Quadrupla       
+
+Saida do nivel 2
+
+CT		Impressao do Programa TAM					
+------------------------
+0		LOADL 0
+1		LOADL 1
+2		CALL succ
+3		STORE (1) 0 [SB]
+4		LOAD (1) 0
+5		LOADL 8
+6		CALL mult
+7		STORE (1) 1 [SB]
+8		PUSH 100
+9		STORE (100) 2 [SB]
+10		LOAD ( 1 ) 1 [SB]
+11		STORE (1) 102 [SB]
+12		LOAD (1) 102 [SB]
+13		LOADL 0
+14		CALL lt
+15		JUMPIF (1) 0 [CB]
+16		LOADL 0
+17		LOADL 1
+18		CALL sub
+19		STORE (1) 103 [SB]
+20		LOAD (1) 103
+21		LOADL 8
+22		CALL mult
+23		STORE (1) 104 [SB]
+24		LOAD ( 1 ) 2 [SB]
+25		STORE (1) 105 [SB]
+26		LOAD (1) 105 [SB]
+27		LOADL 0
+28		CALL gt
+29		JUMPIF (1) 16 [CB]
+30		LOAD (1) 0
+31		LOAD (1) 103 [SB]
+32		CALL ge
+33		STORE (1) 106 [SB]
+34		B2
+35		LOAD (1) 0
+36		LOADL 8
+37		CALL mult
+38		STORE (1) 107 [SB]
+39		LOAD ( 1 ) 2 [SB]
+40		STORE (1) 108 [SB]
+41		LOAD (1) 0
+42		LOADL 8
+43		CALL mult
+44		STORE (1) 109 [SB]
+45		LOAD (1) 103
+46		LOADL 8
+47		CALL mult
+48		STORE (1) 110 [SB]
+49		LOAD ( 1 ) 2 [SB]
+50		STORE (1) 111 [SB]
+51		LOAD (1)111 [SB]
+52		STORE (1) 111 [SB]
+53		LOAD (1) 103
+54		LOADL 8
+55		CALL mult
+56		STORE (1) 112 [SB]
+57		LOAD (1)108 [SB]
+58		PUSH 1
+59		STORE (1) 113 [SB]
+60		STORE (1) 2 [SB]
+61		LOADL 0
+62		JUMPI
+63		HALT
+------------------------
+
