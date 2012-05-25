@@ -1,9 +1,22 @@
 /* declarations */
 
+
 %{
+	#include "sym_table.c"
 	#include <stdio.h>
 	int yydebug=1;
+	/* Tabela de símbolos. Declarada globalmente para estar disponível
+	 * tanto para o Lex quanto para o Yacc.
+	 * Foi declarado dessa forma para o endereço ser conhecido
+	 * em tempo de compilação. */
+	SymbolTable table;
+	SymbolTable *symbol_table = (SymbolTable*) &table;
+	//symbol_table->initialized = False;
 %}
+
+
+
+
 
 %debug
 
@@ -62,6 +75,8 @@
 %token <real> REAL_CONSTANT
 %token <integer> CHAR_CONSTANT
 
+%type<string> type tipo_retornado
+
 %start program
 %%
 
@@ -80,21 +95,32 @@ dcl_var     :       ident_list COLON type
             ;
 ident_list  :       ident_list COMMA ID
             |       ID
+            			{ int id = getSymbol(symbol_table, $1); symbol_table->items[id]->type = strdup($1); }
             ;
 type	:		INTEGER
+					{ $$ = "integer"; }
 		|		REAL
+					{ $$ = "real"; }
 		|		BOOLEAN
+					{ $$ = "boolean"; }
 		|		CHAR
+					{ $$ = "char"; }
 		;
 dcl_proc    :       tipo_retornado PROC ID espec_parametros corpo
+						{ openScope(symbol_table); }
             ;
 vazio   :
         ;
 tipo_retornado  :       INTEGER
+							{ $$ = "integer"; }
                 |       REAL
+                			{ $$ = "real"; }
                 |       BOOLEAN
+                			{ $$ = "boolean"; }
                 |       CHAR
+                			{ $$ = "char"; }
                 |       vazio
+                			{ $$ = "vazio"; }
                 ;
 corpo   :       COLON decl_list SEMICOLON compound_stmt id_return
         |       vazio
@@ -194,9 +220,9 @@ boolean_constant	:		TRUE
 /* programs */
 #include "lex.yy.c"
 main() {
-   initTable(sym_table);
+   initTable(symbol_table);
    yyparse();
-   printTable(sym_table);
+   printTable(symbol_table);
    return 0;
 }
 

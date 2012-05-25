@@ -24,6 +24,7 @@ typedef struct {
 	int last;
 	int scopes[NUM_SCOPES];
 	int current_scope;
+	boolean initialized;
 } SymbolTable;
 
 
@@ -43,10 +44,32 @@ void initTable(SymbolTable *table) {
 		table->items[i] = NULL;
 	for (i = 0; i < NUM_SCOPES; i++)
 		table->scopes[i] = 0;
+	table->initialized = True;
+}
+
+/* Creates a new symbol */
+Symbol *newSymbol(char *name, char *type, int line, int column) {
+	printf("\n\nTABLE: %s(%d, %d)\n", name, line, column);
+	Symbol *symbol = (Symbol*) malloc(sizeof(Symbol));
+	symbol->name = (char*) malloc(sizeof(char) * strlen(name) + 1);
+	strcpy(symbol->name, name);
+	if (symbol->type != NULL) {
+		symbol->type = (char*) malloc(sizeof(char) * strlen(type) + 1);
+		strcpy(symbol->type, type);
+	}
+	else
+		symbol->type = NULL;
+
+	symbol->line = line;
+	symbol->column = column;
+	return symbol;
 }
 
 
+
 void openScope(SymbolTable *table) {
+	printf("\n\n\n\nvoid openScope(SymbolTable *table)\n\n");
+
 	table->current_scope++;
 	if (table->current_scope >= NUM_SCOPES)
 		erro("Não é possível abrir um novo nível.\n");
@@ -70,6 +93,15 @@ int getSymbol(SymbolTable *table, char *name) {
 	erro("Símbolo não encontrado!");
 }
 
+void checkTableCapacity(SymbolTable *table) {
+	if (table->last == table->capacity) {
+		table->capacity = table->capacity * TABLE_GROWTH_FACTOR;
+		table->items = (Symbol**) realloc(table->items, sizeof(Symbol*) * table->capacity);
+		if (table->items == NULL)
+			erro("Falha ao alocar espaço para a tabela de símbolos!\n");
+	}
+}
+
 void installId(SymbolTable *table, char *name, int line, int column) {
 	int i;
 	for (i = table->last-1; i >= 0; i--)
@@ -80,23 +112,28 @@ void installId(SymbolTable *table, char *name, int line, int column) {
 	Symbol *symbol = newSymbol(name, NULL, line, column);
 	symbol->scope = table->current_scope;
 	table->items[table->last] = symbol;
+	printf("\n\nINSTALL: %s(%d, %d)\n", table->items[table->last]->name, table->items[table->last]->line, table->items[table->last]->column);
 	table->last++;
 }
 
-void checkTableCapacity(SymbolTable *table) {
-	if (table->last == table->capacity) {
-		table->capacity = table->capacity * TABLE_GROWTH_FACTOR;
-		table->items = (Symbol**) realloc(table->items, sizeof(Symbol*) * table->capacity);
-		if (table->items == NULL) {
-			erro("Falha ao alocar espaço para a tabela de símbolos!\n");
-			exit(EXIT_FAILURE);
-		}
-	}
+/* Prints the symbol table */
+void printTable(SymbolTable *table) {
+    printf("%16s %16s %16s %16s %16s\n\n", "NOME", "TYPE", "SCOPE", "LINHA", "COLUNA");
+    int i;
+    for (i = 0; i < table->last; i++)
+    	printf("%16s %16s %16d %16d %16d\n", table->items[i]->name, table->items[i]->type, table->items[i]->scope, table->items[i]->line, table->items[i]->column);
+
+//    struct Cell *aux = table->first->next;
+//    while (aux != NULL) {
+//        printf("%16s %16s %16d %16d\n", aux->token->token, aux->token->lexema, aux->token->linha, aux->token->coluna);
+//    	aux = aux->next;
+//    }
+    //printf("total_tokens = %d\n", total_tokens);
 }
 
-void main(void) {
-	return 0;
-}
+//void main(void) {
+//	return;
+//}
 
 
 

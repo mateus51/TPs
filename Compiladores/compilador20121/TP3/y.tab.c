@@ -68,14 +68,22 @@
 /* Copy the first part of user declarations.  */
 
 /* Line 189 of yacc.c  */
-#line 3 "sintatico.y"
+#line 4 "sintatico.y"
 
+	#include "sym_table.c"
 	#include <stdio.h>
 	int yydebug=1;
+	/* Tabela de símbolos. Declarada globalmente para estar disponível
+	 * tanto para o Lex quanto para o Yacc.
+	 * Foi declarado dessa forma para o endereço ser conhecido
+	 * em tempo de compilação. */
+	SymbolTable table;
+	SymbolTable *symbol_table = (SymbolTable*) &table;
+	//symbol_table->initialized = False;
 
 
 /* Line 189 of yacc.c  */
-#line 79 "y.tab.c"
+#line 87 "y.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -208,7 +216,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 11 "sintatico.y"
+#line 24 "sintatico.y"
 
 	int integer;
 	float real;
@@ -217,7 +225,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 221 "y.tab.c"
+#line 229 "y.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -229,7 +237,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 233 "y.tab.c"
+#line 241 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -547,15 +555,15 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    69,    69,    72,    73,    74,    76,    77,    79,    81,
-      82,    84,    85,    86,    87,    89,    91,    93,    94,    95,
-      96,    97,    99,   100,   102,   103,   105,   107,   108,   110,
-     112,   113,   115,   117,   118,   120,   121,   122,   123,   124,
-     125,   126,   128,   130,   131,   133,   135,   137,   139,   141,
-     142,   144,   145,   146,   147,   148,   149,   150,   153,   154,
-     156,   157,   159,   160,   162,   163,   164,   165,   166,   168,
-     169,   171,   172,   173,   174,   175,   176,   177,   178,   179,
-     181,   183,   185,   186,   187,   188,   190,   191
+       0,    84,    84,    87,    88,    89,    91,    92,    94,    96,
+      97,   100,   102,   104,   106,   109,   112,   114,   116,   118,
+     120,   122,   125,   126,   128,   129,   131,   133,   134,   136,
+     138,   139,   141,   143,   144,   146,   147,   148,   149,   150,
+     151,   152,   154,   156,   157,   159,   161,   163,   165,   167,
+     168,   170,   171,   172,   173,   174,   175,   176,   179,   180,
+     182,   183,   185,   186,   188,   189,   190,   191,   192,   194,
+     195,   197,   198,   199,   200,   201,   202,   203,   204,   205,
+     207,   209,   211,   212,   213,   214,   216,   217
 };
 #endif
 
@@ -1564,14 +1572,91 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 70 "sintatico.y"
+#line 85 "sintatico.y"
     { printf("reduced program!\n"); }
+    break;
+
+  case 10:
+
+/* Line 1455 of yacc.c  */
+#line 98 "sintatico.y"
+    { int id = getSymbol(symbol_table, (yyvsp[(1) - (1)].string)); symbol_table->items[id]->type = strdup((yyvsp[(1) - (1)].string)); }
+    break;
+
+  case 11:
+
+/* Line 1455 of yacc.c  */
+#line 101 "sintatico.y"
+    { (yyval.string) = "integer"; }
+    break;
+
+  case 12:
+
+/* Line 1455 of yacc.c  */
+#line 103 "sintatico.y"
+    { (yyval.string) = "real"; }
+    break;
+
+  case 13:
+
+/* Line 1455 of yacc.c  */
+#line 105 "sintatico.y"
+    { (yyval.string) = "boolean"; }
+    break;
+
+  case 14:
+
+/* Line 1455 of yacc.c  */
+#line 107 "sintatico.y"
+    { (yyval.string) = "char"; }
+    break;
+
+  case 15:
+
+/* Line 1455 of yacc.c  */
+#line 110 "sintatico.y"
+    { openScope(symbol_table); }
+    break;
+
+  case 17:
+
+/* Line 1455 of yacc.c  */
+#line 115 "sintatico.y"
+    { (yyval.string) = "integer"; }
+    break;
+
+  case 18:
+
+/* Line 1455 of yacc.c  */
+#line 117 "sintatico.y"
+    { (yyval.string) = "real"; }
+    break;
+
+  case 19:
+
+/* Line 1455 of yacc.c  */
+#line 119 "sintatico.y"
+    { (yyval.string) = "boolean"; }
+    break;
+
+  case 20:
+
+/* Line 1455 of yacc.c  */
+#line 121 "sintatico.y"
+    { (yyval.string) = "char"; }
+    break;
+
+  case 21:
+
+/* Line 1455 of yacc.c  */
+#line 123 "sintatico.y"
+    { (yyval.string) = "vazio"; }
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1575 "y.tab.c"
+#line 1660 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1783,14 +1868,14 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 193 "sintatico.y"
+#line 219 "sintatico.y"
 
 /* programs */
 #include "lex.yy.c"
 main() {
-   initTable(sym_table);
+   initTable(symbol_table);
    yyparse();
-   printTable(sym_table);
+   printTable(symbol_table);
    return 0;
 }
 
