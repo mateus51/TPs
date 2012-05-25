@@ -36,7 +36,7 @@ void main(void)
 
  L = 1;    						/* Considera-se que a primeira posicao da tabela eh a de indice 1.
 												 L eh o final da arvore binaria */
- nivel = 1;           /* O primeiro nivel ‚ o 1 */
+ nivel = 1;           /* O primeiro nivel Ã© o 1 */
  escopo[nivel] = 0;   /* escopo[1] contem o indice do primeiro elemento */
 }
 

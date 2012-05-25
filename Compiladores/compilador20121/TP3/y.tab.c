@@ -1565,7 +1565,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 70 "sintatico.y"
-    { printf("reduced program\n"); }
+    { printf("reduced program!\n"); }
     break;
 
 

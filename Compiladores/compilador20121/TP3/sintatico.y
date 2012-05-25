@@ -67,7 +67,7 @@
 
 /* rules */
 program    :       PROGRAM ID SEMICOLON decl_list compound_stmt
-						{ printf("reduced program\n"); }
+						{ printf("reduced program!\n"); }
            ;
 decl_list   :       decl_list SEMICOLON decl
             |       decl
