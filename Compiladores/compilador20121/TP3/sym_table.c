@@ -24,12 +24,13 @@ typedef struct {
 	int last;
 	int scopes[NUM_SCOPES];
 	int current_scope;
-	boolean initialized;
 } SymbolTable;
 
+void printTable(SymbolTable*);
 
-void erro(char *message) {
-	printf("Erro! - %s\n", message);
+void erro(SymbolTable *table, char *message) {
+	printf("Erro! - %s\n\n", message);
+	printTable(table);
 	exit(EXIT_FAILURE);
 }
 
@@ -44,12 +45,11 @@ void initTable(SymbolTable *table) {
 		table->items[i] = NULL;
 	for (i = 0; i < NUM_SCOPES; i++)
 		table->scopes[i] = 0;
-	table->initialized = True;
 }
 
 /* Creates a new symbol */
-Symbol *newSymbol(char *name, char *type, int line, int column) {
-	printf("\n\nTABLE: %s(%d, %d)\n", name, line, column);
+Symbol *newSymbol(char *name, char *type, int scope, int line, int column) {
+//	printf("TABLE: %s(%d, %d)\n", name, line, column);
 	Symbol *symbol = (Symbol*) malloc(sizeof(Symbol));
 	symbol->name = (char*) malloc(sizeof(char) * strlen(name) + 1);
 	strcpy(symbol->name, name);
@@ -62,19 +62,22 @@ Symbol *newSymbol(char *name, char *type, int line, int column) {
 
 	symbol->line = line;
 	symbol->column = column;
+	symbol->scope = scope;
 	return symbol;
 }
 
 
 
 void openScope(SymbolTable *table) {
-	printf("\n\n\n\nvoid openScope(SymbolTable *table)\n\n");
+	printf("\n\nOpening scope...\n  previous: %d\n", table->current_scope);
 
 	table->current_scope++;
 	if (table->current_scope >= NUM_SCOPES)
-		erro("Não é possível abrir um novo nível.\n");
+		erro(table, "Não é possível abrir um novo nível.\n");
 	else
 		table->scopes[table->current_scope] = table->last;
+
+	printf("  current: %d\n\n", table->current_scope);
 }
 
 
@@ -83,14 +86,16 @@ void closeScope(SymbolTable *table) {
 	table->current_scope--;
 }
 
+/* Returns the symbol index in the table. Symbol must be in the table. */
 int getSymbol(SymbolTable *table, char *name) {
+	printf("\n\n looking for '%s'...", name);
 	int i;
 	for (i = table->last-1; i >= 0; i--) {
 		if (!strcmp(name, table->items[i]->name))
 			return i;
 
 	}
-	erro("Símbolo não encontrado!");
+	erro(table, "Símbolo não encontrado!");
 }
 
 void checkTableCapacity(SymbolTable *table) {
@@ -98,191 +103,63 @@ void checkTableCapacity(SymbolTable *table) {
 		table->capacity = table->capacity * TABLE_GROWTH_FACTOR;
 		table->items = (Symbol**) realloc(table->items, sizeof(Symbol*) * table->capacity);
 		if (table->items == NULL)
-			erro("Falha ao alocar espaço para a tabela de símbolos!\n");
+			erro(table, "Falha ao alocar espaço para a tabela de símbolos!\n");
 	}
 }
 
 void installId(SymbolTable *table, char *name, int line, int column) {
 	int i;
-	for (i = table->last-1; i >= 0; i--)
+	for (i = table->last-1; i >= table->scopes[table->current_scope]; i--)
 		if (!strcmp(table->items[i]->name, name))
 			return;
 
 	checkTableCapacity(table);
-	Symbol *symbol = newSymbol(name, NULL, line, column);
+	Symbol *symbol = newSymbol(name, NULL, table->current_scope, line, column);
 	symbol->scope = table->current_scope;
 	table->items[table->last] = symbol;
-	printf("\n\nINSTALL: %s(%d, %d)\n", table->items[table->last]->name, table->items[table->last]->line, table->items[table->last]->column);
 	table->last++;
+
+	printf("\n\n");
+	printf("TABLE: symbol %s (%d, %d) installed.\n", table->items[table->last-1]->name, table->items[table->last-1]->line, table->items[table->last-1]->column);
+	printf("  current scope: %d\n", table->current_scope);
+	printf("  symbol scope: %d\n", table->current_scope);
+	printf("\n");
+	printTable(table);
+}
+
+/* Updates the symbol type in the table */
+void updateType(SymbolTable *table, int var_index, char *type) {
+	printf("\n\n");
+	printf("TABLE: Updating type of %s (scope %d)...\n", table->items[var_index]->name, table->items[var_index]->scope);
+	if (table->items[var_index]->type != NULL)
+		erro(table, "Tipo de variável já foi especificado!");
+	else {
+		table->items[var_index]->type = (char*) malloc(sizeof(char) * strlen(type) + 1);
+		strcpy(table->items[var_index]->type, type);
+	}
+
+	printf("  type updated to '%s'.\n\n", table->items[var_index]->type);
 }
 
 /* Prints the symbol table */
 void printTable(SymbolTable *table) {
     printf("%16s %16s %16s %16s %16s\n\n", "NOME", "TYPE", "SCOPE", "LINHA", "COLUNA");
     int i;
-    for (i = 0; i < table->last; i++)
-    	printf("%16s %16s %16d %16d %16d\n", table->items[i]->name, table->items[i]->type, table->items[i]->scope, table->items[i]->line, table->items[i]->column);
-
-//    struct Cell *aux = table->first->next;
-//    while (aux != NULL) {
-//        printf("%16s %16s %16d %16d\n", aux->token->token, aux->token->lexema, aux->token->linha, aux->token->coluna);
-//    	aux = aux->next;
-//    }
-    //printf("total_tokens = %d\n", total_tokens);
+    for (i = 0; i < table->last; i++) {
+//    	printf("%16s %16s %16d %16d %16d\n", table->items[i]->name, table->items[i]->type, table->items[i]->scope, table->items[i]->line, table->items[i]->column);
+    	printf("%16s ", table->items[i]->name);
+    	printf("%16s ", table->items[i]->type);
+    	printf("%16d ", table->items[i]->scope);
+    	printf("%16d ", table->items[i]->line);
+    	printf("%16d\n", table->items[i]->column);
+    }
 }
+
+//char *concat(char *str1, char *str2) {
+//	str1 = (char*) realloc(str1, sizeof(char) * strlen(str2));
+//	return strcat(str1, str2);
+//}
 
 //void main(void) {
 //	return;
-//}
-
-
-
-//
-//
-//
-//
-//struct Cell {
-//	Symbol *sym;
-//	struct Cell *next;
-//};
-//
-//typedef struct SymbolList {
-//  struct Cell *first, *last;
-//  boolean initialized;
-//} SymbolList;
-//
-//#define MAX_LEVELS 20
-//
-////typedef struct SymbolTable {
-////	SymbolList levels[MAX_LEVELS];
-////}SymbolTable;
-//
-///* Initializes the symbol table */
-//void initTable(SymbolTable *table) {
-//	int i;
-//	for (int i = 0; i < MAX_LEVELS; i++) {
-//		table->levels[i] = (SymbolList*) malloc(sizeof(SymbolList));
-//		table->levels[i]->first = NULL;
-//		table->levels[i]->last = NULL;
-//		table->levels[i]->initialized = False;
-//	}
-//}
-//
-///* Initializes the symbol list to the default values */
-//void initList(SymbolList *list) {
-//	list->first = (struct Cell*) malloc(sizeof(struct Cell));
-//	list->last = list->first;
-//	list->first->sym = NULL;
-//	list->first->next = NULL;
-//	list->initialized = True;
-//}
-//
-///* Creates a new symbol */
-//Symbol *newSymbol(char *name, char *type, int line, int column) {
-//	Symbol *symbol = (Symbol*) malloc(sizeof(Symbol));
-//	symbol->name = (char*) malloc(sizeof(char) * strlen(name) + 1);
-//	strcpy(symbol->name, name);
-//	if (symbol->type != NULL) {
-//		symbol->type = (char*) malloc(sizeof(char) * strlen(type) + 1);
-//		strcpy(symbol->type, type);
-//	}
-//	else
-//		symbol->type = NULL;
-//
-//	symbol->line = line;
-//	symbol->column = column;
-//	return symbol;
-//}
-//
-///* Get the corresponding symbol fro the symbol table.
-// * Returns NULL if the symbol isn't in the table. */
-//Symbol *getSymbol(SymbolTable *table, char *name) {
-//	int i;
-//	struct Cell *aux;
-//	for (int i = MAX_LEVELS-1; i >= 0; i++) {
-//		// Só pesquisa no nível se ele possuir algum símbolo
-//		if (table->levels[i]->first != NULL && !isListEmpty(table->levels[i])) {
-//			aux = table->levels[i]->first->next;
-//			while (aux != NULL) {
-//				if (!strcmp(aux->sym->name, name))
-//					return aux->sym;
-//				aux = aux->next;
-//			}
-//		}
-//	}
-//	return NULL;
-//}
-//
-///* Adds a token to the symbol table. */
-//void addSymbol(SymbolTable *table, Symbol *symbol, int level) {
-//	Symbol *found_symbol = getSymbol(table, symbol->name);
-//	if (found_symbol == NULL) {
-//		table->last->next = (struct Cell*) malloc(sizeof(struct Cell));
-//		table->last = table->last->next;
-//		table->last->sym = symbol;
-//		table->last->next = NULL;
-//	}
-//	else {
-//		printf("Symbol '%s' found in table!\n", found_symbol->name);
-//	}
-//	return;
-//}
-//
-//
-///* Removes a token from the symbol table */
-//void Retira(struct Cell *p, SymbolTable *table) {
-///*  ---   Obs.: o item a ser retirado e  o seguinte ao apontado por  p --- */
-//	struct Cell *q;
-//	if (table->first == table->last || p == NULL || p->next == NULL) {
-//		if (table->first == table->last)
-//			printf("Erro! Lista vazia!\n");
-//		else if (p == NULL)
-//			printf("Erro! Pointer é NULL!\n");
-//		else if (p->next == NULL)
-//			printf("Erro! Item a ser removido é NULL!\n");
-//		return;
-//	}
-//	q = p->next;
-//	p->next = q->next;
-//	if (p->next == NULL) table->last = p;
-//	free(q->token->lexema);
-//	free(q->token->token);
-//	free(q->token);
-//	free(q);
-//}
-//
-//boolean isListEmpty(SymbolList *list) {
-//	return (boolean) list->first == list->last;
-//}
-//
-///* Prints the symbol table */
-//void printTable(SymbolTable *table) {
-//    printf("%16s %16s %16s %16s\n\n", "TOKEN", "LEXEMA", "LINHA", "COLUNA");
-//    struct Cell *aux = table->first->next;
-//    while (aux != NULL) {
-//        printf("%16s %16s %16d %16d\n", aux->token->token, aux->token->lexema, aux->token->linha, aux->token->coluna);
-//    	aux = aux->next;
-//    }
-//    //printf("total_tokens = %d\n", total_tokens);
-//}
-
-
-
-
-//int main() {
-//	SymbolTable *table = newTable();
-//	Token *token = newToken("COMMA", ",", 3, 45);
-//
-//	addToken(table, token);
-//
-//	struct Cell *aux = table->first->next;
-//	while (aux != NULL) {
-//		printf("token->token = %s\ntoken->lex = %s\n", token->token, token->lexema);
-//		aux = aux->next;
-//	}
-//	Retira(table->first, table);
-//	free(table->first);
-//	free(table);
-//
-//	return 0;
 //}

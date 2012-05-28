@@ -1,8 +1,35 @@
-program asdf;
-  n, fact : integer;
-  
-integer PROCEDURE fatorial(value integer:n):
-  fact : integer;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+program MyProgram;
+a, n, fact : integer;
+
+boolean PROCEDURE fatorial(value integer:n):
+  fact : char;
+  fa, x : integer;
 begin
   a := 1;
   repeat
@@ -10,7 +37,7 @@ begin
     n := n - 1
   until n < 2
 end
-  
+
   
 begin
   read(n);

@@ -8,12 +8,11 @@ int total_tokens = 0;
 
 
 void installToken(char *lex) {
-//	if (!symbol_table->initialized)
-//		printf("Table NOT initialized!!\n");
 
-//	printf("\n\nLEX : %s(%d, %d)\n", lex, linha_atual, coluna_atual);
-
-	installId(symbol_table, lex, linha_atual, coluna_atual);
+	//printf("LEX : %s(%d, %d)\n", lex, linha_atual, coluna_atual);
+	
+	if (!reading_code)
+		installId(symbol_table, lex, linha_atual, coluna_atual);
 }
 
 %}
@@ -37,12 +36,12 @@ NEWLINE             \n
 SPACES             [\ \t\b\012]+
 LT				   <
 %%
-{NEWLINE}				 linha_atual++; coluna_atual = 0;
+{NEWLINE}				 linha_atual++; coluna_atual = 0;//printf("\nfound newline!\n l: %d\n c: %d\n\n", linha_atual, coluna_atual); 
 {SPACES}				 coluna_atual += strlen(yytext);
 {COMMA}                  coluna_atual += strlen(yytext); return(COMMA);
 {COLON}                  coluna_atual += strlen(yytext); return(COLON);
 {SEMICOLON}              coluna_atual += strlen(yytext); return(SEMICOLON);
-PROCEDURE                coluna_atual += strlen(yytext); return(PROC);
+PROCEDURE                coluna_atual += strlen(yytext); return(PROC);//printf("LEX\n");openScope(symbol_table); 
 sin                      coluna_atual += strlen(yytext); return(SIN);
 log                      coluna_atual += strlen(yytext); return(LOG);
 cos                      coluna_atual += strlen(yytext); return(COS);

@@ -4,70 +4,58 @@
 %{
 	#include "sym_table.c"
 	#include <stdio.h>
-	int yydebug=1;
+	
+	
 	/* Tabela de símbolos. Declarada globalmente para estar disponível
 	 * tanto para o Lex quanto para o Yacc.
 	 * Foi declarado dessa forma para o endereço ser conhecido
 	 * em tempo de compilação. */
 	SymbolTable table;
 	SymbolTable *symbol_table = (SymbolTable*) &table;
-	//symbol_table->initialized = False;
+	int yydebug=1;
+
+	// No máximo 10 variáveis na mesma declaração
+	int vars_to_get_type[10];
+	int var_ind = 0;
+	boolean reading_code = False;
+
+	void resetVarsArray() {
+		printf("reseting vars array...\n");
+		
+		int i;
+		for (i = 0; i < 10; i++)
+			vars_to_get_type[i] = -1;
+		var_ind = 0;
+	}
+
+	void updateVariablesType(char *type_str) {
+		printf("\n\nUpdating array...\n  array[0] = %d\n", vars_to_get_type[0]);
+		int i;
+		for (i = 0; vars_to_get_type[i] != -1; i++)
+			updateType(symbol_table, vars_to_get_type[i], type_str);
+
+		resetVarsArray();
+		printTable(symbol_table);
+	}
+
+	void saveVarInArray(int var_index) {
+		if (var_ind >= 10)
+			erro(symbol_table, "No máximo 10 variáveis podem ser declaradas ao mesmo tempo!");
+
+		vars_to_get_type[var_ind] = var_index;
+		var_ind++;
+	}
+
 %}
 
-
-
-
-
-%debug
-
-%union 
+%union
 {
 	int integer;
 	float real;
 	char *string;
 }
 
-%token COMMA 
-%token COLON
-%token SEMICOLON
-%token PROC
-%token SIN
-%token LOG
-%token COS
-%token ORD
-%token ABS
-%token SQRT
-%token EXP
-%token EOFILE
-%token EOLN
-%token PROGRAM
-%token INTEGER
-%token REAL
-%token BOOLEAN
-%token CHAR
-%token VALUE
-%token REFERENCE
-%token BEGIN_TOK
-%token END
-%token IF
-%token THEN
-%token ELSE
-%token REPEAT
-%token UNTIL
-%token READ
-%token WRITE
-%token FALSE
-%token TRUE
-%token ATRIB
-%token LPAR
-%token RPAR
-%token NOT
-%token EQ
-%token NE
-%token GT
-%token LT
-%token GE
-%token LE
+%token COMMA COLON SEMICOLON PROC SIN LOG COS ORD ABS SQRT EXP EOFILE EOLN PROGRAM INTEGER REAL BOOLEAN CHAR VALUE REFERENCE BEGIN_TOK END IF THEN ELSE REPEAT UNTIL READ WRITE FALSE TRUE ATRIB LPAR RPAR NOT EQ NE GT LT GE LE
 %token <integer> ADDOP
 %token <integer> MULOP
 %token <string> ID
@@ -82,7 +70,7 @@
 
 /* rules */
 program    :       PROGRAM ID SEMICOLON decl_list compound_stmt
-						{ printf("reduced program!\n"); }
+						{ updateType(symbol_table, getSymbol(symbol_table, $2), "program"); printf("reduced program!\n"); }
            ;
 decl_list   :       decl_list SEMICOLON decl
             |       decl
@@ -92,10 +80,12 @@ decl    :       dcl_var
         |       dcl_proc
         ;
 dcl_var     :       ident_list COLON type
+						{ updateVariablesType($3); }
             ;
 ident_list  :       ident_list COMMA ID
+            			{ saveVarInArray(getSymbol(symbol_table, $3)); }
             |       ID
-            			{ int id = getSymbol(symbol_table, $1); symbol_table->items[id]->type = strdup($1); }
+            			{ saveVarInArray(getSymbol(symbol_table, $1)); }
             ;
 type	:		INTEGER
 					{ $$ = "integer"; }
@@ -107,7 +97,7 @@ type	:		INTEGER
 					{ $$ = "char"; }
 		;
 dcl_proc    :       tipo_retornado PROC ID espec_parametros corpo
-						{ openScope(symbol_table); }
+						{ updateType(symbol_table, getSymbol(symbol_table, $3), $1); }
             ;
 vazio   :
         ;
@@ -122,23 +112,38 @@ tipo_retornado  :       INTEGER
                 |       vazio
                 			{ $$ = "vazio"; }
                 ;
-corpo   :       COLON decl_list SEMICOLON compound_stmt id_return
+corpo   :       COLON decl_list SEMICOLON compound_stmt after_proc_compound id_return
         |       vazio
         ;
+after_proc_compound	:		vazio
+								{ closeScope(symbol_table); }
+					;
+						;
 id_return   :       ID
             |       vazio
             ;
-espec_parametros    :       LPAR lista_parametros RPAR
+espec_parametros    :       lpar_espec_params lista_parametros RPAR
                     ;
+lpar_espec_params	:		LPAR
+								{ openScope(symbol_table); }
+					;
 lista_parametros	:		parametro
                     |		lista_parametros COMMA parametro
                     ;
 parametro	:		modo type COLON ID
+						{ updateType(symbol_table, getSymbol(symbol_table, $4), $2); }
 			;
 modo	:		VALUE
 		|		REFERENCE
 		;
-compound_stmt	:		BEGIN_TOK stmt_list END
+compound_stmt	:		start_compound stmt_list end_compound
+							{ /*closeScope(symbol_table);*/ }
+				;
+start_compound	:		BEGIN_TOK
+							{ reading_code = True; }
+				;
+end_compound	:		END
+							{ reading_code = False; }
 				;
 stmt_list	:		stmt_list SEMICOLON stmt
 			|		stmt
@@ -174,7 +179,7 @@ expr	:		simple_expr
 		|		simple_expr LT simple_expr
 		|		simple_expr GE simple_expr
 		|		simple_expr LE simple_expr
-				
+
 		;
 simple_expr	:		term
 			|		simple_expr ADDOP term
@@ -221,6 +226,7 @@ boolean_constant	:		TRUE
 #include "lex.yy.c"
 main() {
    initTable(symbol_table);
+   resetVarsArray();
    yyparse();
    printTable(symbol_table);
    return 0;
