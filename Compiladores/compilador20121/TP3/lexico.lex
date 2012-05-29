@@ -7,12 +7,18 @@ int coluna_atual = 0;
 int total_tokens = 0;
 
 
-void installToken(char *lex) {
+int installToken(char *lex) {
 
-	//printf("LEX : %s(%d, %d)\n", lex, linha_atual, coluna_atual);
-	
+	if (DBG) {
+		printf("\n\nLEX : %s(%d, %d)\n", lex, linha_atual, coluna_atual);
+		printTable(symbol_table);
+	}
+		
+	// if reading declarations
 	if (!reading_code)
-		installId(symbol_table, lex, linha_atual, coluna_atual);
+		return installId(symbol_table, lex, linha_atual + 1, coluna_atual);
+	else
+		return getSymbol(symbol_table, lex);
 }
 
 %}
@@ -27,8 +33,8 @@ INTEGER_CONSTANT    {UNSIGNED_INTEGER}
 REAL_CONSTANT       {UNSIGNED_REAL}
 CHAR_CONSTANT       '.'
 RELOP               =|<|<=|>|>=|!=
-ADDOP               \+|-|or
-MULOP               \*|\/|div|mod|and
+ADDOP               \+|-
+MULOP               \*|\/
 COMMA               ,
 COLON               :
 SEMICOLON           ;
@@ -69,6 +75,10 @@ read                     coluna_atual += strlen(yytext); return(READ);
 write                    coluna_atual += strlen(yytext); return(WRITE);
 false                    coluna_atual += strlen(yytext); return(FALSE);
 true                     coluna_atual += strlen(yytext); return(TRUE);
+div						 coluna_atual += strlen(yytext); return(DIV);
+mod						 coluna_atual += strlen(yytext); return(MOD);
+and						 coluna_atual += strlen(yytext); return(AND);
+or 						 coluna_atual += strlen(yytext); return(OR);
 :=                       coluna_atual += strlen(yytext); return(ATRIB);
 \(                       coluna_atual += strlen(yytext); return(LPAR);
 \)                       coluna_atual += strlen(yytext); return(RPAR);
@@ -84,7 +94,7 @@ NOT                      coluna_atual += strlen(yytext); return(NOT);
 {INTEGER_CONSTANT}       yylval.integer = atoi(yytext); coluna_atual += strlen(yytext); return(INTEGER_CONSTANT);
 {REAL_CONSTANT}          yylval.real = (int) atof(yytext); coluna_atual += strlen(yytext); return(REAL_CONSTANT);
 {CHAR_CONSTANT}          yylval.integer = yytext[0]; coluna_atual += strlen(yytext); return(CHAR_CONSTANT);
-{ID}                     installToken(yytext); yylval.string = strdup(yytext); coluna_atual += strlen(yytext); return(ID);
+{ID}                     yylval.integer = installToken(yytext); coluna_atual += strlen(yytext); return(ID);
 %%
 #ifndef yywrap
 yywrap() { return 1; }

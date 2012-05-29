@@ -1,32 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-typedef char boolean;
-#define True  1
-#define False 0
-
-#define TABLE_INITIAL_CAPACITY 32
-#define TABLE_GROWTH_FACTOR 2
-#define NUM_SCOPES 50
-
-typedef struct Symbol {
-    char *name;
-    char *type;
-    int scope;
-    int line;
-    int column;
-} Symbol;
-
-typedef struct {
-	Symbol** items;
-	int capacity;
-	int last;
-	int scopes[NUM_SCOPES];
-	int current_scope;
-} SymbolTable;
-
-void printTable(SymbolTable*);
+#include "sym_table.h"
 
 void erro(SymbolTable *table, char *message) {
 	printf("Erro! - %s\n\n", message);
@@ -63,13 +35,15 @@ Symbol *newSymbol(char *name, char *type, int scope, int line, int column) {
 	symbol->line = line;
 	symbol->column = column;
 	symbol->scope = scope;
+	symbol->num_params = 0;
 	return symbol;
 }
 
 
 
 void openScope(SymbolTable *table) {
-	printf("\n\nOpening scope...\n  previous: %d\n", table->current_scope);
+	if (DBG)
+		printf("\n\nOpening scope...\n  previous: %d\n", table->current_scope);
 
 	table->current_scope++;
 	if (table->current_scope >= NUM_SCOPES)
@@ -77,7 +51,8 @@ void openScope(SymbolTable *table) {
 	else
 		table->scopes[table->current_scope] = table->last;
 
-	printf("  current: %d\n\n", table->current_scope);
+	if (DBG)
+		printf("  current: %d\n\n", table->current_scope);
 }
 
 
@@ -88,7 +63,9 @@ void closeScope(SymbolTable *table) {
 
 /* Returns the symbol index in the table. Symbol must be in the table. */
 int getSymbol(SymbolTable *table, char *name) {
-	printf("\n\n looking for '%s'...", name);
+	if (DBG)
+		printf("\n\n looking for '%s'...", name);
+
 	int i;
 	for (i = table->last-1; i >= 0; i--) {
 		if (!strcmp(name, table->items[i]->name))
@@ -96,6 +73,7 @@ int getSymbol(SymbolTable *table, char *name) {
 
 	}
 	erro(table, "Símbolo não encontrado!");
+	return 0;
 }
 
 void checkTableCapacity(SymbolTable *table) {
@@ -107,11 +85,11 @@ void checkTableCapacity(SymbolTable *table) {
 	}
 }
 
-void installId(SymbolTable *table, char *name, int line, int column) {
+int installId(SymbolTable *table, char *name, int line, int column) {
 	int i;
 	for (i = table->last-1; i >= table->scopes[table->current_scope]; i--)
 		if (!strcmp(table->items[i]->name, name))
-			return;
+			return i;
 
 	checkTableCapacity(table);
 	Symbol *symbol = newSymbol(name, NULL, table->current_scope, line, column);
@@ -119,18 +97,23 @@ void installId(SymbolTable *table, char *name, int line, int column) {
 	table->items[table->last] = symbol;
 	table->last++;
 
-	printf("\n\n");
-	printf("TABLE: symbol %s (%d, %d) installed.\n", table->items[table->last-1]->name, table->items[table->last-1]->line, table->items[table->last-1]->column);
-	printf("  current scope: %d\n", table->current_scope);
-	printf("  symbol scope: %d\n", table->current_scope);
-	printf("\n");
-	printTable(table);
+	if (DBG) {
+		int last = table->last - 1;
+		printf("\n\n");
+		printf("TABLE: symbol %s (%d, %d) installed.[%d]\n", table->items[last]->name, table->items[last]->line, table->items[last]->column, last);
+		printf("  current scope: %d\n", table->current_scope);
+		printf("  symbol scope: %d\n", table->current_scope);
+		printf("\n");
+		printTable(table);
+	}
+	return table->last - 1;
 }
 
 /* Updates the symbol type in the table */
 void updateType(SymbolTable *table, int var_index, char *type) {
-	printf("\n\n");
-	printf("TABLE: Updating type of %s (scope %d)...\n", table->items[var_index]->name, table->items[var_index]->scope);
+	if (DBG)
+		printf("\n\nTABLE: Updating type of %s (scope %d)...\n", table->items[var_index]->name, table->items[var_index]->scope);
+
 	if (table->items[var_index]->type != NULL)
 		erro(table, "Tipo de variável já foi especificado!");
 	else {
@@ -138,28 +121,22 @@ void updateType(SymbolTable *table, int var_index, char *type) {
 		strcpy(table->items[var_index]->type, type);
 	}
 
-	printf("  type updated to '%s'.\n\n", table->items[var_index]->type);
+	if (DBG)
+		printf("  type updated to '%s'.\n\n", table->items[var_index]->type);
 }
 
 /* Prints the symbol table */
 void printTable(SymbolTable *table) {
-    printf("%16s %16s %16s %16s %16s\n\n", "NOME", "TYPE", "SCOPE", "LINHA", "COLUNA");
+    printf("%16s %16s %16s %16s %16s %16s %16s\n\n", "NOME", "INDEX", "TYPE", "NUM_PARAMS", "SCOPE", "LINHA", "COLUNA");
     int i;
     for (i = 0; i < table->last; i++) {
-//    	printf("%16s %16s %16d %16d %16d\n", table->items[i]->name, table->items[i]->type, table->items[i]->scope, table->items[i]->line, table->items[i]->column);
     	printf("%16s ", table->items[i]->name);
+    	printf("%16d ", i);
     	printf("%16s ", table->items[i]->type);
+    	printf("%16d ", table->items[i]->num_params);
     	printf("%16d ", table->items[i]->scope);
     	printf("%16d ", table->items[i]->line);
     	printf("%16d\n", table->items[i]->column);
     }
 }
 
-//char *concat(char *str1, char *str2) {
-//	str1 = (char*) realloc(str1, sizeof(char) * strlen(str2));
-//	return strcat(str1, str2);
-//}
-
-//void main(void) {
-//	return;
-//}
