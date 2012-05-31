@@ -2,9 +2,7 @@
 
 extern YYSTYPE yylval;
 
-int linha_atual = 0;
-int coluna_atual = 0;
-int total_tokens = 0;
+
 
 
 int installToken(char *lex) {

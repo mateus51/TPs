@@ -1,7 +1,24 @@
 #include "sym_table.h"
 
-void checkAtribType(SymbolTable *table, int index, char *type);
+#define EXIT_ON_ERROR False
 
-void checkExpType(SymbolTable *table, char *type1, char *type2);
+enum BuiltInFunction {
+	fsin, fcos, flog, ford, fabs, fsqrt, fexp, feofile, feoln
+};
 
-void checkFunctionCall(SymbolTable *table, int index);
+
+void checkAtribType(SymbolTable*, int, char*);
+
+void checkExpType(SymbolTable*, char*, char*);
+
+void checkFunctionCall(SymbolTable*, int);
+
+void checkMod(char*, char*);
+
+void checkDiv(char*, char*);
+
+void checkAnd(char*, char*);
+
+char* checkBuiltInFunctionCall(enum BuiltInFunction, char*);
+
+boolean checkNumericalArg(char*);

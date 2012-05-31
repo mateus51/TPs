@@ -6,6 +6,11 @@
 	#include "type_checker.h"
 	
 	
+	int linha_atual = 0;
+	int coluna_atual = 0;
+	int total_tokens = 0;	
+	
+	
 	/* Tabela de símbolos. Declarada globalmente para estar disponível
 	 * tanto para o Lex quanto para o Yacc.
 	 * Foi declarado dessa forma para o endereço ser conhecido
@@ -91,8 +96,8 @@
 %token <real> REAL_CONSTANT
 %token <integer> CHAR_CONSTANT
 
-%type<string> type tipo_retornado expr factor factor_a function_ref_par built_in_function constant simple_expr term
-%type<integer> variable simple_variable_or_proc
+%type<string> type tipo_retornado expr factor factor_a function_ref_par constant simple_expr term
+%type<integer> variable simple_variable_or_proc built_in_function
 
 %start program
 %%
@@ -233,11 +238,11 @@ term	:		factor_a
 		|		term MULOP factor_a
 					{ checkExpType(symbol_table, $1, $3); $$ = $1; }
 		|		term AND factor_a
-					{ checkExpType(symbol_table, $1, "boolean"); $$ = $1; }
+					{ checkAnd($1, $3); $$ = $1; }
 		|		term MOD factor_a
-					{ checkExpType(symbol_table, $1, "integer"); $$ = $1; }
+					{ checkMod($1, $3); $$ = $1; }
 		|		term DIV factor_a
-					{ checkExpType(symbol_table, $1, "integer"); $$ = $1; }
+					{ checkDiv($1, $3); $$ = $1; }
 		;
 factor_a	:		'-' factor
 						{ $$ = $2; }
@@ -256,28 +261,28 @@ factor	:		ID
 					{ $$ = $1; }
 		;
 function_ref_par	:		built_in_function LPAR expr RPAR
-								{ $$ = $1; }
+								{ $$ = checkBuiltInFunctionCall($1, $3); }
 					|		variable LPAR expr_list RPAR
 								{ checkFunctionCall(symbol_table, $1); $$ = getType($1); }
 					;
 built_in_function	:		SIN
-								{ $$ = "real"; }
+								{ $$ = fsin; }
 					|		COS
-								{ $$ = "real"; }
+								{ $$ = fcos; }
 					|		LOG
-								{ $$ = "real"; }
+								{ $$ = flog; }
 					|		ORD
-								{ $$ = "integer"; }
+								{ $$ = ford; }
 					|		ABS
-								{ $$ = "real"; }
+								{ $$ = fabs; }
 					|		SQRT
-								{ $$ = "real"; }
+								{ $$ = fsqrt; }
 					|		EXP
-								{ $$ = "real"; }
+								{ $$ = fexp; }
 					|		EOFILE
-								{ $$ = "integer"; }
+								{ $$ = feofile; }
 					|		EOLN
-								{ $$ = "integer"; }
+								{ $$ = feoln; }
 					;
 variable	:		simple_variable_or_proc
 						{ $$ = $1; }
