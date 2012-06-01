@@ -72,10 +72,6 @@
 		symbol_table->items[index]->num_params = function_def_params;
 		function_def_params = 0;
 	}
-	
-	char *getType(int index) {
-		return symbol_table->items[index]->type;
-	}	
 
 %}
 
@@ -96,7 +92,7 @@
 %token <real> REAL_CONSTANT
 %token <integer> CHAR_CONSTANT
 
-%type<string> type tipo_retornado expr factor factor_a function_ref_par constant simple_expr term
+%type<string> type tipo_retornado expr factor factor_a function_ref_par constant simple_expr term cond
 %type<integer> variable simple_variable_or_proc built_in_function
 
 %start program
@@ -193,14 +189,18 @@ stmt	:		assign_stmt
 		|		function_ref_par
 		;
 assign_stmt	:		ID ATRIB expr
-						{ checkAtribType(symbol_table, $1, $3); }
+						{ checkAssign(symbol_table, $1, $3); }
 			;
 if_stmt	:		IF cond THEN stmt
+					{ checkIf($2); }
 		|		IF cond THEN stmt ELSE stmt
+					{ checkIf($2); }
 		;
 cond	:		expr
+					{ $$ = $1; }
 		;
 repeat_stmt	:		REPEAT stmt_list UNTIL expr
+						{ checkRepeat($4); }
 			;
 read_stmt	:		READ LPAR ident_list RPAR
 			;
@@ -214,17 +214,17 @@ expr_list	:		expr
 expr	:		simple_expr
 					{ $$ = $1; }
 		|		simple_expr EQ simple_expr
-					{ $$ = "boolean"; }
+					{ $$ = checkRELOP($1, $3); }
 		|		simple_expr NE simple_expr
-					{ $$ = "boolean"; }
+					{ $$ = checkRELOP($1, $3); }
 		|		simple_expr GT simple_expr
-					{ $$ = "boolean"; }
+					{ $$ = checkRELOP($1, $3); }
 		|		simple_expr LT simple_expr
-					{ $$ = "boolean"; }
+					{ $$ = checkRELOP($1, $3); }
 		|		simple_expr GE simple_expr
-					{ $$ = "boolean"; }
+					{ $$ = checkRELOP($1, $3); }
 		|		simple_expr LE simple_expr
-					{ $$ = "boolean"; }
+					{ $$ = checkRELOP($1, $3); }
 		;
 simple_expr	:		term
 						{ $$ = $1; }
@@ -250,20 +250,20 @@ factor_a	:		'-' factor
 						{ $$ = $1; }
 			;
 factor	:		ID
-					{ $$ = getType($1); }
+					{ $$ = lookupType(symbol_table, $1); }
 		|		constant
 					{ $$ = $1; }
 		|		LPAR expr RPAR
 					{ $$ = $2; }
 		|		NOT factor
-					{ $$ = $2; }
+					{ $$ = checkNOT($2); }
 		|		function_ref_par
 					{ $$ = $1; }
 		;
 function_ref_par	:		built_in_function LPAR expr RPAR
 								{ $$ = checkBuiltInFunctionCall($1, $3); }
 					|		variable LPAR expr_list RPAR
-								{ checkFunctionCall(symbol_table, $1); $$ = getType($1); }
+								{ $$ = checkFunctionCall(symbol_table, $1); }
 					;
 built_in_function	:		SIN
 								{ $$ = fsin; }

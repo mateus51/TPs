@@ -45,7 +45,7 @@ void closeScope(SymbolTable *table);
 
 int getSymbol(SymbolTable *table, char *name);
 
-void checkTableCapacity(SymbolTable *table);
+char *lookupType(SymbolTable *table, int index);
 
 int installId(SymbolTable *table, char *name, int line, int column);
 

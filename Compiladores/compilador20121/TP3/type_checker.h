@@ -7,11 +7,15 @@ enum BuiltInFunction {
 };
 
 
-void checkAtribType(SymbolTable*, int, char*);
+void checkAssign(SymbolTable*, int, char*);
+
+void checkIf(char*);
+
+void checkRepeat(char*);
 
 void checkExpType(SymbolTable*, char*, char*);
 
-void checkFunctionCall(SymbolTable*, int);
+char* checkFunctionCall(SymbolTable*, int);
 
 void checkMod(char*, char*);
 
@@ -19,6 +23,8 @@ void checkDiv(char*, char*);
 
 void checkAnd(char*, char*);
 
-char* checkBuiltInFunctionCall(enum BuiltInFunction, char*);
+char* checkNOT(char*);
 
-boolean checkNumericalArg(char*);
+char* checkRELOP(char*, char*);
+
+char* checkBuiltInFunctionCall(enum BuiltInFunction function, char *arg_type);

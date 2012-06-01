@@ -1,5 +1,14 @@
 #include "sym_table.h"
 
+void checkTableCapacity(SymbolTable *table) {
+	if (table->last == table->capacity) {
+		table->capacity = table->capacity * TABLE_GROWTH_FACTOR;
+		table->items = (Symbol**) realloc(table->items, sizeof(Symbol*) * table->capacity);
+		if (table->items == NULL)
+			erro(table, "Falha ao alocar espaço para a tabela de símbolos!\n");
+	}
+}
+
 void erro(SymbolTable *table, char *message) {
 	printf("Erro! - %s\n\n", message);
 	printTable(table);
@@ -76,13 +85,8 @@ int getSymbol(SymbolTable *table, char *name) {
 	return 0;
 }
 
-void checkTableCapacity(SymbolTable *table) {
-	if (table->last == table->capacity) {
-		table->capacity = table->capacity * TABLE_GROWTH_FACTOR;
-		table->items = (Symbol**) realloc(table->items, sizeof(Symbol*) * table->capacity);
-		if (table->items == NULL)
-			erro(table, "Falha ao alocar espaço para a tabela de símbolos!\n");
-	}
+char *lookupType(SymbolTable *table, int index) {
+	return table->items[index]->type;
 }
 
 int installId(SymbolTable *table, char *name, int line, int column) {
