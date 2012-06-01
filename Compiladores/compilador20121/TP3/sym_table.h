@@ -47,7 +47,7 @@ int getSymbol(SymbolTable *table, char *name);
 
 char *lookupType(SymbolTable *table, int index);
 
-int installId(SymbolTable *table, char *name, int line, int column);
+int installId(SymbolTable *table, char *name);
 
 void updateType(SymbolTable *table, int var_index, char *type);
 

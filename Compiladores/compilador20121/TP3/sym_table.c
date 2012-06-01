@@ -89,14 +89,15 @@ char *lookupType(SymbolTable *table, int index) {
 	return table->items[index]->type;
 }
 
-int installId(SymbolTable *table, char *name, int line, int column) {
+int installId(SymbolTable *table, char *name) {
 	int i;
 	for (i = table->last-1; i >= table->scopes[table->current_scope]; i--)
 		if (!strcmp(table->items[i]->name, name))
 			return i;
 
 	checkTableCapacity(table);
-	Symbol *symbol = newSymbol(name, NULL, table->current_scope, line, column);
+	extern int linha_atual, coluna_atual;
+	Symbol *symbol = newSymbol(name, NULL, table->current_scope, linha_atual, coluna_atual);
 	symbol->scope = table->current_scope;
 	table->items[table->last] = symbol;
 	table->last++;

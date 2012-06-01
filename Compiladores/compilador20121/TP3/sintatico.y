@@ -6,8 +6,8 @@
 	#include "type_checker.h"
 	
 	
-	int linha_atual = 0;
-	int coluna_atual = 0;
+	int linha_atual = 1;
+	int coluna_atual = 1;
 	int total_tokens = 0;	
 	
 	
@@ -74,7 +74,6 @@
 	}
 
 %}
-
 
 
 %union
@@ -309,11 +308,11 @@ main() {
    initTable(symbol_table);
    resetVarsArray();
    yyparse();
-   printTable(symbol_table);
+   //printTable(symbol_table);
    return 0;
 }
 
 yyerror(s) char *s; {
-	fprintf( stderr, "%s\n", s );
+	fprintf( stderr, "[yacc yyerror()] %s\n", s );
 }
 

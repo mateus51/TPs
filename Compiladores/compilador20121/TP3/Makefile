@@ -10,7 +10,7 @@ lex.yy.c: lexico.lex
 	lex lexico.lex
 
 y.tab.c: lex.yy.c sintatico.y
-	yacc sintatico.y --verbose #--debug
+	yacc sintatico.y #--verbose #--debug
 
 sym_table.o: sym_table.c sym_table.h
 	$(COMPILER) $(OPTIONS) sym_table.c

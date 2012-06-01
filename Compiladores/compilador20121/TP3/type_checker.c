@@ -16,8 +16,10 @@ void checkAssign(SymbolTable *table, int index, char *type) {
 	if (DBG)
 		printf("\n\nchecking type of var %s (%s)\n\n", table->items[index]->name, type);
 
+
 	if (strcmp(table->items[index]->type, type)) {
-		printf("Warning: assignment type mismatch! -  %s := %s\n", table->items[index]->type, type);
+		extern int linha_atual;
+		printf("Warning (line %d): assignment type mismatch! -  %s <- %s\n", linha_atual, table->items[index]->type, type);
 		if (EXIT_ON_ERROR)
 			exit(EXIT_FAILURE);
 	}
@@ -25,7 +27,8 @@ void checkAssign(SymbolTable *table, int index, char *type) {
 
 void checkIf(char *cond) {
 	if (strcmp(cond, "boolean")) {
-		printf("Warning: 'if' statement requires a boolean condition (condition is '%s')\n", cond);
+		extern int linha_atual;
+		printf("Warning (line %d): 'if' statement requires a boolean condition (condition is '%s')\n", linha_atual, cond);
 		if (EXIT_ON_ERROR)
 			exit(EXIT_FAILURE);
 	}
@@ -33,7 +36,8 @@ void checkIf(char *cond) {
 
 void checkRepeat(char *expr) {
 	if (strcmp(expr, "boolean")) {
-		printf("Warning: 'repeat' statement requires an expression that evaluates to a boolean (expression is '%s')\n", expr);
+		extern int linha_atual;
+		printf("Warning (line %d): 'repeat' statement requires an expression that evaluates to a boolean (expression is '%s')\n", linha_atual, expr);
 		if (EXIT_ON_ERROR)
 			exit(EXIT_FAILURE);
 	}
@@ -46,7 +50,8 @@ void checkExpType(SymbolTable *table, char *type1, char *type2) {
 		printf("\n\nchecking type of exp (%s x %s)\n", type1, type2);
 
 	if (strcmp(type1, type2)) {
-		printf("Warning: expression type mismatch! -  %s and %s are in the same expression.\n", type1, type2);
+		extern int linha_atual;
+		printf("Warning (line %d): expression type mismatch! -  %s and %s are in the same expression.\n", linha_atual, type1, type2);
 		//printTable(table);
 	}
 }
@@ -57,7 +62,8 @@ char* checkFunctionCall(SymbolTable *table, int index) {
 
 	extern int function_call_params;
 	if (table->items[index]->num_params != function_call_params) {
-		printf("Function call error! Wrong number of parameters: %s (%d for %d)\n", table->items[index]->name, table->items[index]->num_params, function_call_params);
+		extern int linha_atual;
+		printf("Warning (line %d): wrong number of parameters on function call: %s (%d for %d)\n", linha_atual, table->items[index]->name, table->items[index]->num_params, function_call_params);
 //		printTable(table);
 		if (EXIT_ON_ERROR)
 			exit(EXIT_FAILURE);
@@ -72,7 +78,8 @@ char* checkFunctionCall(SymbolTable *table, int index) {
  */
 void checkMod(char *op1, char *op2) {
 	if (strcmp("integer", op1) || strcmp("integer", op2)) {
-		printf("Warning: 'mod' operator requires integer operands.\n");
+		extern int linha_atual;
+		printf("Warning (line %d): 'mod' operator requires integer operands.\n", linha_atual);
 
 		if (EXIT_ON_ERROR)
 			exit(EXIT_FAILURE);
@@ -81,7 +88,8 @@ void checkMod(char *op1, char *op2) {
 
 void checkDiv(char *op1, char *op2) {
 	if (strcmp("integer", op1) || strcmp("integer", op2)) {
-		printf("Warning: 'div' operator requires integer operands.\n");
+		extern int linha_atual;
+		printf("Warning (line %d): 'div' operator requires integer operands.\n", linha_atual);
 
 		if (EXIT_ON_ERROR)
 			exit(EXIT_FAILURE);
@@ -90,7 +98,8 @@ void checkDiv(char *op1, char *op2) {
 
 void checkAnd(char *op1, char *op2) {
 	if (strcmp("boolean", op1) || strcmp("boolean", op2)) {
-		printf("Warning: 'and' operator requires boolean operands.\n");
+		extern int linha_atual;
+		printf("Warning (line %d): 'and' operator requires boolean operands.\n", linha_atual);
 
 		if (EXIT_ON_ERROR)
 			exit(EXIT_FAILURE);
@@ -103,7 +112,8 @@ void checkAnd(char *op1, char *op2) {
  */
 char* checkNOT(char *op) {
 	if (strcmp("boolean", op)) {
-		printf("Warning: 'NOT' operator requires a boolean operand.\n");
+		extern int linha_atual;
+		printf("Warning (line %d): 'NOT' operator requires a boolean operand.\n", linha_atual);
 
 		if (EXIT_ON_ERROR)
 			exit(EXIT_FAILURE);
@@ -113,13 +123,9 @@ char* checkNOT(char *op) {
 
 // FIXME: RELOPs não necessariamente são boolean! 1 > 2 é válido! Ver documentaçao pascal.
 char* checkRELOP(char *op1, char *op2) {
-	if (strcmp("boolean", op1) || strcmp("boolean", op2)) {
-		printf("Warning: relational operators require boolean operands.\n");
+	// RELOPs aceitam qualquer tipo de operandos.
 
-		if (EXIT_ON_ERROR)
-			exit(EXIT_FAILURE);
-	}
-	return op1;
+	return "boolean";
 }
 
 
@@ -131,7 +137,8 @@ char* checkBuiltInFunctionCall(enum BuiltInFunction function, char *arg_type) {
 
 	case fsin:
 		if (!checkNumericalArg(arg_type)) {
-			printf("Warning: 'sin' function requires an integer or real argument.\n");
+			extern int linha_atual;
+			printf("Warning (line %d): 'sin' function requires an integer or real argument.\n", linha_atual);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
@@ -139,7 +146,8 @@ char* checkBuiltInFunctionCall(enum BuiltInFunction function, char *arg_type) {
 
 	case fcos:
 		if (!checkNumericalArg(arg_type)) {
-			printf("Warning: 'cos' function requires an integer or real argument.\n");
+			extern int linha_atual;
+			printf("Warning (line %d): 'cos' function requires an integer or real argument.\n", linha_atual);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
@@ -147,7 +155,8 @@ char* checkBuiltInFunctionCall(enum BuiltInFunction function, char *arg_type) {
 
 	case flog:
 		if (!checkNumericalArg(arg_type)) {
-			printf("Warning: 'log' function requires an integer or real argument.\n");
+			extern int linha_atual;
+			printf("Warning (line %d): 'log' function requires an integer or real argument.\n", linha_atual);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
@@ -155,7 +164,8 @@ char* checkBuiltInFunctionCall(enum BuiltInFunction function, char *arg_type) {
 
 	case ford:
 		if (strcmp("char", arg_type)) {
-			printf("Warning: 'ord' function requires a char argument.\n");
+			extern int linha_atual;
+			printf("Warning (line %d): 'ord' function requires a char argument.\n", linha_atual);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
@@ -163,7 +173,8 @@ char* checkBuiltInFunctionCall(enum BuiltInFunction function, char *arg_type) {
 
 	case fabs:
 		if (!checkNumericalArg(arg_type)) {
-			printf("Warning: 'abs' function requires an integer or real argument.\n");
+			extern int linha_atual;
+			printf("Warning (line %d): 'abs' function requires an integer or real argument.\n", linha_atual);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
@@ -171,7 +182,8 @@ char* checkBuiltInFunctionCall(enum BuiltInFunction function, char *arg_type) {
 
 	case fsqrt:
 		if (!checkNumericalArg(arg_type)) {
-			printf("Warning: 'sqrt' function requires an integer or real argument.\n");
+			extern int linha_atual;
+			printf("Warning (line %d): 'sqrt' function requires an integer or real argument.\n", linha_atual);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
@@ -179,7 +191,8 @@ char* checkBuiltInFunctionCall(enum BuiltInFunction function, char *arg_type) {
 
 	case fexp:
 		if (!checkNumericalArg(arg_type)) {
-			printf("Warning: 'exp' function requires an integer or real argument.\n");
+			extern int linha_atual;
+			printf("Warning (line %d): 'exp' function requires an integer or real argument.\n", linha_atual);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
@@ -187,7 +200,8 @@ char* checkBuiltInFunctionCall(enum BuiltInFunction function, char *arg_type) {
 
 	case feofile:
 		if (strcmp(arg_type, "integer")) {
-			printf("Warning: 'eofile' function requires an integer argument.\n");
+			extern int linha_atual;
+			printf("Warning (line %d): 'eofile' function requires an integer argument.\n", linha_atual);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
@@ -195,7 +209,8 @@ char* checkBuiltInFunctionCall(enum BuiltInFunction function, char *arg_type) {
 
 	case feoln:
 		if (strcmp(arg_type, "integer")) {
-			printf("Warning: 'eoln' function requires an integer argument.\n");
+			extern int linha_atual;
+			printf("Warning (line %d): 'eoln' function requires an integer argument.\n", linha_atual);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}

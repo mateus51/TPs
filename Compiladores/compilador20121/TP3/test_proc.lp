@@ -1,39 +1,13 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 program MyProgram;
 a, n, fact : integer;
 
-boolean PROCEDURE fatorial(value integer:n, reference char:chr):
+integer PROCEDURE fatorial(value integer:n, reference char:chr):
   fact : char;
   fa, x : integer;
 begin
-  a := 1.0;
+  a := 1.0; fa := 2.0;
   repeat
-    a := a * n;
+    a := false;
     n := n - 1
   until n < 2
 end
