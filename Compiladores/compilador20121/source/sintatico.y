@@ -308,7 +308,6 @@ main() {
    initTable(symbol_table);
    resetVarsArray();
    yyparse();
-   printTable(symbol_table);
    return 0;
 }
 
