@@ -1,6 +1,0 @@
-program asdf ;
-a , b , c:                          integer ;
-c := a + b ;
-write (asdf)
-123456
-12.34.65

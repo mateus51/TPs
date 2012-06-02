@@ -1,18 +1,9 @@
 program asdf;
-  n, fact : integer;
 begin
-  read(n);
-  fact := fatorial(n)
-  write(fact);
+  if 1 then
+  	if 2 then
+  	 write('a')
+  	else
+  	 write('b')
 end
-
-integer PROCEDURE fatorial(value integer:n):
-  fact : integer;
-begin
-  a := 1
-  repeat
-    a := a * n
-    n := n - 1
-  until n < 2
-end a
 

@@ -1,4 +1,8 @@
 %{
+#include <string.h>
+
+extern YYSTYPE yylval;
+
 typedef struct Token {
     char *token;
     char *lexema;
@@ -19,10 +23,11 @@ Token* getToken(char *tok, char *lex) {
     strcpy(token->lexema, lex);
     return token;
 }
-void installToken(char *tok, char *lex) {
+Token* installToken(char *tok, char *lex) {
     total_tokens++;
     //tokens = (Token*) realloc(tokens, sizeof(Token) * total_tokens);
-    tokens[total_tokens-1] = getToken(tok, lex);
+    //tokens[total_tokens-1] = getToken(tok, lex);
+    return getToken(tok, lex);
 }
 void printTokens() {
     int i = 0;
@@ -51,55 +56,60 @@ COLON               :
 SEMICOLON           ;
 NEWLINE             \n
 SPACES             [\ \t\b\012]+
+LT				   <
 %%
-{NEWLINE}               ECHO; linha_atual++; coluna_atual = 0;
-{SPACES}                ECHO; coluna_atual += strlen(yytext);
-{COMMA}                 ECHO; installToken("COMMA", yytext); coluna_atual += strlen(yytext); return(token);
-{COLON}                 ECHO; installToken("COLON", yytext); coluna_atual += strlen(yytext); return(token);
-{SEMICOLON}             ECHO; installToken("SEMICOLON", yytext); coluna_atual += strlen(yytext); return(token);
-{INTEGER_CONSTANT}      ECHO; installToken("INTEGER_CONSTANT", yytext); coluna_atual += strlen(yytext); return(token);
-{REAL_CONSTANT}         ECHO; installToken("REAL_CONSTANT", yytext); coluna_atual += strlen(yytext); return(token);
-{CHAR_CONSTANT}         ECHO; installToken("CHAR_CONSTANT", yytext); coluna_atual += strlen(yytext); return(token);
-{ADDOP}                 ECHO; installToken("ADDOP", yytext); coluna_atual += strlen(yytext); return(token);
-{MULOP}                 ECHO; installToken("MULOP", yytext); coluna_atual += strlen(yytext); return(token);
-{RELOP}                 ECHO; installToken("RELOP", yytext); coluna_atual += strlen(yytext); return(token);
-PROCEDURE               ECHO; installToken("PROC", yytext); coluna_atual += strlen(yytext); return(token);
-sin                     ECHO; installToken("SIN", yytext); coluna_atual += strlen(yytext); return(token);
-log                     ECHO; installToken("LOG", yytext); coluna_atual += strlen(yytext); return(token);
-cos                     ECHO; installToken("COS", yytext); coluna_atual += strlen(yytext); return(token);
-ord                     ECHO; installToken("ORD", yytext); coluna_atual += strlen(yytext); return(token);
-abs                     ECHO; installToken("ABS", yytext); coluna_atual += strlen(yytext); return(token);
-sqrt                    ECHO; installToken("SQRT", yytext); coluna_atual += strlen(yytext); return(token);
-exp                     ECHO; installToken("EXP", yytext); coluna_atual += strlen(yytext); return(token);
-eof                     ECHO; installToken("EOF", yytext); coluna_atual += strlen(yytext); return(token);
-eoln                    ECHO; installToken("EOLN", yytext); coluna_atual += strlen(yytext); return(token);
-program                 ECHO; installToken("PROGRAM", yytext); coluna_atual += strlen(yytext); return(token);
-integer                 ECHO; installToken("INTEGER", yytext); coluna_atual += strlen(yytext); return(token);
-real                    ECHO; installToken("REAL", yytext); coluna_atual += strlen(yytext); return(token);
-boolean                 ECHO; installToken("BOOLEAN", yytext); coluna_atual += strlen(yytext); return(token);
-char                    ECHO; installToken("CHAR", yytext); coluna_atual += strlen(yytext); return(token);
-value                   ECHO; installToken("VALUE", yytext); coluna_atual += strlen(yytext); return(token);
-reference               ECHO; installToken("REFERENCE", yytext); coluna_atual += strlen(yytext); return(token);
-begin                   ECHO; installToken("BEGIN", yytext); coluna_atual += strlen(yytext); return(token);
-end                     ECHO; installToken("END", yytext); coluna_atual += strlen(yytext); return(token);
-if                      ECHO; installToken("IF", yytext); coluna_atual += strlen(yytext); return(token);
-then                    ECHO; installToken("THEN", yytext); coluna_atual += strlen(yytext); return(token);
-else                    ECHO; installToken("ELSE", yytext); coluna_atual += strlen(yytext); return(token);
-repeat                  ECHO; installToken("REPEAT", yytext); coluna_atual += strlen(yytext); return(token);
-until                   ECHO; installToken("UNTIL", yytext); coluna_atual += strlen(yytext); return(token);
-read                    ECHO; installToken("READ", yytext); coluna_atual += strlen(yytext); return(token);
-write                   ECHO; installToken("WRITE", yytext); coluna_atual += strlen(yytext); return(token);
-false                   ECHO; installToken("FALSE", yytext); coluna_atual += strlen(yytext); return(token);
-true                    ECHO; installToken("TRUE", yytext); coluna_atual += strlen(yytext); return(token);
-:=                      ECHO; installToken("ATRIB", yytext); coluna_atual += strlen(yytext); return(token);
-\(                      ECHO; installToken("LPAR", yytext); coluna_atual += strlen(yytext); return(token);
-\)                      ECHO; installToken("RPAR", yytext); coluna_atual += strlen(yytext); return(token);
-NOT                     ECHO; installToken("NOT", yytext); coluna_atual += strlen(yytext); return(token);
-{ID}                    ECHO; installToken("ID", yytext); coluna_atual += strlen(yytext); return(token);
+{NEWLINE}
+{SPACES}
+{COMMA}                  return(COMMA);
+{COLON}                  return(COLON);
+{SEMICOLON}              return(SEMICOLON);
+PROCEDURE                return(PROC);
+sin                      return(SIN);
+log                      return(LOG);
+cos                      return(COS);
+ord                      return(ORD);
+abs                      return(ABS);
+sqrt                     return(SQRT);
+exp                      return(EXP);
+eof                      return(EOFILE);
+eoln                     return(EOLN);
+program                  return(PROGRAM);
+integer                  return(INTEGER);
+real                     return(REAL);
+boolean                  return(BOOLEAN);
+char                     return(CHAR);
+value                    return(VALUE);
+reference                return(REFERENCE);
+begin                    return(BEGIN_TOK);
+end                      return(END);
+if                       return(IF);
+then                     return(THEN);
+else                     return(ELSE);
+repeat                   return(REPEAT);
+until                    return(UNTIL);
+read                     return(READ);
+write                    return(WRITE);
+false                    return(FALSE);
+true                     return(TRUE);
+:=                       return(ATRIB);
+\(                       return(LPAR);
+\)                       return(RPAR);
+NOT                      return(NOT);
+\<						 return(LT);
+>						 return(GT);
+>=						 return(GE);
+\<=						 return(LE);
+=						 return(EQ);
+!=						 return(NE);
+{ADDOP}                  yylval.integer = yytext[0]; return(ADDOP);
+{MULOP}                  yylval.integer = yytext[0]; return(MULOP);
+{INTEGER_CONSTANT}       yylval.integer = atoi(yytext); return(INTEGER_CONSTANT);
+{REAL_CONSTANT}          yylval.real = (int) atof(yytext); return(REAL_CONSTANT);
+{CHAR_CONSTANT}          yylval.integer = yytext[0]; return(CHAR_CONSTANT);
+{ID}                     yylval.string = strdup(yytext); return(ID);
 %%
-int main() {
-    yylex();
-    //printTokens();
-    return 0;
-}
+#ifndef yywrap
+yywrap() { return 1; }
+#endif
+
 
