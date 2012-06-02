@@ -4,14 +4,16 @@ void checkTableCapacity(SymbolTable *table) {
 	if (table->last == table->capacity) {
 		table->capacity = table->capacity * TABLE_GROWTH_FACTOR;
 		table->items = (Symbol**) realloc(table->items, sizeof(Symbol*) * table->capacity);
-		if (table->items == NULL)
-			erro(table, "Falha ao alocar espaço para a tabela de símbolos!\n");
+		if (table->items == NULL) {
+			fprintf(stderr, "Falha ao alocar espaço para a tabela de símbolos!\n");
+			exit(EXIT_FAILURE);
+		}
 	}
 }
 
-void erro(SymbolTable *table, char *message) {
-	printf("Erro! - %s\n\n", message);
-	printTable(table);
+void erro(char *message) {
+	extern int linha_atual;
+	fprintf(stderr, "Error   (line %d): %s\n", linha_atual, message);
 	exit(EXIT_FAILURE);
 }
 
@@ -56,7 +58,7 @@ void openScope(SymbolTable *table) {
 
 	table->current_scope++;
 	if (table->current_scope >= NUM_SCOPES)
-		erro(table, "Não é possível abrir um novo nível.\n");
+		erro("Não é possível abrir um novo nível.\n");
 	else
 		table->scopes[table->current_scope] = table->last;
 
@@ -81,7 +83,7 @@ int getSymbol(SymbolTable *table, char *name) {
 			return i;
 
 	}
-	erro(table, "Símbolo não encontrado!");
+	erro("Símbolo não encontrado!");
 	return 0;
 }
 
@@ -120,7 +122,7 @@ void updateType(SymbolTable *table, int var_index, char *type) {
 		printf("\n\nTABLE: Updating type of %s (scope %d)...\n", table->items[var_index]->name, table->items[var_index]->scope);
 
 	if (table->items[var_index]->type != NULL)
-		erro(table, "Tipo de variável já foi especificado!");
+		erro("Tipo de variável já foi especificado!");
 	else {
 		table->items[var_index]->type = (char*) malloc(sizeof(char) * strlen(type) + 1);
 		strcpy(table->items[var_index]->type, type);

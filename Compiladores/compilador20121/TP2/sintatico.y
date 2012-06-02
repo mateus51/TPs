@@ -1,66 +1,77 @@
 /* declarations */
 
 %{
-#include <stdio.h>
-}%
+	#include <stdio.h>
+	int yydebug=1;
+%}
 
-%token      COMMA 
+%debug
+
+%union 
+{
+	int integer;
+	float real;
+	char *string;
+}
+
+%token COMMA 
 %token COLON
-%token  SEMICOLON
-%token  INTEGER_CONSTANT
-%token  REAL_CONSTANT
-%token  CHAR_CONSTANT
-%token  ADDOP
-%token  PROC
-%token  SIN
-%token  LOG
-%token  COS
-%token  ORD
-%token  ABS
-%token  SQRT
-%token  EXP
-%token  EOF
-%token  EOLN
-%token  PROGRAM
-%token  INTEGER
-%token  REAL
-%token  BOOLEAN
-%token  CHAR
-%token  VALUE
-%token  REFERENCE
-%token  BEGIN
-%token  END
-%token  IF
-%token  THEN
-%token  ELSE
-%token  REPEAT
-%token  UNTIL
-%token  READ
-%token  WRITE
-%token  FALSE
-%token  TRUE
-%token  ATRIB
-%token  LPAR
-%token  RPAR
-%token  NOT
-%token  ID
-%token  EQ
-%token  NE
-%token  GT
-%token  LT
-%token  GE
-%token  LE
-%token  MULOP
-%token  PROCEDURE
+%token SEMICOLON
+%token PROC
+%token SIN
+%token LOG
+%token COS
+%token ORD
+%token ABS
+%token SQRT
+%token EXP
+%token EOFILE
+%token EOLN
+%token PROGRAM
+%token INTEGER
+%token REAL
+%token BOOLEAN
+%token CHAR
+%token VALUE
+%token REFERENCE
+%token BEGIN_TOK
+%token END
+%token IF
+%token THEN
+%token ELSE
+%token REPEAT
+%token UNTIL
+%token READ
+%token WRITE
+%token FALSE
+%token TRUE
+%token ATRIB
+%token LPAR
+%token RPAR
+%token NOT
+%token EQ
+%token NE
+%token GT
+%token LT
+%token GE
+%token LE
+%token <integer> ADDOP
+%token <integer> MULOP
+%token <string> ID
+%token <integer> INTEGER_CONSTANT
+%token <real> REAL_CONSTANT
+%token <integer> CHAR_CONSTANT
 
 %start program
 %%
 
 /* rules */
-program    :       PROGRAM ID SEMICOLON decl_list compound_stmt 
+program    :       PROGRAM ID SEMICOLON decl_list compound_stmt
+						{ printf("reduced program\n"); }
            ;
 decl_list   :       decl_list SEMICOLON decl
             |       decl
+            |		vazio
             ;
 decl    :       dcl_var
         |       dcl_proc
@@ -75,7 +86,7 @@ type	:		INTEGER
 		|		BOOLEAN
 		|		CHAR
 		;
-dcl_proc    :       tipo_retornado PROCEDURE ID espec_parametros corpo
+dcl_proc    :       tipo_retornado PROC ID espec_parametros corpo
             ;
 vazio   :
         ;
@@ -96,12 +107,12 @@ espec_parametros    :       LPAR lista_parametros RPAR
 lista_parametros	:		parametro
                     |		lista_parametros COMMA parametro
                     ;
-parametro	:		modo type SEMICOLON ID
+parametro	:		modo type COLON ID
 			;
 modo	:		VALUE
 		|		REFERENCE
 		;
-compound_stmt	:		BEGIN stmt_list END
+compound_stmt	:		BEGIN_TOK stmt_list END
 				;
 stmt_list	:		stmt_list SEMICOLON stmt
 			|		stmt
@@ -154,7 +165,18 @@ factor	:		ID
 		|		NOT factor
 		|		function_ref_par
 		;
-function_ref_par	:		variable LPAR expr_list RPAR
+function_ref_par	:		built_in_function LPAR expr RPAR
+					|		variable LPAR expr_list RPAR
+					;
+built_in_function	:		SIN
+					|		LOG
+					|		COS
+					|		ORD
+					|		ABS
+					|		SQRT
+					|		EXP
+					|		EOFILE
+					|		EOLN
 					;
 variable	:		simple_variable_or_proc
 			;
@@ -171,4 +193,12 @@ boolean_constant	:		TRUE
 %%
 /* programs */
 #include "lex.yy.c"
+main() {
+   yyparse();
+   return 0;
+}
+
+yyerror(s) char *s; {
+	fprintf( stderr, "%s\n", s );
+}
 

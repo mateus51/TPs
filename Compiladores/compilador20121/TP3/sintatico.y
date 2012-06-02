@@ -62,7 +62,7 @@
 
 	void saveVarInArray(int var_index) {
 		if (var_ind >= 10)
-			erro(symbol_table, "No máximo 10 variáveis podem ser declaradas ao mesmo tempo!");
+			erro("No máximo 10 variáveis podem ser declaradas ao mesmo tempo!");
 
 		vars_to_get_type[var_ind] = var_index;
 		var_ind++;
@@ -308,11 +308,12 @@ main() {
    initTable(symbol_table);
    resetVarsArray();
    yyparse();
-   //printTable(symbol_table);
+   printTable(symbol_table);
    return 0;
 }
 
 yyerror(s) char *s; {
-	fprintf( stderr, "[yacc yyerror()] %s\n", s );
+	extern int linha_atual;
+	fprintf(stderr, "Error   (line %d): %s\n", linha_atual, s);
 }
 

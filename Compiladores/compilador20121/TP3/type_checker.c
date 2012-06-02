@@ -63,7 +63,7 @@ char* checkFunctionCall(SymbolTable *table, int index) {
 	extern int function_call_params;
 	if (table->items[index]->num_params != function_call_params) {
 		extern int linha_atual;
-		printf("Warning (line %d): wrong number of parameters on function call: %s (%d for %d)\n", linha_atual, table->items[index]->name, table->items[index]->num_params, function_call_params);
+		printf("Warning (line %d): wrong number of parameters on function call: %s (have %d, supplied %d)\n", linha_atual, table->items[index]->name, table->items[index]->num_params, function_call_params);
 //		printTable(table);
 		if (EXIT_ON_ERROR)
 			exit(EXIT_FAILURE);

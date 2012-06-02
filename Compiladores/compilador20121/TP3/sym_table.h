@@ -33,7 +33,7 @@ typedef struct {
 } SymbolTable;
 
 
-void erro(SymbolTable *table, char *message);
+void erro(char *message);
 
 void initTable(SymbolTable *table);
 
