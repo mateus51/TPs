@@ -71,6 +71,7 @@ ActiveRecord::Schema.define(:version => 20120607180056) do
   create_table "purchases", :force => true do |t|
     t.integer  "book_id"
     t.float    "price"
+    t.integer  "quantity"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
