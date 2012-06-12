@@ -13,9 +13,22 @@ char *g_buffer;
 so_addr* g_to_addr;
 
 
-void init_buffer(Buffer *buffer, int buffer_size) {
-	buffer->buffer = (byte*) malloc(buffer_size);
-	buffer->received = False;
+Window* new_window(int window_size, int buffer_size, int socket, so_addr *cli_addr) {
+	Window *window = (Window*) malloc(sizeof(Window));
+	int mtu = tp_mtu();
+	window->buffer_size = mtu > buffer_size ? buffer_size : mtu;
+	window->start = window->end = 0;
+	window->info = (SocketInfo*) malloc(sizeof(SocketInfo));
+	window->info->socket = socket;
+	window->info->cli_addr = cli_addr;
+	window->buffers = (Buffer**) malloc(sizeof(Buffer*) * window_size);
+	int i;
+	for (i = 0; i < window_size; i++) {
+		window->buffers[i] = (Buffer*) malloc(sizeof(Buffer));
+		window->buffers[i]->buffer = (byte*) malloc(buffer_size);
+		window->buffers[i]->received = False;
+	}
+	return window;
 }
 
 
@@ -45,7 +58,7 @@ int confirmed_sendto(int sock, char *buffer, int buff_len, so_addr* to_addr) {
 	g_buffer = buffer;
 	g_to_addr = to_addr;
 	signal(SIGALRM, timeout_handler);
-	int sent, recv;
+	int sent;
 	boolean received = False;
 	char buff[2];
 	alarm(1);
@@ -70,7 +83,16 @@ int confirmed_sendto(int sock, char *buffer, int buff_len, so_addr* to_addr) {
         }
         else {
         	printf("buffer: [%d %d]\n", buff[0], buff[1]);
-            received = True;
+        	if (buff[0] == ACK) {
+        		received = True;
+				alarm(0); // disable timer
+        	}
+        	else if (buff[0] == FAIL) {
+        		printf("request FAILED!\n");
+        	}
+        	else {
+        		printf("header wasnt ACK nor FAIL");
+        	}
         }
 
 	}
@@ -94,14 +116,14 @@ int confirmed_recvfrom(int sock, char* buffer, int buff_len, so_addr* from_addr)
 		}
 
 	}
-	send_ack(sock, from_addr, buffer[2]);
+	send_MSG(sock, from_addr, ACK, buffer[2]);
 	return resp;
 }
 
-int send_ack(int sock, so_addr *to_addr, byte seq) {
-	printf("will sleep for 3\n");
-	sleep(3);
-	printf("woke up!\n");
-	byte ack[2] = {ACK, seq};
-	return tp_sendto(sock, ack, 2, to_addr);
+int send_MSG(int sock, so_addr *to_addr, MSG msg, byte seq) {
+//	printf("will sleep for 3\n");
+//	sleep(3);
+//	printf("woke up!\n");
+	byte buffer[2] = {msg, seq};
+	return tp_sendto(sock, buffer, 2, to_addr);
 }

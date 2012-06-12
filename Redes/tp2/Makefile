@@ -7,7 +7,7 @@ tp2-client: time.o tp_socket.o client.o window.o
 	$(COMPILER) time.o tp_socket.o client.o window.o -o $@
 
 tp2-server: time.o tp_socket.o server.o window.o
-	$(COMPILER) time.o tp_socket.o server.o window.o -o $@
+	$(COMPILER) time.o tp_socket.o server.o window.o -pthread -o $@
 
 client.o: client.c client.h
 	$(COMPILER) $(OPTIONS) client.c
