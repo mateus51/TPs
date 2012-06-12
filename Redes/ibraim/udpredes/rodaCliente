@@ -1,0 +1,5 @@
+rm -f cliente.o tp2client
+gcc cliente.c tp_socket.c io.c -c
+gcc cliente.o tp_socket.o io.o -o tp2client 
+./tp2client 127.0.0.1 6969 lerolero 512 
+diff arquivoBaixado lerolero

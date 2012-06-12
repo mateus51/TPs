@@ -1,0 +1,4 @@
+rm -f servidor.o io.o tp_socket.o tp2.o tp2server
+gcc -pthread servidor.c io.c tp_socket.c tp2.c -c
+gcc -pthread servidor.o io.o tp_socket.o tp2.o -o tp2server
+./tp2server 6969 512 
