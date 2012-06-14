@@ -7,10 +7,30 @@
 
 #include "window.h"
 #include "time.h"
-#include "client.h"
+
+void read_client_params(int argc, char *argv[], char **host, int *port, char **filename, int *buffer_size, int *window_size) {
+	if(argc != 6){
+		printf("Usage:  %s host port filename buffer_size window_size\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
+	else {
+		*host = (char*) malloc(sizeof(char) * (strlen(argv[1])+1));
+		strcpy(*host, argv[1]);
+
+		*port = atoi(argv[2]);
+
+		*filename = (char*) malloc(sizeof(char) * (strlen(argv[3])+1));
+		strcpy(*filename, argv[3]);
+
+		*buffer_size = atoi(argv[4]);
+
+		*window_size = atoi(argv[5]);
+	}
+}
+
+
 
 int main(int argc, char *argv[]) {
-
 	int resp = tp_init();
 	if (resp != 0) {
 		fprintf(stderr, "tp_init() failed (%d)\n", resp);
@@ -43,40 +63,24 @@ int main(int argc, char *argv[]) {
 			exit(EXIT_FAILURE);
 		}
 
+		Window *window = new_window(window_size, buffer_size, client_sock, &server_addr);
+		boolean received = False;
+		int bytes;
 
+		while (!received) {
 
+			bytes = receive_and_store(window, file);
+
+			if (bytes == 0)
+				received = True;
+
+		}
+
+		fclose(file);
+		free(host);
+		free(filename);
+		free_window(window);
 	}
 
 	return EXIT_SUCCESS;
-
 }
-
-
-
-
-void read_client_params(int argc, char *argv[], char **host, int *port, char **filename, int *buffer_size, int *window_size) {
-	if(argc != 6){
-		printf("Usage:  %s host port filename buffer_size window_size\n", argv[0]);
-		exit(EXIT_FAILURE);
-	}
-	else {
-		*host = (char*) malloc(sizeof(char) * (strlen(argv[1])+1));
-		strcpy(*host, argv[1]);
-
-		*port = atoi(argv[2]);
-
-		*filename = (char*) malloc(sizeof(char) * (strlen(argv[3])+1));
-		strcpy(*filename, argv[3]);
-
-		*buffer_size = atoi(argv[4]);
-
-		*window_size = atoi(argv[5]);
-	}
-}
-
-
-
-//void print_info(struct HostInfo *info, char *filename) {
-//	printf(" %s (%s:%d) - buffer: %d\n", filename, info->host, info->port, info->buffer_size);
-//}
-

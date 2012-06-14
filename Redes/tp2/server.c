@@ -1,67 +1,25 @@
-#include "server.h"
 #include "window.h"
+#include "listener.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <netdb.h>
 #include <string.h>
-#include <pthread.h>
+//#include <pthread.h>
 #include <unistd.h>
+//#include <signal.h>
 
 #define WAIT_TIME 1 // in seconds
 
-boolean keep_listening;
-
-void *ACKListener(void *info) {
-	Window *window = (Window*) info;
-	byte buffer[2];
-	unsigned char seq;
-	int resp;
-
-	while(keep_listening){
-		resp = tp_recvfrom(window->info->socket, buffer, 2, NULL);
-		if (resp < 0) {
-			perror("ACKlistener()");
-//			exit(EXIT_FAILURE);
-		}
-		 if (buffer[0] == ACK) {
-			 printf("ACKlistener: ACK %d\n", buffer[1]);
-			 seq = (unsigned char) buffer[1];
-			 window->buffers[seq]->received = True;
-		 }
-		 else if (buffer[0] == FAIL) {
-			 printf("ACKlistener: FAIL\n");
-		 }
-		 else {
-			 printf("ACKlistener: ???\n");
-		 }
-	}
-   pthread_exit(NULL);
-   return NULL; // only to remove warning.
-}
-
-pthread_t startListener(Window *window) {
-	int rc;
-	pthread_t thread;
-	pthread_attr_t attr;
-	pthread_attr_init(&attr);
-	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-	rc = pthread_create(&thread, &attr, ACKListener, (void*) window);
-	if (rc) {
-		 printf("ERROR: return code from pthread_create() is %d\n", rc);
-		 exit(EXIT_FAILURE);
-	}
-	pthread_attr_destroy(&attr);
-	return thread;
-}
-
-void stopListener (pthread_t thread) {
-	int rc;
-	keep_listening = False;
-	rc = pthread_join(thread, NULL);
-	if (rc) {
-		printf("ERROR; return code from pthread_join() is %d\n", rc);
+void read_server_params(int argc, char *argv[], int *port, int *buffer_size, int *window_size) {
+	if(argc != 4){
+		printf("Usage:  %s port buffer_size window_size\n", argv[0]);
 		exit(EXIT_FAILURE);
+	}
+	else {
+		*port = atoi(argv[1]);
+		*buffer_size = atoi(argv[2]);
+		*window_size = atoi(argv[3]);
 	}
 }
 
@@ -108,78 +66,57 @@ int main(int argc, char *argv[]) {
 		// preparing window
 		Window *window = new_window(window_size, buffer_size, server_sock, &client_addr);
 
-		int i, bytes_read, buffers_to_send, current_slot = 0;
-		boolean window_full = False, sent = False, received = False, has_more_data = True;
+		int bytes_read, total_sent = 0;
+		boolean sent = False;
+
+		// start signal listener
+		pthread_t sig_listener = start_signal_listener(window);
+		set_alarm(1);
+
+		// start ACK listener
+		pthread_t ack_listener = start_ack_listener(window);
+
 		while(!sent) {
 
-			// filling buffers
-			while (!window_full && has_more_data) {
-				// 2 bytes header
-				window->buffers[current_slot]->buffer[0] = MORE;
-				window->buffers[current_slot]->buffer[1] = current_slot;
-				bytes_read = fread(window->buffers[current_slot] + 2, 1, buffer_size - 3, file);
-				if (bytes_read == 0) {
-					has_more_data = False;
-					buffers_to_send = current_slot;
-				} else if (current_slot == window->window_size - 1) {
-					window_full = True;
-					buffers_to_send = current_slot + 1;
-					current_slot = 0;
-				}
-				else {
-					// put '\0' to use strlen() when sending
-					window->buffers[current_slot]->buffer[bytes_read + 2] = '\0';
-					current_slot++;
-				}
-			}
-			window_full = False;
+			// fill next slot and send it to client. Listener will verify if arrived,
+			// and resend if necessary.
+			bytes_read = fill_and_send_next_slot(window, file);
 
-			// starting ACK listener
-			pthread_t thread = startListener(window);
-
-			// sending data
-			for (i = 0; i < buffers_to_send; i++) {
-				tp_sendto(server_sock, window->buffers[i]->buffer, strlen(window->buffers[i]->buffer), &client_addr);
-			}
-
-			// checking if everything was received
-			received = False;
-			while (!received) {
-				received = True;
-				for (i = 0; i < buffers_to_send; i++) {
-					if (!window->buffers[i]->received) {
-						received = False;
-						tp_sendto(server_sock, window->buffers[i]->buffer, strlen(window->buffers[i]->buffer), &client_addr);
-					}
-				}
-				if (!received) sleep(WAIT_TIME);
-			}
-
-			// disable listener
-			stopListener(thread);
-
-			// all sent!
-			if (!has_more_data) {
-				send_MSG(window->info->socket, window->info->cli_addr, END, 0);
+			// EOF reached. All sent.
+			if (bytes_read == 0) {
 				sent = True;
 			}
 
+			// Window is full. Wait for an empty slot.
+			else if (bytes_read == -1) {
+				sleep(1); // OK to call since it's in the main function
+//				struct timespec time;
+//				time.tv_sec = 0;
+//				time.tv_nsec = 500000000; // 0.5 sec.
+//				nanosleep(time, NULL);
+			}
+
+			else {
+				total_sent += bytes_read;
+			}
 		}
 
+		// wait listener to finish handling ACKs.
+		printf("waiting for ACK listener to finish...\n");
+		stop_listener(ack_listener);
+		printf("ACK listener stoped!\n");
 
+		// tell listener to stop
+		extern int keep_listening_for_signals;
+		keep_listening_for_signals = False;
+		printf("stoping SIG listener...\n");
+		stop_listener(sig_listener); // wait for it to stop
+
+		fclose(file);
+		free_window(window);
 	}
+
+	destroy_server_window_mutex();
 
 	return EXIT_SUCCESS;
-}
-
-void read_server_params(int argc, char *argv[], int *port, int *buffer_size, int *window_size) {
-	if(argc != 4){
-		printf("Usage:  %s port buffer_size window_size\n", argv[0]);
-		exit(EXIT_FAILURE);
-	}
-	else {
-		*port = atoi(argv[1]);
-		*buffer_size = atoi(argv[2]);
-		*window_size = atoi(argv[3]);
-	}
 }
