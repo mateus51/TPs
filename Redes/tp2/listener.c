@@ -147,28 +147,30 @@ void *ack_listener(void *info) {
 
 		seq = (unsigned char) buffer[1];
 
+		printf("[ACK Listener] ");
+
 		switch (buffer[0]) {
 		case ACK: // packet received without errors
-			printf("ACKlistener: ACK %d\n", seq);
+			printf("ACK %d\n", seq);
 			lock_server_window_mutex();
 			all_received = mark_received_by_client(window, seq);
 			unlock_server_window_mutex();
 			char b = all_received ? 'T' : 'F';
-			printf("all_received: %c\n", b);
+			printf("  all_received: %c\n", b);
 			break;
 
 		case FAIL: // packet received with errors
-			printf("ACKlistener: FAIL %d\n", buffer[1]);
+			printf("FAIL %d\n", buffer[1]);
 			printf("  resending %d\n", seq);
 			resend(window, seq);
 			break;
 
 		case MORE:
-			printf("ACKlistener: MORE %d\n", buffer[1]);
+			printf("MORE %d\n", buffer[1]);
 			break;
 
 		case END:
-			printf("ACKlistener: END %d\n", buffer[1]);
+			printf("END %d\n", buffer[1]);
 			break;
 
 		default:

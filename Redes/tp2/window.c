@@ -15,6 +15,8 @@ char *g_buffer;
 so_addr* g_to_addr;
 
 
+// #### COMMON FUNCTIONS ####
+
 Window* new_window(int window_size, int buffer_size, int socket, so_addr *cli_addr) {
 	Window *window = (Window*) malloc(sizeof(Window));
 	int mtu = tp_mtu();
@@ -49,9 +51,17 @@ void free_window(Window *window) {
 }
 
 
+int send_MSG(int sock, so_addr *to_addr, MSG msg, byte seq) {
+	byte buffer[HEADER_SIZE];
+	bzero(buffer, HEADER_SIZE);
+	buffer[0] = msg;
+	buffer[1] = seq;
+	return tp_sendto(sock, buffer, HEADER_SIZE, to_addr);
+}
+
 byte get_parity_byte(char *str, int size) {
-	int i, j, result, sum = 0, mask = 1;
-	byte chr;
+	int i, result, sum = 0;//, j, mask = 1;
+//	byte chr;
 	for (i = 0; i < size; i++) {
 //		chr = str[i];
 //		for (j = 0; j < 8; j++) {
@@ -64,11 +74,6 @@ byte get_parity_byte(char *str, int size) {
 	result = sum % 256;
 	return result;
 //	return 1;
-}
-
-boolean check_parity_byte(char *buffer, int size) {
-	byte par = get_parity_byte(buffer, size - 1);
-	return par == buffer[size - 1];
 }
 
 // returns the positions of this seq number in the window.
@@ -87,8 +92,33 @@ int get_pos(Window *window, int seq) {
 		if (pos >= window->start)
 			return -1;
 	}
-
 	return pos;
+}
+
+// resends a packet.
+int resend(Window *window, int seq) {
+	int pos = get_pos(window, seq);
+	return tp_sendto(window->info->socket, window->buffers[pos]->buffer, strlen(window->buffers[pos]->buffer + HEADER_SIZE) + HEADER_SIZE + TAIL_SIZE + 1, window->info->addr);
+}
+
+// resends the older packet in window
+int resend_older(Window *window) {
+	int pos;
+	if (window->buffers[window->start]->received) {
+		pos = window->start + 1;
+		if (pos == window->size) pos = 0;
+	}
+	else
+		pos = window->start;
+
+	printf("  resending %d\n", window->buffers[pos]->buffer[1]);
+	return tp_sendto(window->info->socket, window->buffers[pos]->buffer, strlen(window->buffers[pos]->buffer + HEADER_SIZE) + HEADER_SIZE + TAIL_SIZE + 1, window->info->addr);
+}
+
+
+boolean check_parity_byte(char *buffer, int size) {
+	byte par = get_parity_byte(buffer, size - 1);
+	return par == buffer[size - 1];
 }
 
 boolean window_full(Window *window) {
@@ -102,6 +132,16 @@ void slide_window_start(Window *window) {
 	if (window->full) window->full = False;
 	if (window->start == window->next) window->empty = True;
 }
+
+
+
+
+
+
+
+
+
+// #### CLIENT FUNCTIONS ####
 
 void write_to_file(Window *window, FILE *file) {
 
@@ -187,20 +227,11 @@ int store_buffer(Window *window, char *buffer, FILE *file) {
 
 	// se recebeu o próximo a ser escrito
 	if (window->buffers[window->start]->received) {
-//		switch (window->buffers[window->start]->buffer[0]) {
-//		case MORE:
-//			printf("  received [MORE %d]\n", window->buffers[window->start]->buffer[1]);
-//			break;
-//		case END:
-//			printf("  received [END %d]\n", window->buffers[window->start]->buffer[1]);
-//			break;
-//		}
 		write_to_file(window, file);
 	}
 
 	return 0;
 }
-
 
 int receive_and_store(Window *window, FILE *file) {
 	int bytes_recv, resp;
@@ -236,7 +267,7 @@ int receive_and_store(Window *window, FILE *file) {
 }
 
 
-
+// #### SERVER FUNCTIONS ####
 
 int fill_and_send_next_slot(Window *window, FILE *file) {
 	// mutex to access the window
@@ -330,28 +361,28 @@ int fill_and_send_next_slot(Window *window, FILE *file) {
 	}
 }
 
-// while the window while it's possible.
+// slide the window while it's possible.
 // returns a boolean that indicates if the client received all parts
 boolean slide_window(Window *window) {
 	boolean slided_end = False;
 	if (window->buffers[window->start]->received) {
-		printf("start received!\n");
+//		printf("start received!\n");
 		int next = window->start + 1;
 		if (next == window->size) next = 0;
 
+		printf("sliding window...\n");
 		while (window->buffers[next]->received) {
-			printf("sliding window!\n  old start: %d\n", window->start);
+			printf("  window->start (old): %d\n", window->start);
 			slide_window_start(window);
-			printf("slided window!\n   new start: %d\n", window->start);
+			printf("  window->start (new): %d\n", window->start);
+			printf("  window->next: %d\n", window->next);
 			next = window->start + 1;
 			if (next == window->size) next = 0;
 		}
 
-		printf("passou do while!\n");
-
 		// If last packet is END, slide it and return true;
 		if (window->buffers[window->start]->received && window->buffers[window->start]->buffer[0] == END) {
-			printf("ack is END\n");
+			printf("  sliding END...\n");
 			slide_window_start(window);
 			slided_end = True;
 		}
@@ -373,30 +404,6 @@ boolean mark_received_by_client(Window *window, byte seq) {
 
 	return slided_end;
 }
-
-// resends a packet.
-int resend(Window *window, int seq) {
-	int pos = get_pos(window, seq);
-	return tp_sendto(window->info->socket, window->buffers[pos]->buffer, strlen(window->buffers[pos]->buffer + HEADER_SIZE) + HEADER_SIZE + TAIL_SIZE + 1, window->info->addr);
-}
-
-// resends the older packet in window
-int resend_older(Window *window) {
-	int pos;
-	if (window->buffers[window->start]->received) {
-		pos = window->start + 1;
-		if (pos == window->size) pos = 0;
-	}
-	else
-		pos = window->start;
-
-	printf("  resending %d\n", window->buffers[pos]->buffer[1]);
-	return tp_sendto(window->info->socket, window->buffers[pos]->buffer, strlen(window->buffers[pos]->buffer + HEADER_SIZE) + HEADER_SIZE + TAIL_SIZE + 1, window->info->addr);
-}
-
-
-
-
 
 
 
@@ -478,10 +485,4 @@ int confirmed_recvfrom(int sock, char* buffer, int buff_len, so_addr* from_addr)
 	return resp;
 }
 
-int send_MSG(int sock, so_addr *to_addr, MSG msg, byte seq) {
-	byte buffer[HEADER_SIZE];
-	bzero(buffer, HEADER_SIZE);
-	buffer[0] = msg;
-	buffer[1] = seq;
-	return tp_sendto(sock, buffer, HEADER_SIZE, to_addr);
-}
+

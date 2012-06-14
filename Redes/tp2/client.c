@@ -57,6 +57,12 @@ int main(int argc, char *argv[]) {
 		strcpy(buffer, filename);
 		resp = confirmed_sendto(client_sock, buffer, strlen(buffer) + 1, &server_addr);
 
+		if (!strcmp(filename, "exit")) {
+			free(host);
+			free(filename);
+			exit(EXIT_SUCCESS);
+		}
+
 		FILE *file = fopen(filename, "w+");
 		if (file == NULL) {
 			printf("Error creating file.\n");
