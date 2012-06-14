@@ -75,7 +75,11 @@ int main(int argc, char *argv[]) {
 
 		while (!received) {
 
+			printf("\n");
+
 			bytes = receive_and_store(window, file);
+
+			printf("\n");
 
 			if (bytes == 0)
 				received = True;

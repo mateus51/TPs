@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
 
 				// Window is full. Wait for an empty slot.
 				else if (bytes_read == -1) {
-					sleep(1); // OK to call since it's in the main function
+					//sleep(1); // OK to call since it's in the main function
 	//				struct timespec time;
 	//				time.tv_sec = 0;
 	//				time.tv_nsec = 500000000; // 0.5 sec.

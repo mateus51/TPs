@@ -284,9 +284,12 @@ int fill_and_send_next_slot(Window *window, FILE *file) {
 		// posição do próximo slot na janela
 		int pos = window->next;
 
+		printf("fill_and_send_next_slot()\n");
+
 		// próximo número de sequência
 		unsigned char seq;
 		if (window->empty) {
+			printf("  window is empty! seq is 0\n");
 			seq = 0;
 		}
 		else {
@@ -295,11 +298,7 @@ int fill_and_send_next_slot(Window *window, FILE *file) {
 			seq = ((unsigned char) window->buffers[last]->buffer[1]) + 1;
 		}
 
-		// unlock to read from disk
-//		pthread_mutex_unlock(server_window);
 
-
-		printf("fill_and_send_next_slot()\n");
 
 		// guarda as duas primeiras posições para cabeçalho e a última para o '/0' da string.
 		bzero(window->buffers[pos]->buffer, window->buffer_size);
@@ -313,7 +312,7 @@ int fill_and_send_next_slot(Window *window, FILE *file) {
 			window->buffers[pos]->buffer[0] = MORE;
 			window->buffers[pos]->buffer[1] = seq;
 			window->buffers[pos]->buffer[bytes_read + 2] = '\0';
-			printf("  window->buffers[pos]->buffer[%d] = '\\0'", bytes_read + 2);
+//			printf("  window->buffers[pos]->buffer[%d] = '\\0'", bytes_read + 2);
 		}
 		byte parity = get_parity_byte(window->buffers[pos]->buffer, window->buffer_size - 1);
 		window->buffers[pos]->buffer[window->buffer_size - 1] = parity;
