@@ -111,7 +111,7 @@ int resend_older(Window *window) {
 	else
 		pos = window->start;
 
-	printf("  resending %d\n", window->buffers[pos]->buffer[1]);
+//	printf("  resending %d\n", window->buffers[pos]->buffer[1]);
 	return tp_sendto(window->info->socket, window->buffers[pos]->buffer, strlen(window->buffers[pos]->buffer + HEADER_SIZE) + HEADER_SIZE + TAIL_SIZE + 1, window->info->addr);
 }
 
@@ -150,16 +150,16 @@ void write_to_file(Window *window, FILE *file) {
 		next = 0;
 
 	while (window->buffers[next]->received) {
-		printf("  writing buffer %d\n", window->buffers[window->start]->buffer[1]);
-		char received = window->buffers[next]->received ? 'T' : 'F';
-		switch (window->buffers[next]->buffer[0]) {
-		case MORE:
-			printf("  next [MORE %d] (%c)\n", window->buffers[next]->buffer[1], received);
-			break;
-		case END:
-			printf("  next [END %d] (%c)\n", window->buffers[next]->buffer[1], received);
-			break;
-		}
+//		printf("  writing buffer %d\n", window->buffers[window->start]->buffer[1]);
+//		char received = window->buffers[next]->received ? 'T' : 'F';
+//		switch (window->buffers[next]->buffer[0]) {
+//		case MORE:
+//			printf("  next [MORE %d] (%c)\n", window->buffers[next]->buffer[1], received);
+//			break;
+//		case END:
+//			printf("  next [END %d] (%c)\n", window->buffers[next]->buffer[1], received);
+//			break;
+//		}
 
 		// writing buffer
 		fwrite(window->buffers[window->start]->buffer + HEADER_SIZE, 1, strlen(window->buffers[window->start]->buffer + HEADER_SIZE), file);
@@ -178,15 +178,15 @@ void write_to_file(Window *window, FILE *file) {
 			next = 0;
 	}
 
-	char received = window->buffers[next]->received ? 'T' : 'F';
-	switch (window->buffers[next]->buffer[0]) {
-	case MORE:
-		printf("  next [MORE %d] (%c)\n", window->buffers[next]->buffer[1], received);
-		break;
-	case END:
-		printf("  next [END %d] (%c)\n", window->buffers[next]->buffer[1], received);
-		break;
-	}
+//	char received = window->buffers[next]->received ? 'T' : 'F';
+//	switch (window->buffers[next]->buffer[0]) {
+//	case MORE:
+//		printf("  next [MORE %d] (%c)\n", window->buffers[next]->buffer[1], received);
+//		break;
+//	case END:
+//		printf("  next [END %d] (%c)\n", window->buffers[next]->buffer[1], received);
+//		break;
+//	}
 }
 
 // on success returns 0;
@@ -199,14 +199,14 @@ int store_buffer(Window *window, char *buffer, FILE *file) {
 	byte seq = buffer[1];
 	int pos = get_pos(window, seq);
 
-	switch (buffer[0]) {
-	case MORE:
-		printf("storing [MORE %d]\n", buffer[1]);
-		break;
-	case END:
-		printf("storing [END %d]\n", buffer[1]);
-		break;
-	}
+//	switch (buffer[0]) {
+//	case MORE:
+//		printf("storing [MORE %d]\n", buffer[1]);
+//		break;
+//	case END:
+//		printf("storing [END %d]\n", buffer[1]);
+//		break;
+//	}
 
 	if (pos == window->start)
 		set_alarm(1);
@@ -216,14 +216,14 @@ int store_buffer(Window *window, char *buffer, FILE *file) {
 	window->buffers[pos]->received = True;
 	if (window->empty) window->empty = False;
 
-	switch (window->buffers[pos]->buffer[0]) {
-	case MORE:
-		printf("stored [MORE %d]\n", window->buffers[pos]->buffer[1]);
-		break;
-	case END:
-		printf("stored [END %d]\n", window->buffers[pos]->buffer[1]);
-		break;
-	}
+//	switch (window->buffers[pos]->buffer[0]) {
+//	case MORE:
+//		printf("stored [MORE %d]\n", window->buffers[pos]->buffer[1]);
+//		break;
+//	case END:
+//		printf("stored [END %d]\n", window->buffers[pos]->buffer[1]);
+//		break;
+//	}
 
 	// se recebeu o próximo a ser escrito
 	if (window->buffers[window->start]->received) {
@@ -258,7 +258,7 @@ int receive_and_store(Window *window, FILE *file) {
 		bytes_recv = 0;
 		break;
 	default:
-		printf("default case!\n");
+//		printf("default case!\n");
 		bytes_recv = -1;
 		break;
 	}
@@ -284,12 +284,12 @@ int fill_and_send_next_slot(Window *window, FILE *file) {
 		// posição do próximo slot na janela
 		int pos = window->next;
 
-		printf("fill_and_send_next_slot()\n");
+//		printf("fill_and_send_next_slot()\n");
 
 		// próximo número de sequência
 		unsigned char seq;
 		if (window->empty) {
-			printf("  window is empty! seq is 0\n");
+//			printf("  window is empty! seq is 0\n");
 			seq = 0;
 		}
 		else {
@@ -317,24 +317,24 @@ int fill_and_send_next_slot(Window *window, FILE *file) {
 		byte parity = get_parity_byte(window->buffers[pos]->buffer, window->buffer_size - 1);
 		window->buffers[pos]->buffer[window->buffer_size - 1] = parity;
 
-		printf("  read %d bytes\n", bytes_read);
-		printf("  sending...\n");
-		switch (window->buffers[pos]->buffer[0]) {
-		case ACK:
-			printf("    msg: ACK\n");
-			break;
-		case MORE:
-			printf("    msg: MORE\n");
-			break;
-		case FAIL:
-			printf("    msg: FAIL\n");
-			break;
-		case END:
-			printf("    msg: END\n");
-			break;
-		}
-		printf("    seq: %d\n", window->buffers[pos]->buffer[1]);
-		printf("    crc: %d\n", window->buffers[pos]->buffer[window->buffer_size - 1]);
+//		printf("  read %d bytes\n", bytes_read);
+//		printf("  sending...\n");
+//		switch (window->buffers[pos]->buffer[0]) {
+//		case ACK:
+//			printf("    msg: ACK\n");
+//			break;
+//		case MORE:
+//			printf("    msg: MORE\n");
+//			break;
+//		case FAIL:
+//			printf("    msg: FAIL\n");
+//			break;
+//		case END:
+//			printf("    msg: END\n");
+//			break;
+//		}
+//		printf("    seq: %d\n", window->buffers[pos]->buffer[1]);
+//		printf("    crc: %d\n", window->buffers[pos]->buffer[window->buffer_size - 1]);
 
 //		resp = tp_sendto(window->info->socket, window->buffers[pos]->buffer, strlen(window->buffers[pos]->buffer + HEADER_SIZE) + HEADER_SIZE + TAIL_SIZE + 1, window->info->addr);
 		resp = tp_sendto(window->info->socket, window->buffers[pos]->buffer, window->buffer_size, window->info->addr);
@@ -369,19 +369,19 @@ boolean slide_window(Window *window) {
 		int next = window->start + 1;
 		if (next == window->size) next = 0;
 
-		printf("sliding window...\n");
+//		printf("sliding window...\n");
 		while (window->buffers[next]->received) {
-			printf("  window->start (old): %d\n", window->start);
+//			printf("  window->start (old): %d\n", window->start);
 			slide_window_start(window);
-			printf("  window->start (new): %d\n", window->start);
-			printf("  window->next: %d\n", window->next);
+//			printf("  window->start (new): %d\n", window->start);
+//			printf("  window->next: %d\n", window->next);
 			next = window->start + 1;
 			if (next == window->size) next = 0;
 		}
 
 		// If last packet is END, slide it and return true;
 		if (window->buffers[window->start]->received && window->buffers[window->start]->buffer[0] == END) {
-			printf("  sliding END...\n");
+//			printf("  sliding END...\n");
 			slide_window_start(window);
 			slided_end = True;
 		}
@@ -431,12 +431,9 @@ int confirmed_sendto(int sock, char *buffer, int buff_len, so_addr* to_addr) {
 //		recv = tp_recvfrom(sock, buff, 2, to_addr);
         if (tp_recvfrom(sock, buff, 2, to_addr) < 0) {
             /* chamadas de socket só retornam < 0 se deu erro */
-
-        	printf("dentro do if\n");
-
             if (errno == EINTR) {
                 /* uma chamada interrompida seria tratada aqui */
-            	printf("errno == EINTR\n");
+//            	printf("errno == EINTR\n");
             	sent = tp_sendto(sock, buffer, strlen(buffer) + 1, to_addr);
                 errno = 0;
             }
@@ -446,16 +443,17 @@ int confirmed_sendto(int sock, char *buffer, int buff_len, so_addr* to_addr) {
             }
         }
         else {
-        	printf("buffer: [%d %d]\n", buff[0], buff[1]);
-        	if (buff[0] == ACK) {
+        	switch (buff[0]) {
+        	case ACK:
         		received = True;
 				alarm(0); // disable timer
-        	}
-        	else if (buff[0] == FAIL) {
-        		printf("request FAILED!\n");
-        	}
-        	else {
-        		printf("header wasnt ACK nor FAIL");
+        		break;
+        	case FAIL:
+//        		printf("request FAILED!\n");
+        		break;
+        	default:
+//        		printf("header wasnt ACK nor FAIL");
+        		break;
         	}
         }
 

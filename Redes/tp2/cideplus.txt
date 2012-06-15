@@ -1,0 +1,20 @@
+1 - CIDE+ Intro
+2 - SPLs
+3 - CIDE
+4 - CIDE+
+5 - Processo CIDE+
+Mostrar vídeo
+6 - Minha contribuição
+
+UI improvements
+
+- Marcadores na barra de rolagem
+- Possibilidade de esconder as cores (somente markers)
+  versões full/light (código mto colorido!)
+
+
+Software Product Lines
+
+- métodos, ferramentas e técnicas de engenharia de software para a criação de uma
+  coleção de sistemas de software similares a partir de um conjunto compartilhado
+  de recursos de software, utilizando um meio comum de produção. (Wikipedia)Possi

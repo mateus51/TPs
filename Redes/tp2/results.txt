@@ -1,0 +1,113 @@
+#############
+# 100 bytes #
+#############
+
+./tp2-client jaguar.dcc.ufmg.br 3000 test_100.txt 512 2
+Buffer =   512 byte(s),       0.04 kbps (100 bytes em 2.571448 s)
+
+
+./tp2-client jaguar.dcc.ufmg.br 3000 test_100.txt 512 4
+Buffer =   512 byte(s),       0.01 kbps (100 bytes em 7.660781 s)
+
+
+./tp2-client jaguar.dcc.ufmg.br 3000 test_100.txt 512 8
+Buffer =   512 byte(s),       0.34 kbps (100 bytes em 0.285782 s)
+
+
+./tp2-client jaguar.dcc.ufmg.br 3000 test_100.txt 512 16
+Buffer =   512 byte(s),       0.58 kbps (100 bytes em 0.169633 s)
+
+
+
+
+
+##############
+# 1000 bytes #
+##############
+
+./tp2-client jaguar.dcc.ufmg.br 3000 test_1000.txt 512 2
+Buffer =   512 byte(s),       1.53 kbps (1000 bytes em 0.636777 s)
+
+
+./tp2-client jaguar.dcc.ufmg.br 3000 test_1000.txt 512 4
+Buffer =   512 byte(s),       2.34 kbps (1000 bytes em 0.417751 s)
+
+
+./tp2-client jaguar.dcc.ufmg.br 3000 test_1000.txt 512 8
+Buffer =   512 byte(s),       8.31 kbps (1000 bytes em 0.117463 s)
+
+
+./tp2-client jaguar.dcc.ufmg.br 3000 test_1000.txt 512 16
+Buffer =   512 byte(s),       2.64 kbps (1000 bytes em 0.369862 s)
+
+
+
+
+
+
+##############
+# 4000 bytes #
+##############
+
+./tp2-client jaguar.dcc.ufmg.br 3000 test_4000.txt 512 2
+Buffer =   512 byte(s),       3.60 kbps (4000 bytes em 1.085821 s)
+
+
+./tp2-client jaguar.dcc.ufmg.br 3000 test_4000.txt 512 4
+Buffer =   512 byte(s),       4.31 kbps (4000 bytes em 0.906778 s)
+
+
+./tp2-client jaguar.dcc.ufmg.br 3000 test_4000.txt 512 8
+Buffer =   512 byte(s),       5.05 kbps (4000 bytes em 0.773699 s)
+
+
+./tp2-client jaguar.dcc.ufmg.br 3000 test_4000.txt 512 16
+Buffer =   512 byte(s),       4.00 kbps (4000 bytes em 0.977656 s)
+
+
+./tp2-client jaguar.dcc.ufmg.br 3000 test_4000.txt 512 32
+Buffer =   512 byte(s),       5.70 kbps (4000 bytes em 0.685673 s)
+
+
+
+
+
+##############
+# 8000 bytes #
+##############
+
+./tp2-client jaguar.dcc.ufmg.br 3000 test_8000.txt 512 2
+Buffer =   512 byte(s),      29.43 kbps (8000 bytes em 0.265424 s)
+Buffer =   512 byte(s),      26.14 kbps (8000 bytes em 0.298895 s)
+Buffer =   512 byte(s),      24.67 kbps (8000 bytes em 0.316729 s)
+Buffer =   512 byte(s),      46.49 kbps (8000 bytes em 0.168049 s)
+
+
+./tp2-client jaguar.dcc.ufmg.br 3000 test_8000.txt 512 4
+Buffer =   512 byte(s),     113.81 kbps (8000 bytes em 0.068643 s)
+Buffer =   512 byte(s),      35.90 kbps (8000 bytes em 0.217608 s)
+Buffer =   512 byte(s),      43.13 kbps (8000 bytes em 0.181124 s)
+Buffer =   512 byte(s),      42.34 kbps (8000 bytes em 0.184540 s)
+
+
+./tp2-client jaguar.dcc.ufmg.br 3000 test_8000.txt 512 8
+Buffer =   512 byte(s),      94.18 kbps (8000 bytes em 0.082950 s)
+Buffer =   512 byte(s),     111.29 kbps (8000 bytes em 0.070202 s)
+Buffer =   512 byte(s),     116.67 kbps (8000 bytes em 0.066961 s)
+Buffer =   512 byte(s),      66.15 kbps (8000 bytes em 0.118110 s)
+
+
+
+./tp2-client jaguar.dcc.ufmg.br 3000 test_8000.txt 512 16
+Buffer =   512 byte(s),     148.36 kbps (8000 bytes em 0.052660 s)
+Buffer =   512 byte(s),     210.28 kbps (8000 bytes em 0.037153 s)
+Buffer =   512 byte(s),     145.11 kbps (8000 bytes em 0.053839 s)
+Buffer =   512 byte(s),      56.23 kbps (8000 bytes em 0.138938 s)
+
+
+
+./tp2-client jaguar.dcc.ufmg.br 3000 test_8000.txt 512 32
+Buffer =   512 byte(s),     143.78 kbps (8000 bytes em 0.054335 s)
+Buffer =   512 byte(s),     155.82 kbps (8000 bytes em 0.050137 s)
+Buffer =   512 byte(s),     126.70 kbps (8000 bytes em 0.061661 s)
+Buffer =   512 byte(s),     204.38 kbps (8000 bytes em 0.038226 s)

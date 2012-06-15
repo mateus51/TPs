@@ -16,11 +16,11 @@ pthread_mutex_t* get_server_window_mutex(void) {
 
 void lock_server_window_mutex() {
 	pthread_mutex_lock(&server_window);
-	printf("\nMUTEX locked!\n");
+//	printf("\nMUTEX locked!\n");
 }
 
 void unlock_server_window_mutex() {
-	printf("MUTEX unlocked!\n\n");
+//	printf("MUTEX unlocked!\n\n");
 	pthread_mutex_unlock(&server_window);
 }
 
@@ -38,7 +38,7 @@ void set_alarm(int wait_time) {
 // to the window pointer without it being global.
 // When the alarm arrives, resends the older packet in the window.
 void *signal_listener(void *arg) {
-	printf("starting signal listener...\n");
+//	printf("starting signal listener...\n");
 	sigset_t set;
 	int rc, sig;
 	signal(SIGALRM, dummy_handler);
@@ -73,10 +73,10 @@ void *signal_listener(void *arg) {
 			set_alarm(1);
 		}
 		else if (!keep_listening_for_signals){
-			printf("keep_listening_for_signals is FALSE!\n");
+//			printf("keep_listening_for_signals is FALSE!\n");
 		}
 		else {
-			printf("caugth signal isn't SIGALRM!\n");
+//			printf("caugth signal isn't SIGALRM!\n");
 		}
 	}
 	pthread_exit(NULL);
@@ -147,34 +147,34 @@ void *ack_listener(void *info) {
 
 		seq = (unsigned char) buffer[1];
 
-		printf("[ACK Listener] ");
+//		printf("[ACK Listener] ");
 
 		switch (buffer[0]) {
 		case ACK: // packet received without errors
-			printf("ACK %d\n", seq);
+//			printf("ACK %d\n", seq);
 			lock_server_window_mutex();
 			all_received = mark_received_by_client(window, seq);
 			unlock_server_window_mutex();
-			char b = all_received ? 'T' : 'F';
-			printf("  all_received: %c\n", b);
+//			char b = all_received ? 'T' : 'F';
+//			printf("  all_received: %c\n", b);
 			break;
 
 		case FAIL: // packet received with errors
-			printf("FAIL %d\n", buffer[1]);
-			printf("  resending %d\n", seq);
+//			printf("FAIL %d\n", buffer[1]);
+//			printf("  resending %d\n", seq);
 			resend(window, seq);
 			break;
 
 		case MORE:
-			printf("MORE %d\n", buffer[1]);
+//			printf("MORE %d\n", buffer[1]);
 			break;
 
 		case END:
-			printf("END %d\n", buffer[1]);
+//			printf("END %d\n", buffer[1]);
 			break;
 
 		default:
-			printf("ERROR: unknown header (%d)\n", buffer[1]);
+//			printf("ERROR: unknown header (%d)\n", buffer[1]);
 			break;
 		}
 	}

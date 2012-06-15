@@ -43,6 +43,9 @@ int main(int argc, char *argv[]) {
 		int port, buffer_size, window_size;
 		read_client_params(argc, argv, &host, &port, &filename, &buffer_size, &window_size);
 
+		//start to count time
+		double start_time = get_time();
+
 		int client_sock = tp_socket(0);
 		so_addr server_addr;
 		tp_build_addr(&server_addr, host, port);
@@ -71,22 +74,26 @@ int main(int argc, char *argv[]) {
 
 		Window *window = new_window(window_size, buffer_size, client_sock, &server_addr);
 		boolean received = False;
-		int bytes;
+		int bytes, total_received = 0;
 
 		while (!received) {
 
-			printf("\n");
+//			printf("\n");
 
 			bytes = receive_and_store(window, file);
+			total_received += bytes;
 
-			printf("\n");
+//			printf("\n");
 
 			if (bytes == 0)
 				received = True;
 
 		}
-
 		fclose(file);
+		double elapsed_time = get_time() - start_time;
+		double kbps = (total_received / 1024.0) / elapsed_time;
+		printf("Buffer = \%5u byte(s), \%10.2f kbps (\%u bytes em \%3.6f s)\n", window->buffer_size, kbps, total_received, elapsed_time);
+
 		free(host);
 		free(filename);
 		free_window(window);

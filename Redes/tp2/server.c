@@ -1,13 +1,12 @@
-#include "window.h"
 #include "listener.h"
+#include "window.h"
+#include "time.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <netdb.h>
 #include <string.h>
-//#include <pthread.h>
 #include <unistd.h>
-//#include <signal.h>
 
 #define WAIT_TIME 1 // in seconds
 
@@ -45,7 +44,7 @@ int main(int argc, char *argv[]) {
 		char buffer[buffer_size];
 
 
-		while (1) {
+//		while (1) {
 			bzero(buffer, buffer_size);
 
 			// receiving file name from client
@@ -57,8 +56,11 @@ int main(int argc, char *argv[]) {
 			printf("Message Received: '%s'\n", buffer);
 			printf("  From: %s\n", host);
 
-			if (!strcmp(buffer, "exit"))
-				break;
+//			if (!strcmp(buffer, "exit"))
+//				break;
+
+			// start to count time
+			double start_time = get_time();
 
 			// preparing file to be sent
 			char filename[strlen(buffer) + 1];
@@ -95,11 +97,11 @@ int main(int argc, char *argv[]) {
 
 				// Window is full. Wait for an empty slot.
 				else if (bytes_read == -1) {
-					//sleep(1); // OK to call since it's in the main function
-	//				struct timespec time;
-	//				time.tv_sec = 0;
-	//				time.tv_nsec = 500000000; // 0.5 sec.
-	//				nanosleep(time, NULL);
+					//sleep(1);
+//					struct timespec time;
+//					time.tv_sec = 0;
+//					time.tv_nsec = 500000000; // 0.5 sec.
+//					nanosleep(time, NULL); // OK to call since it's in the main function
 				}
 
 				else {
@@ -108,21 +110,26 @@ int main(int argc, char *argv[]) {
 			}
 
 			// wait listener to finish handling ACKs.
-			printf("waiting for ACK listener to finish...\n");
+//			printf("waiting for ACK listener to finish...\n");
 			stop_listener(ack_listener);
-			printf("ACK listener stoped!\n");
+//			printf("ACK listener stoped!\n");
 
 			// tell listener to stop
 			extern int keep_listening_for_signals;
 			keep_listening_for_signals = False;
-			printf("stoping SIG listener...\n");
+//			printf("stoping SIG listener...\n");
 			stop_listener(sig_listener); // wait for it to stop
 
 			fclose(file);
+
+			double elapsed_time = get_time() - start_time;
+			double kbps = (total_sent / 1024.0) / elapsed_time;
+			printf("Buffer = \%5u byte(s), \%10.2f kbps (\%u bytes em \%3.6f s)\n", window->buffer_size, kbps, total_sent, elapsed_time);
+
 			free_window(window);
 		}
 
-	}
+//	}
 
 	destroy_server_window_mutex();
 
