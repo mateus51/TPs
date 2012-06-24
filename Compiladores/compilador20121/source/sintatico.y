@@ -2,21 +2,23 @@
 
 
 %{
+
+	#include <stdio.h>
+
 	#include "sym_table.h"
 	#include "type_checker.h"
+	#include "semantic_analyzer.h"
 	
-	
-	int linha_atual = 1;
-	int coluna_atual = 1;
+	#define YYSTYPE Attributes
+     
 	int total_tokens = 0;	
 	
-	
 	/* Tabela de símbolos. Declarada globalmente para estar disponível
-	 * tanto para o Lex quanto para o Yacc.
-	 * Foi declarado dessa forma para o endereço ser conhecido
-	 * em tempo de compilação (stack). */
+	 * tanto para o Lex quanto para o Yacc. */
 	SymbolTable table;
 	SymbolTable *symbol_table = (SymbolTable*) &table;
+	
+	// Debug flag
 	int yydebug=1;
 
 	// No máximo 10 variáveis na mesma declaração
@@ -76,30 +78,23 @@
 %}
 
 
-%union
-{
-	int integer;
-	float real;
-	char *string;
-}
 
-%token COMMA COLON SEMICOLON PROC SIN LOG COS ORD ABS SQRT EXP EOFILE EOLN PROGRAM INTEGER REAL BOOLEAN CHAR VALUE REFERENCE BEGIN_TOK END IF THEN ELSE REPEAT UNTIL READ WRITE FALSE TRUE ATRIB LPAR RPAR NOT EQ NE GT LT GE LE DIV MOD AND OR
-%token <integer> ADDOP
-%token <integer> MULOP
-%token <integer> ID
-%token <integer> INTEGER_CONSTANT
-%token <real> REAL_CONSTANT
-%token <integer> CHAR_CONSTANT
+%token COMMA COLON SEMICOLON PROC SIN LOG COS ORD ABS SQRT EXP EOFILE EOLN CHR PROGRAM INTEGER REAL BOOLEAN CHAR VALUE REFERENCE BEGIN_TOK END IF THEN ELSE REPEAT UNTIL READ WRITE FALSE TRUE ATRIB LPAR RPAR NOT EQ NE GT LT GE LE DIV MOD AND OR ID INTEGER_CONSTANT REAL_CONSTANT CHAR_CONSTANT ADDOP MULOP
 
-%type<string> type tipo_retornado expr factor factor_a function_ref_par constant simple_expr term cond
-%type<integer> variable simple_variable_or_proc built_in_function
 
 %start program
+
+
+%error-verbose
+
+
+%initial-action { @$.last_column = 0; };
+
 %%
 
 /* rules */
 program    :       PROGRAM ID SEMICOLON decl_list compound_stmt
-						{ updateType(symbol_table, $2, "program"); }
+						{ updateType(symbol_table, $2.addr, "program"); }
            ;
 decl_list   :       decl_list SEMICOLON decl
             |       decl
@@ -109,37 +104,37 @@ decl    :       dcl_var
         |       dcl_proc
         ;
 dcl_var     :       ident_list COLON type
-						{ updateVariablesType($3); }
+						{ updateVariablesType($3.type); }
             ;
 ident_list  :       ident_list COMMA ID
-            			{ saveVarInArray($3); }
+            			{ saveVarInArray($3.addr); }
             |       ID
-            			{ saveVarInArray($1); }
+            			{ saveVarInArray($1.addr); }
             ;
 type	:		INTEGER
-					{ $$ = "integer"; }
+					{ $$.type = "integer"; }
 		|		REAL
-					{ $$ = "real"; }
+					{ $$.type = "real"; }
 		|		BOOLEAN
-					{ $$ = "boolean"; }
+					{ $$.type = "boolean"; }
 		|		CHAR
-					{ $$ = "char"; }
+					{ $$.type = "char"; }
 		;
 dcl_proc    :       tipo_retornado PROC ID espec_parametros corpo
-						{ updateFunctionDef($3, $1); }
+						{ updateFunctionDef($3.addr, $1.type); }
             ;
 vazio   :
         ;
 tipo_retornado  :       INTEGER
-							{ $$ = "integer"; }
+							{ $$.type = "integer"; }
                 |       REAL
-                			{ $$ = "real"; }
+                			{ $$.type = "real"; }
                 |       BOOLEAN
-                			{ $$ = "boolean"; }
+                			{ $$.type = "boolean"; }
                 |       CHAR
-                			{ $$ = "char"; }
+                			{ $$.type = "char"; }
                 |       vazio
-                			{ $$ = "vazio"; }
+                			{ $$.type = "vazio"; }
                 ;
 corpo   :       COLON decl_list SEMICOLON compound_stmt after_proc_compound id_return
         |       vazio
@@ -162,7 +157,7 @@ lista_parametros	:		parametro
                     			{ function_def_params++; }
                     ;
 parametro	:		modo type COLON ID
-						{ updateType(symbol_table, $4, $2); }
+						{ updateType(symbol_table, $4.addr, $2.type); }
 			;
 modo	:		VALUE
 		|		REFERENCE
@@ -188,18 +183,18 @@ stmt	:		assign_stmt
 		|		function_ref_par
 		;
 assign_stmt	:		ID ATRIB expr
-						{ checkAssign(symbol_table, $1, $3); }
+						{ checkAssign(symbol_table, $1.addr, $3.type, @3.first_line, @3.first_column, @3.last_line, @3.last_column); }
 			;
 if_stmt	:		IF cond THEN stmt
-					{ checkIf($2); }
+					{ checkIf($2.type, @2.first_line, @2.first_column, @2.last_line, @2.last_column); }
 		|		IF cond THEN stmt ELSE stmt
-					{ checkIf($2); }
+					{ checkIf($2.type, @2.first_line, @2.first_column, @2.last_line, @2.last_column); }
 		;
 cond	:		expr
-					{ $$ = $1; }
+					{ $$.type = $1.type; }
 		;
 repeat_stmt	:		REPEAT stmt_list UNTIL expr
-						{ checkRepeat($4); }
+						{ checkRepeat($4.type, @4.first_line, @4.first_column, @4.last_line, @4.last_column); }
 			;
 read_stmt	:		READ LPAR ident_list RPAR
 			;
@@ -211,92 +206,94 @@ expr_list	:		expr
 						{ function_call_params++; }
 			;
 expr	:		simple_expr
-					{ $$ = $1; }
+					{ $$.type = $1.type; }
 		|		simple_expr EQ simple_expr
-					{ $$ = checkRELOP($1, $3); }
+					{ $$.type = checkRELOP($1.type, $3.type); }
 		|		simple_expr NE simple_expr
-					{ $$ = checkRELOP($1, $3); }
+					{ $$.type = checkRELOP($1.type, $3.type); }
 		|		simple_expr GT simple_expr
-					{ $$ = checkRELOP($1, $3); }
+					{ $$.type = checkRELOP($1.type, $3.type); }
 		|		simple_expr LT simple_expr
-					{ $$ = checkRELOP($1, $3); }
+					{ $$.type = checkRELOP($1.type, $3.type); }
 		|		simple_expr GE simple_expr
-					{ $$ = checkRELOP($1, $3); }
+					{ $$.type = checkRELOP($1.type, $3.type); }
 		|		simple_expr LE simple_expr
-					{ $$ = checkRELOP($1, $3); }
+					{ $$.type = checkRELOP($1.type, $3.type); }
 		;
 simple_expr	:		term
-						{ $$ = $1; }
+						{ $$.type = $1.type; }
 			|		simple_expr ADDOP term
-						{ checkExpType(symbol_table, $1, $3); $$ = $1; }
+						{ checkExpType(symbol_table, $1.type, $3.type, @$.first_line, @$.first_column, @$.last_line, @$.last_column); $$ = $1; }
 			|		simple_expr OR term
-						{ checkExpType(symbol_table, $1, "boolean"); $$ = $1; }
+						{ checkExpType(symbol_table, $1.type, "boolean", @$.first_line, @$.first_column, @$.last_line, @$.last_column); $$ = $1; }
 			;
 term	:		factor_a
-					{ $$ = $1; }
+					{ $$.type = $1.type; }
 		|		term MULOP factor_a
-					{ checkExpType(symbol_table, $1, $3); $$ = $1; }
+					{ checkExpType(symbol_table, $1.type, $3.type, @$.first_line, @$.first_column, @$.last_line, @$.last_column); $$.type = $1.type; }
 		|		term AND factor_a
-					{ checkAnd($1, $3); $$ = $1; }
+					{ checkAnd($1.type, $3.type, @$.first_line, @$.first_column, @$.last_line, @$.last_column); $$.type = $1.type; }
 		|		term MOD factor_a
-					{ checkMod($1, $3); $$ = $1; }
+					{ checkMod($1.type, $3.type, @$.first_line, @$.first_column, @$.last_line, @$.last_column); $$.type = $1.type; }
 		|		term DIV factor_a
-					{ checkDiv($1, $3); $$ = $1; }
+					{ checkDiv($1.type, $3.type, @$.first_line, @$.first_column, @$.last_line, @$.last_column); $$.type = $1.type; }
 		;
 factor_a	:		'-' factor
-						{ $$ = $2; }
+						{ $$.type = $2.type; }
 			|		factor
-						{ $$ = $1; }
+						{ $$.type = $1.type; }
 			;
 factor	:		ID
-					{ $$ = lookupType(symbol_table, $1); }
+					{ $$.type = lookupType(symbol_table, $1.addr); }
 		|		constant
-					{ $$ = $1; }
+					{ $$.type = $1.type; }
 		|		LPAR expr RPAR
-					{ $$ = $2; }
+					{ $$.type = $2.type; }
 		|		NOT factor
-					{ $$ = checkNOT($2); }
+					{ $$.type = checkNOT($2.type, @2.first_line, @2.first_column, @2.last_line, @2.last_column); }
 		|		function_ref_par
-					{ $$ = $1; }
+					{ $$.type = $1.type; }
 		;
 function_ref_par	:		built_in_function LPAR expr RPAR
-								{ $$ = checkBuiltInFunctionCall($1, $3); }
+								{ $$.type = checkBuiltInFunctionCall($1.integer, $3.type, @3.first_line, @3.first_column, @3.last_line, @3.last_column); }
 					|		variable LPAR expr_list RPAR
-								{ $$ = checkFunctionCall(symbol_table, $1); }
+								{ $$.type = checkFunctionCall(symbol_table, $1.addr, @3.first_line, @3.first_column, @3.last_line, @3.last_column); }
 					;
 built_in_function	:		SIN
-								{ $$ = fsin; }
+								{ $$.integer = fsin; }
 					|		COS
-								{ $$ = fcos; }
+								{ $$.integer = fcos; }
 					|		LOG
-								{ $$ = flog; }
+								{ $$.integer = flog; }
 					|		ORD
-								{ $$ = ford; }
+								{ $$.integer = ford; }
 					|		ABS
-								{ $$ = fabs; }
+								{ $$.integer = fabs; }
 					|		SQRT
-								{ $$ = fsqrt; }
+								{ $$.integer = fsqrt; }
 					|		EXP
-								{ $$ = fexp; }
+								{ $$.integer = fexp; }
 					|		EOFILE
-								{ $$ = feofile; }
+								{ $$.integer = feofile; }
 					|		EOLN
-								{ $$ = feoln; }
+								{ $$.integer = feoln; }
+					|		CHR
+								{ $$.integer = fchr; }
 					;
 variable	:		simple_variable_or_proc
-						{ $$ = $1; }
+						{ $$.addr = $1.addr; }
 			;
 simple_variable_or_proc	:		ID
-									{ $$ = $1; }
+									{ $$.addr = $1.addr; }
 						;
 constant	:		INTEGER_CONSTANT
-						{ $$ = "integer"; }
+						{ $$.type = "integer"; }
 			|		REAL_CONSTANT
-						{ $$ = "real"; }
+						{ $$.type = "real"; }
 			|		CHAR_CONSTANT
-						{ $$ = "char"; }
+						{ $$.type = "char"; }
 			|		boolean_constant
-						{ $$ = "boolean"; }
+						{ $$.type = "boolean"; }
 			;
 boolean_constant	:		TRUE
 					|		FALSE
@@ -308,11 +305,14 @@ main() {
    initTable(symbol_table);
    resetVarsArray();
    yyparse();
+   printTable(symbol_table);
    return 0;
 }
 
 yyerror(s) char *s; {
-	extern int linha_atual;
-	fprintf(stderr, "Error   (line %d): %s\n", linha_atual, s);
+	//extern int linha_atual;
+	//fprintf(stderr, "Error   (line %d): %s\n", linha_atual, s);
+	extern YYLTYPE yylloc;
+	fprintf(stderr, "Error (l%d,c%d-l%d,c%d): %s\n", yylloc.first_line, yylloc.first_column, yylloc.last_line, yylloc.last_column, s);
 }
 

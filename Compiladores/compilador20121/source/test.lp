@@ -1,6 +1,20 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 program test;
 i, j, k : integer;
-x, y, z : real;
+x, y, z : real; 5r
 
 integer PROCEDURE fatorial(value integer:n):
   x, result : integer;

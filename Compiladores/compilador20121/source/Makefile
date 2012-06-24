@@ -1,5 +1,5 @@
 COMPILER = gcc
-OPTIONS = -c -Wall
+OPTIONS = -c -Wall -g
 EXEC_NAME = a.out
 
 all: compiler

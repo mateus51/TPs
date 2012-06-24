@@ -1,10 +1,6 @@
 #ifndef __SYM_TABLE_H__
 #define __SYM_TABLE_H__
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 typedef char boolean;
 #define True  1
 #define False 0
@@ -21,7 +17,8 @@ typedef struct Symbol {
     int num_params;
     int scope;
     int line;
-    int column;
+    int first_column;
+    int last_column;
 } Symbol;
 
 typedef struct {
@@ -47,7 +44,7 @@ int getSymbol(SymbolTable *table, char *name);
 
 char *lookupType(SymbolTable *table, int index);
 
-int installId(SymbolTable *table, char *name);
+int installId(SymbolTable *table, char *name, int linha_atual, int coluna_atual);
 
 void updateType(SymbolTable *table, int var_index, char *type);
 

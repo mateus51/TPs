@@ -1,40 +1,55 @@
 %{
 
 extern YYSTYPE yylval;
-//extern YYLTYPE yylloc;
+extern YYLTYPE yylloc;
 
 
 void updateLineInfo() {
-	extern int linha_atual, coluna_atual;
-	
+	//extern int linha_atual, coluna_atual;
 	//printf("updating line...\n  - previous: %d\n\n", linha_atual);
+	//linha_atual = linha_atual + 1;
+	//coluna_atual = 0;
 	
-	linha_atual = linha_atual + 1;
-	coluna_atual = 0;
+	
+	yylloc.first_line++;
+	yylloc.last_line++;
+	yylloc.first_column = yylloc.last_column = 0;
 }
 
 void updateColumnInfo(int total_chr) {
-	extern int coluna_atual;
-
+	//extern int coluna_atual;
 	//printf("updating column...\n  - previous: %d\n  - delta: %d\n", coluna_atual, total_chr);
+	//coluna_atual += total_chr;
+	
+	
+	//yylloc.last_column = yylloc.first_column + total_chr - 1;
+	
+	yylloc.first_column = yylloc.last_column + 1;
 
-	coluna_atual += total_chr;
+	yylloc.last_column = yylloc.first_column + total_chr - 1;
 }
 
 
 int installToken(char *lex) {
 
 	if (DBG) {
-		printf("\n\nLEX : %s(%d, %d)\n", lex, linha_atual, coluna_atual);
+		//printf("\n\nLEX : %s(%d, %d)\n", lex, linha_atual, coluna_atual);
 		printTable(symbol_table);
 	}
 
 	// if reading declarations
-	if (!reading_code)
-		return installId(symbol_table, lex);
+	if (!reading_code) {
+		//printf("LEX: installing token '%s'\n  line: %d\n  f column: %d\n  l column: %d\n", lex, yylloc.first_line, yylloc.first_column, yylloc.last_column);
+		return installId(symbol_table, lex, yylloc.first_line, yylloc.first_column);
+	}
 	else
 		return getSymbol(symbol_table, lex);
 }
+
+void printLocInfo(char *lex) {
+	printf("Location Info: '%s'\n  l: %d/%d\n  c: %d/%d\n", lex, yylloc.first_line, yylloc.last_line, yylloc.first_column, yylloc.last_column);
+}
+
 
 %}
 LETTER              [a-zA-Z]
@@ -55,13 +70,14 @@ COLON               :
 SEMICOLON           ;
 NEWLINE            [\r\n\f]
 SPACES             [ \t\v]+
+
 %%
-{NEWLINE}				 updateLineInfo(); //printf("\nfound newline!\n l: %d\n c: %d\n\n", linha_atual, coluna_atual);
+{NEWLINE}				 updateLineInfo();
 {SPACES}				 updateColumnInfo(strlen(yytext));
 {COMMA}                  updateColumnInfo(strlen(yytext)); return(COMMA);
 {COLON}                  updateColumnInfo(strlen(yytext)); return(COLON);
 {SEMICOLON}              updateColumnInfo(strlen(yytext)); return(SEMICOLON);
-PROCEDURE                updateColumnInfo(strlen(yytext)); return(PROC);//printf("LEX\n");openScope(symbol_table);
+PROCEDURE                updateColumnInfo(strlen(yytext)); return(PROC);
 sin                      updateColumnInfo(strlen(yytext)); return(SIN);
 log                      updateColumnInfo(strlen(yytext)); return(LOG);
 cos                      updateColumnInfo(strlen(yytext)); return(COS);
@@ -71,6 +87,7 @@ sqrt                     updateColumnInfo(strlen(yytext)); return(SQRT);
 exp                      updateColumnInfo(strlen(yytext)); return(EXP);
 eof                      updateColumnInfo(strlen(yytext)); return(EOFILE);
 eoln                     updateColumnInfo(strlen(yytext)); return(EOLN);
+chr                      updateColumnInfo(strlen(yytext)); return(CHR);
 program                  updateColumnInfo(strlen(yytext)); return(PROGRAM);
 integer                  updateColumnInfo(strlen(yytext)); return(INTEGER);
 real                     updateColumnInfo(strlen(yytext)); return(REAL);
@@ -103,12 +120,12 @@ NOT                      updateColumnInfo(strlen(yytext)); return(NOT);
 \<=						 updateColumnInfo(strlen(yytext)); return(LE);
 =						 updateColumnInfo(strlen(yytext)); return(EQ);
 !=						 updateColumnInfo(strlen(yytext)); return(NE);
-{ADDOP}                  yylval.integer = yytext[0]; updateColumnInfo(strlen(yytext)); return(ADDOP);
-{MULOP}                  yylval.integer = yytext[0]; updateColumnInfo(strlen(yytext)); return(MULOP);
-{INTEGER_CONSTANT}       yylval.integer = atoi(yytext); updateColumnInfo(strlen(yytext)); return(INTEGER_CONSTANT);
-{REAL_CONSTANT}          yylval.real = (int) atof(yytext); updateColumnInfo(strlen(yytext)); return(REAL_CONSTANT);
-{CHAR_CONSTANT}          yylval.integer = yytext[0]; updateColumnInfo(strlen(yytext)); return(CHAR_CONSTANT);
-{ID}                     yylval.integer = installToken(yytext); updateColumnInfo(strlen(yytext)); return(ID);
+{ADDOP}                  updateColumnInfo(strlen(yytext)); yylval.intval = yytext[0]; return(ADDOP);
+{MULOP}                  updateColumnInfo(strlen(yytext)); yylval.intval = yytext[0]; return(MULOP);
+{INTEGER_CONSTANT}       updateColumnInfo(strlen(yytext)); yylval.intval = atoi(yytext); return(INTEGER_CONSTANT);
+{REAL_CONSTANT}          updateColumnInfo(strlen(yytext)); yylval.realval = (double) atof(yytext); return(REAL_CONSTANT);
+{CHAR_CONSTANT}          updateColumnInfo(strlen(yytext)); yylval.intval = yytext[0]; return(CHAR_CONSTANT);
+{ID}                     updateColumnInfo(strlen(yytext)); yylval.addr = installToken(yytext); return(ID);
 %%
 #ifndef yywrap
 yywrap() { return 1; }

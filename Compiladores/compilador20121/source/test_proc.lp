@@ -1,7 +1,7 @@
 program MyProgram;
 a, n, fact : integer;
 
-integer PROCEDURE fatorial(value integer:n, reference char:chr):
+integer PROCEDURE fatorial(value integer:n, reference char:chrt):
   fact : char;
   fa, x : integer;
 begin
@@ -15,6 +15,8 @@ end
   
 begin
   read(n);
-  fact := fatorial(n, a);
-  write(a)
+  fact := fatorial(n);
+  write(a);
+  sin(true);
+  a := chr('b')
 end
