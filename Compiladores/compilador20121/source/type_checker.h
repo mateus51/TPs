@@ -1,3 +1,6 @@
+#ifndef __TYPE_CHECKER_H__
+#define __TYPE_CHECKER_H__
+
 #include "sym_table.h"
 
 #define EXIT_ON_ERROR False
@@ -7,24 +10,28 @@ enum BuiltInFunction {
 };
 
 
-void checkAssign(SymbolTable*, int, char*, int, int, int, int);
+int getTypeWidth(Type type);
 
-void checkIf(char*, int, int, int, int);
+void checkAssign(SymbolTable*, int, Type, int, int, int, int);
 
-void checkRepeat(char*, int, int, int, int);
+void checkIf(Type, int, int, int, int);
 
-void checkExpType(SymbolTable*, char*, char*, int, int, int, int);
+void checkRepeat(Type, int, int, int, int);
 
-char* checkFunctionCall(SymbolTable*, int, int, int, int, int);
+void checkExpType(SymbolTable*, Type, Type, int, int, int, int);
 
-void checkMod(char*, char*, int, int, int, int);
+Type checkFunctionCall(SymbolTable*, int, int, int, int, int);
 
-void checkDiv(char*, char*, int, int, int, int);
+void checkMod(Type, Type, int, int, int, int);
 
-void checkAnd(char*, char*, int, int, int, int);
+void checkDiv(Type, Type, int, int, int, int);
 
-char* checkNOT(char*, int, int, int, int);
+void checkAnd(Type, Type, int, int, int, int);
 
-char* checkRELOP(char*, char*);
+Type checkNOT(Type, int, int, int, int);
 
-char* checkBuiltInFunctionCall(enum BuiltInFunction, char*, int, int, int, int);
+Type checkRELOP(Type, Type);
+
+Type checkBuiltInFunctionCall(enum BuiltInFunction, Type, int, int, int, int);
+
+#endif

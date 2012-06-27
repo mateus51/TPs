@@ -4,46 +4,63 @@
 
 #include "type_checker.h"
 
-
+int getTypeWidth(Type type) {
+	switch (type) {
+	case real:
+		return 8;
+	case integer:
+		return 4;
+	case character:
+		return 1;
+	case boolean:
+		return 1;
+	default:
+		return 0;
+	}
+}
 
 // private functions
-boolean checkNumericalArg(char *arg) {
-	if (strcmp("integer", arg) && strcmp("real", arg))
+char checkNumericalArg(Type arg_type) {
+	switch (arg_type) {
+	case integer:
+		return True;
+	case real:
+		return True;
+	default:
 		return False;
-
-	return True;
+	}
 }
 
 
 /*
  * Statements
  */
-void checkAssign(SymbolTable *table, int index, char *type, int fline, int fcolumn, int lline, int lcolumn) {
+void checkAssign(SymbolTable *table, int index, Type type, int fline, int fcolumn, int lline, int lcolumn) {
 	if (DBG)
-		printf("\n\nchecking type of var %s (%s)\n\n", table->items[index]->name, type);
+		printf("\n\nchecking type of var %s (%s)\n\n", table->items[index]->name, typeStr(type));
 
 
-	if (strcmp(table->items[index]->type, type)) {
+	if (table->items[index]->type != type) {
 		//extern int linha_atual;
-		printf("Warning (%d,%d-%d,%d): assignment type mismatch! -  %s <- %s\n", fline, fcolumn, lline, lcolumn, table->items[index]->type, type);
+		printf("Warning (%d,%d-%d,%d): assignment type mismatch! -  %s <- %s\n", fline, fcolumn, lline, lcolumn, typeStr(table->items[index]->type), typeStr(type));
 		if (EXIT_ON_ERROR)
 			exit(EXIT_FAILURE);
 	}
 }
 
-void checkIf(char *cond, int fline, int fcolumn, int lline, int lcolumn) {
-	if (strcmp(cond, "boolean")) {
+void checkIf(Type cond_type, int fline, int fcolumn, int lline, int lcolumn) {
+	if (cond_type != boolean) {
 		//extern int linha_atual;
-		printf("Warning (%d,%d-%d,%d): 'if' statement requires a boolean condition (condition is '%s')\n", fline, fcolumn, lline, lcolumn, cond);
+		printf("Warning (%d,%d-%d,%d): 'if' statement requires a boolean condition (condition is '%s')\n", fline, fcolumn, lline, lcolumn, typeStr(cond_type));
 		if (EXIT_ON_ERROR)
 			exit(EXIT_FAILURE);
 	}
 }
 
-void checkRepeat(char *expr, int fline, int fcolumn, int lline, int lcolumn) {
-	if (strcmp(expr, "boolean")) {
+void checkRepeat(Type expr_type, int fline, int fcolumn, int lline, int lcolumn) {
+	if (expr_type != boolean) {
 		//extern int linha_atual;
-		printf("Warning (%d,%d-%d,%d): 'repeat' statement requires an expression that evaluates to a boolean (expression is '%s')\n", fline, fcolumn, lline, lcolumn, expr);
+		printf("Warning (%d,%d-%d,%d): 'repeat' statement requires an expression that evaluates to a boolean (expression is '%s')\n", fline, fcolumn, lline, lcolumn, typeStr(expr_type));
 		if (EXIT_ON_ERROR)
 			exit(EXIT_FAILURE);
 	}
@@ -51,18 +68,18 @@ void checkRepeat(char *expr, int fline, int fcolumn, int lline, int lcolumn) {
 
 
 
-void checkExpType(SymbolTable *table, char *type1, char *type2, int fline, int fcolumn, int lline, int lcolumn) {
+void checkExpType(SymbolTable *table, Type type1, Type type2, int fline, int fcolumn, int lline, int lcolumn) {
 	if (DBG)
-		printf("\n\nchecking type of exp (%s x %s)\n", type1, type2);
+		printf("\n\nchecking type of exp (%s x %s)\n", typeStr(type1), typeStr(type2));
 
-	if (strcmp(type1, type2)) {
+	if (type1 != type2) {
 		//extern int linha_atual;
-		printf("Warning (%d,%d-%d,%d): expression type mismatch! -  %s and %s are in the same expression.\n", fline, fcolumn, lline, lcolumn, type1, type2);
+		printf("Warning (%d,%d-%d,%d): expression type mismatch! -  %s and %s are in the same expression.\n", fline, fcolumn, lline, lcolumn, typeStr(type1), typeStr(type2));
 		//printTable(table);
 	}
 }
 
-char* checkFunctionCall(SymbolTable *table, int index, int fline, int fcolumn, int lline, int lcolumn) {
+Type checkFunctionCall(SymbolTable *table, int index, int fline, int fcolumn, int lline, int lcolumn) {
 	if (DBG)
 		printf("\n\nchecking function call: %s(%d params)\n", table->items[index]->name, table->items[index]->num_params);
 
@@ -82,8 +99,8 @@ char* checkFunctionCall(SymbolTable *table, int index, int fline, int fcolumn, i
 /*
  * Numerical Operators
  */
-void checkMod(char *op1, char *op2, int fline, int fcolumn, int lline, int lcolumn) {
-	if (strcmp("integer", op1) || strcmp("integer", op2)) {
+void checkMod(Type op1, Type op2, int fline, int fcolumn, int lline, int lcolumn) {
+	if (op1 != integer || op2 != integer) {
 		//extern int linha_atual;
 		printf("Warning (%d,%d-%d,%d): 'mod' operator requires integer operands.\n", fline, fcolumn, lline, lcolumn);
 
@@ -92,8 +109,8 @@ void checkMod(char *op1, char *op2, int fline, int fcolumn, int lline, int lcolu
 	}
 }
 
-void checkDiv(char *op1, char *op2, int fline, int fcolumn, int lline, int lcolumn) {
-	if (strcmp("integer", op1) || strcmp("integer", op2)) {
+void checkDiv(Type op1, Type op2, int fline, int fcolumn, int lline, int lcolumn) {
+	if (op1 != integer || op2 != integer) {
 		//extern int linha_atual;
 		printf("Warning (%d,%d-%d,%d): 'div' operator requires integer operands.\n", fline, fcolumn, lline, lcolumn);
 
@@ -102,8 +119,8 @@ void checkDiv(char *op1, char *op2, int fline, int fcolumn, int lline, int lcolu
 	}
 }
 
-void checkAnd(char *op1, char *op2, int fline, int fcolumn, int lline, int lcolumn) {
-	if (strcmp("boolean", op1) || strcmp("boolean", op2)) {
+void checkAnd(Type op1, Type op2, int fline, int fcolumn, int lline, int lcolumn) {
+	if (op1 != boolean || op2 != boolean) {
 		//extern int linha_atual;
 		printf("Warning (%d,%d-%d,%d): 'and' operator requires boolean operands.\n", fline, fcolumn, lline, lcolumn);
 
@@ -116,8 +133,8 @@ void checkAnd(char *op1, char *op2, int fline, int fcolumn, int lline, int lcolu
 /*
  * Boolean operators
  */
-char* checkNOT(char *op, int fline, int fcolumn, int lline, int lcolumn) {
-	if (strcmp("boolean", op)) {
+Type checkNOT(Type op, int fline, int fcolumn, int lline, int lcolumn) {
+	if (op != boolean) {
 		//extern int linha_atual;
 		printf("Warning (%d,%d-%d,%d): 'NOT' operator requires a boolean operand.\n", fline, fcolumn, lline, lcolumn);
 
@@ -128,17 +145,17 @@ char* checkNOT(char *op, int fline, int fcolumn, int lline, int lcolumn) {
 }
 
 // FIXME: RELOPs não necessariamente são boolean! 1 > 2 é válido! Ver documentaçao pascal.
-char* checkRELOP(char *op1, char *op2) {
+Type checkRELOP(Type op1, Type op2) {
 	// RELOPs aceitam qualquer tipo de operandos.
 
-	return "boolean";
+	return boolean;
 }
 
 
 
 
 /* Built-in functions */
-char* checkBuiltInFunctionCall(enum BuiltInFunction function, char *arg_type, int fline, int fcolumn, int lline, int lcolumn) {
+Type checkBuiltInFunctionCall(enum BuiltInFunction function, Type arg_type, int fline, int fcolumn, int lline, int lcolumn) {
 	switch (function) {
 
 	case fsin:
@@ -148,7 +165,7 @@ char* checkBuiltInFunctionCall(enum BuiltInFunction function, char *arg_type, in
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
-		return "real";
+		return real;
 
 	case fcos:
 		if (!checkNumericalArg(arg_type)) {
@@ -157,7 +174,7 @@ char* checkBuiltInFunctionCall(enum BuiltInFunction function, char *arg_type, in
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
-		return "real";
+		return real;
 
 	case flog:
 		if (!checkNumericalArg(arg_type)) {
@@ -166,16 +183,16 @@ char* checkBuiltInFunctionCall(enum BuiltInFunction function, char *arg_type, in
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
-		return "real";
+		return real;
 
 	case ford:
-		if (strcmp("char", arg_type)) {
+		if (arg_type != character) {
 			//extern int linha_atual;
 			printf("Warning (%d,%d-%d,%d): 'ord' function requires a char argument.\n", fline, fcolumn, lline, lcolumn);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
-		return "integer";
+		return integer;
 
 	case fabs:
 		if (!checkNumericalArg(arg_type)) {
@@ -193,7 +210,7 @@ char* checkBuiltInFunctionCall(enum BuiltInFunction function, char *arg_type, in
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
-		return "real";
+		return real;
 
 	case fexp:
 		if (!checkNumericalArg(arg_type)) {
@@ -202,39 +219,39 @@ char* checkBuiltInFunctionCall(enum BuiltInFunction function, char *arg_type, in
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
-		return "real";
+		return real;
 
 	case feofile:
-		if (strcmp(arg_type, "integer")) {
+		if (arg_type != integer) {
 			//extern int linha_atual;
 			printf("Warning (%d,%d-%d,%d): 'eofile' function requires an integer argument.\n", fline, fcolumn, lline, lcolumn);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
-		return "boolean";
+		return boolean;
 
 	case feoln:
-		if (strcmp(arg_type, "integer")) {
+		if (arg_type != integer) {
 			//extern int linha_atual;
 			printf("Warning (%d,%d-%d,%d): 'eoln' function requires an integer argument.\n", fline, fcolumn, lline, lcolumn);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
-		return "boolean";
+		return boolean;
 
 	case fchr:
-		if (strcmp("integer", arg_type)) {
+		if (arg_type != integer) {
 			//extern int linha_atual;
 			printf("Warning (%d,%d-%d,%d): 'chr' function requires an integer argument.\n", fline, fcolumn, lline, lcolumn);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
-		return "char";
+		return character;
 		break;
 
 	default:
 		printf("Default case!\n");
-		return NULL;
+		return nulltype;
 	}
 }
 

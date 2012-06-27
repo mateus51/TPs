@@ -1,14 +1,20 @@
+#ifndef __SEMANTIC_ANALYZER_H__
+#define __SEMANTIC_ANALYZER_H__
 
+#include "type_checker.h"
+#include "sym_table.h"
 
 typedef struct {
-	int integer;
-	double real;
-	char *string;
+	Type type; // symbol type
+	int width;
 
-	char *type; // symbol type
 	int addr;   // symbol table addr;
+
+	enum BuiltInFunction function;
 
 	int intval;
 	double realval;
 	char charval;
 } Attributes;
+
+#endif

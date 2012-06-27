@@ -1,7 +1,7 @@
 #ifndef __SYM_TABLE_H__
 #define __SYM_TABLE_H__
 
-typedef char boolean;
+//typedef char boolean;
 #define True  1
 #define False 0
 
@@ -11,14 +11,19 @@ typedef char boolean;
 
 #define DBG False//True
 
+typedef enum {
+	nulltype, integer, real, character, boolean, program
+} Type;
+
 typedef struct Symbol {
     char *name;
-    char *type;
+    Type type;
     int num_params;
     int scope;
     int line;
     int first_column;
     int last_column;
+    int width;
 } Symbol;
 
 typedef struct {
@@ -30,11 +35,13 @@ typedef struct {
 } SymbolTable;
 
 
+char *typeStr(Type type);
+
 void erro(char *message);
 
 void initTable(SymbolTable *table);
 
-Symbol *newSymbol(char *name, char *type, int scope, int line, int column);
+Symbol *newSymbol(char *name, Type type, int scope, int line, int column);
 
 void openScope(SymbolTable *table);
 
@@ -42,11 +49,11 @@ void closeScope(SymbolTable *table);
 
 int getSymbol(SymbolTable *table, char *name);
 
-char *lookupType(SymbolTable *table, int index);
+Type lookupType(SymbolTable *table, int index);
 
 int installId(SymbolTable *table, char *name, int linha_atual, int coluna_atual);
 
-void updateType(SymbolTable *table, int var_index, char *type);
+void updateType(SymbolTable *table, int var_index, Type type);
 
 void printTable(SymbolTable*);
 

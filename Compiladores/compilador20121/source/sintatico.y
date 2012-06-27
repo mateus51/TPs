@@ -27,7 +27,7 @@
 	
 	// variavel para indicar quando o parser está lendo
 	// código ou declarações
-	boolean reading_code = False;
+	char reading_code = False;
 	
 	// variavel que guarda número de parâmetros
 	// de cada definição função.
@@ -44,20 +44,20 @@
 		var_ind = 0;
 	}
 
-	void updateVariablesType(char *type_str) {
+	void updateVariablesType(Type type) {
 		if (DBG)
 			printf("\n\nUpdating array...\n  array[0] = %d\n", vars_to_get_type[0]);
 
 		int i;
 		for (i = 0; vars_to_get_type[i] != -1; i++)
-			updateType(symbol_table, vars_to_get_type[i], type_str);
+			updateType(symbol_table, vars_to_get_type[i], type);
 
 		resetVarsArray();
 		//printTable(symbol_table);
 	}
 	
-	void updateFunctionDef(int index, char *type) {
-		updateType(symbol_table, index, type);
+	void updateFunctionDef(int index, Type functype) {
+		updateType(symbol_table, index, functype);
 		symbol_table->items[index]->num_params = function_def_params;
 		function_def_params = 0;
 	}
@@ -94,7 +94,7 @@
 
 /* rules */
 program    :       PROGRAM ID SEMICOLON decl_list compound_stmt
-						{ updateType(symbol_table, $2.addr, "program"); }
+						{ updateType(symbol_table, $2.addr, program); }
            ;
 decl_list   :       decl_list SEMICOLON decl
             |       decl
@@ -112,13 +112,13 @@ ident_list  :       ident_list COMMA ID
             			{ saveVarInArray($1.addr); }
             ;
 type	:		INTEGER
-					{ $$.type = "integer"; }
+					{ $$.type = integer; }
 		|		REAL
-					{ $$.type = "real"; }
+					{ $$.type = real; }
 		|		BOOLEAN
-					{ $$.type = "boolean"; }
+					{ $$.type = boolean; }
 		|		CHAR
-					{ $$.type = "char"; }
+					{ $$.type = character; }
 		;
 dcl_proc    :       tipo_retornado PROC ID espec_parametros corpo
 						{ updateFunctionDef($3.addr, $1.type); }
@@ -126,15 +126,15 @@ dcl_proc    :       tipo_retornado PROC ID espec_parametros corpo
 vazio   :
         ;
 tipo_retornado  :       INTEGER
-							{ $$.type = "integer"; }
+							{ $$.type = integer; }
                 |       REAL
-                			{ $$.type = "real"; }
+                			{ $$.type = real; }
                 |       BOOLEAN
-                			{ $$.type = "boolean"; }
+                			{ $$.type = boolean; }
                 |       CHAR
-                			{ $$.type = "char"; }
+                			{ $$.type = character; }
                 |       vazio
-                			{ $$.type = "vazio"; }
+                			{ $$.type = nulltype; }
                 ;
 corpo   :       COLON decl_list SEMICOLON compound_stmt after_proc_compound id_return
         |       vazio
@@ -225,7 +225,7 @@ simple_expr	:		term
 			|		simple_expr ADDOP term
 						{ checkExpType(symbol_table, $1.type, $3.type, @$.first_line, @$.first_column, @$.last_line, @$.last_column); $$ = $1; }
 			|		simple_expr OR term
-						{ checkExpType(symbol_table, $1.type, "boolean", @$.first_line, @$.first_column, @$.last_line, @$.last_column); $$ = $1; }
+						{ checkExpType(symbol_table, $1.type, boolean, @$.first_line, @$.first_column, @$.last_line, @$.last_column); $$ = $1; }
 			;
 term	:		factor_a
 					{ $$.type = $1.type; }
@@ -255,45 +255,45 @@ factor	:		ID
 					{ $$.type = $1.type; }
 		;
 function_ref_par	:		built_in_function LPAR expr RPAR
-								{ $$.type = checkBuiltInFunctionCall($1.integer, $3.type, @3.first_line, @3.first_column, @3.last_line, @3.last_column); }
+								{ $$.type = checkBuiltInFunctionCall($1.function, $3.type, @3.first_line, @3.first_column, @3.last_line, @3.last_column); $$.width = getTypeWidth($$.type); }
 					|		variable LPAR expr_list RPAR
-								{ $$.type = checkFunctionCall(symbol_table, $1.addr, @3.first_line, @3.first_column, @3.last_line, @3.last_column); }
+								{ $$.type = checkFunctionCall(symbol_table, $1.addr, @3.first_line, @3.first_column, @3.last_line, @3.last_column); ; $$.width = getTypeWidth($$.type); }
 					;
 built_in_function	:		SIN
-								{ $$.integer = fsin; }
+								{ $$.function = fsin; }
 					|		COS
-								{ $$.integer = fcos; }
+								{ $$.function = fcos; }
 					|		LOG
-								{ $$.integer = flog; }
+								{ $$.function = flog; }
 					|		ORD
-								{ $$.integer = ford; }
+								{ $$.function = ford; }
 					|		ABS
-								{ $$.integer = fabs; }
+								{ $$.function = fabs; }
 					|		SQRT
-								{ $$.integer = fsqrt; }
+								{ $$.function = fsqrt; }
 					|		EXP
-								{ $$.integer = fexp; }
+								{ $$.function = fexp; }
 					|		EOFILE
-								{ $$.integer = feofile; }
+								{ $$.function = feofile; }
 					|		EOLN
-								{ $$.integer = feoln; }
+								{ $$.function = feoln; }
 					|		CHR
-								{ $$.integer = fchr; }
+								{ $$.function = fchr; }
 					;
 variable	:		simple_variable_or_proc
-						{ $$.addr = $1.addr; }
+						{ $$.addr = $1.addr; $$.width = $1.width; }
 			;
 simple_variable_or_proc	:		ID
-									{ $$.addr = $1.addr; }
+									{ $$.addr = $1.addr; $$.width = $1.width; }
 						;
 constant	:		INTEGER_CONSTANT
-						{ $$.type = "integer"; }
+						{ $$.type = integer; $$.width = 4; }
 			|		REAL_CONSTANT
-						{ $$.type = "real"; }
+						{ $$.type = real; $$.width = 8; }
 			|		CHAR_CONSTANT
-						{ $$.type = "char"; }
+						{ $$.type = character; $$.width = 1; }
 			|		boolean_constant
-						{ $$.type = "boolean"; }
+						{ $$.type = boolean; $$.width = 1; }
 			;
 boolean_constant	:		TRUE
 					|		FALSE

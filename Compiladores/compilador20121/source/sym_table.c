@@ -4,6 +4,25 @@
 #include <stdlib.h>
 #include <string.h>
 
+char *typeStr(Type type) {
+	switch(type) {
+	case nulltype:
+		return NULL;
+	case integer:
+		return "integer";
+	case character:
+		return "char";
+	case real:
+		return "real";
+	case boolean:
+		return "boolean";
+	case program:
+		return "program";
+	default:
+		return NULL;
+	}
+}
+
 void checkTableCapacity(SymbolTable *table) {
 	if (table->last == table->capacity) {
 		table->capacity = table->capacity * TABLE_GROWTH_FACTOR;
@@ -35,24 +54,18 @@ void initTable(SymbolTable *table) {
 }
 
 /* Creates a new symbol */
-Symbol *newSymbol(char *name, char *type, int scope, int line, int column) {
+Symbol *newSymbol(char *name, Type type, int scope, int line, int column) {
 //	printf("TABLE: %s(%d, %d)\n", name, line, column);
 	int name_size = strlen(name);
 	Symbol *symbol = (Symbol*) malloc(sizeof(Symbol));
-	symbol->name = (char*) malloc(sizeof(char) * name_size + 1);
+	symbol->name = (char*) malloc(sizeof(char) * (name_size + 1));
 	strcpy(symbol->name, name);
-	if (symbol->type != NULL) {
-		symbol->type = (char*) malloc(sizeof(char) * strlen(type) + 1);
-		strcpy(symbol->type, type);
-	}
-	else
-		symbol->type = NULL;
-
+	symbol->type = type;
 	symbol->line = line;
 	symbol->first_column = column;
 	symbol->last_column = symbol->first_column + strlen(name) - 1;
 	symbol->scope = scope;
-	symbol->num_params = 0;
+	symbol->num_params = symbol->width = 0;
 	return symbol;
 }
 
@@ -93,7 +106,7 @@ int getSymbol(SymbolTable *table, char *name) {
 	return 0;
 }
 
-char *lookupType(SymbolTable *table, int index) {
+Type lookupType(SymbolTable *table, int index) {
 	return table->items[index]->type;
 }
 
@@ -105,7 +118,7 @@ int installId(SymbolTable *table, char *name, int linha_atual, int coluna_atual)
 
 	checkTableCapacity(table);
 //	extern int linha_atual, coluna_atual;
-	Symbol *symbol = newSymbol(name, NULL, table->current_scope, linha_atual, coluna_atual);
+	Symbol *symbol = newSymbol(name, nulltype, table->current_scope, linha_atual, coluna_atual);
 	symbol->scope = table->current_scope;
 	table->items[table->last] = symbol;
 	table->last++;
@@ -123,34 +136,51 @@ int installId(SymbolTable *table, char *name, int linha_atual, int coluna_atual)
 }
 
 /* Updates the symbol type in the table */
-void updateType(SymbolTable *table, int var_index, char *type) {
+void updateType(SymbolTable *table, int var_index, Type type) {
 	if (DBG)
 		printf("\n\nTABLE: Updating type of %s (scope %d)...\n", table->items[var_index]->name, table->items[var_index]->scope);
 
-	if (table->items[var_index]->type != NULL)
+	if (table->items[var_index]->type != nulltype)
 		erro("Tipo de variável já foi especificado!");
-	else {
-		table->items[var_index]->type = (char*) malloc(sizeof(char) * strlen(type) + 1);
-		strcpy(table->items[var_index]->type, type);
+	else
+		table->items[var_index]->type = type;
+
+	switch (type) {
+	case integer:
+		table->items[var_index]->width = 4;
+		break;
+	case real:
+		table->items[var_index]->width = 8;
+		break;
+	case character:
+		table->items[var_index]->width = 1;
+		break;
+	case boolean:
+		table->items[var_index]->width = 1;
+		break;
+	default:
+		table->items[var_index]->width = 1;
+		printf("updating type : default case (%s)\n", typeStr(type));
 	}
 
 	if (DBG)
-		printf("  type updated to '%s'.\n\n", table->items[var_index]->type);
+		printf("  type updated to '%s'.\n\n", typeStr(table->items[var_index]->type));
 }
 
 /* Prints the symbol table */
 void printTable(SymbolTable *table) {
-    printf("%16s %16s %16s %16s %16s %16s %16s %16s\n\n", "NOME", "INDEX", "TYPE", "NUM_PARAMS", "SCOPE", "LINHA", "COLUNA I", "COLUNA F");
+    printf("%10s %10s %10s %10s %10s %10s %10s %10s %10s\n\n", "NOME", "INDEX", "TYPE", "NUM_PARAMS", "SCOPE", "LINHA", "COLUNA I", "COLUNA F", "WIDTH");
     int i;
     for (i = 0; i < table->last; i++) {
-    	printf("%16s ", table->items[i]->name);
-    	printf("%16d ", i);
-    	printf("%16s ", table->items[i]->type);
-    	printf("%16d ", table->items[i]->num_params);
-    	printf("%16d ", table->items[i]->scope);
-    	printf("%16d ", table->items[i]->line);
-    	printf("%16d ", table->items[i]->first_column);
-    	printf("%16d\n", table->items[i]->last_column);
+    	printf("%10s ", table->items[i]->name);
+    	printf("%10d ", i);
+    	printf("%10d ", table->items[i]->type);
+    	printf("%10d ", table->items[i]->num_params);
+    	printf("%10d ", table->items[i]->scope);
+    	printf("%10d ", table->items[i]->line);
+    	printf("%10d ", table->items[i]->first_column);
+    	printf("%10d ", table->items[i]->last_column);
+    	printf("%10d\n", table->items[i]->width);
     }
 }
 
