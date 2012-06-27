@@ -141,7 +141,7 @@ void updateType(SymbolTable *table, int var_index, Type type) {
 		printf("\n\nTABLE: Updating type of %s (scope %d)...\n", table->items[var_index]->name, table->items[var_index]->scope);
 
 	if (table->items[var_index]->type != nulltype)
-		erro("Tipo de variável já foi especificado!");
+		erro("Procedure ou variável duplicada.");
 	else
 		table->items[var_index]->type = type;
 
@@ -160,7 +160,7 @@ void updateType(SymbolTable *table, int var_index, Type type) {
 		break;
 	default:
 		table->items[var_index]->width = 1;
-		printf("updating type : default case (%s)\n", typeStr(type));
+//		printf("updating type : default case (%s)\n", typeStr(type));
 	}
 
 	if (DBG)

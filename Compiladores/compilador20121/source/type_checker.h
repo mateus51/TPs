@@ -3,7 +3,7 @@
 
 #include "sym_table.h"
 
-#define EXIT_ON_ERROR False
+#define EXIT_ON_ERROR True
 
 enum BuiltInFunction {
 	fsin, fcos, flog, ford, fabs, fsqrt, fexp, feofile, feoln, fchr
@@ -18,7 +18,7 @@ void checkIf(Type, int, int, int, int);
 
 void checkRepeat(Type, int, int, int, int);
 
-void checkExpType(SymbolTable*, Type, Type, int, int, int, int);
+Type checkExpType(SymbolTable*, Type, Type, int, int, int, int);
 
 Type checkFunctionCall(SymbolTable*, int, int, int, int, int);
 

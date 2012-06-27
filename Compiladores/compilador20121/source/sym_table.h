@@ -12,7 +12,7 @@
 #define DBG False//True
 
 typedef enum {
-	nulltype, integer, real, character, boolean, program
+	nulltype, integer, real, character, boolean, program, vazio
 } Type;
 
 typedef struct Symbol {

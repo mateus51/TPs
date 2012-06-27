@@ -56,8 +56,11 @@
 		//printTable(symbol_table);
 	}
 	
-	void updateFunctionDef(int index, Type functype) {
+	void updateFunctionDef(int index, Type functype, int retaddr, int fline, int fcolumn, int lline, int lcolumn) {
 		updateType(symbol_table, index, functype);
+		if (functype != vazio && retaddr == -1) {
+			printf("Warning (%d,%d-%d,%d): no return value on non-void function.\n", fline, fcolumn, lline, lcolumn);
+		}
 		symbol_table->items[index]->num_params = function_def_params;
 		function_def_params = 0;
 	}
@@ -121,7 +124,7 @@ type	:		INTEGER
 					{ $$.type = character; }
 		;
 dcl_proc    :       tipo_retornado PROC ID espec_parametros corpo
-						{ updateFunctionDef($3.addr, $1.type); }
+						{ updateFunctionDef($3.addr, $1.type, $5.addr, @$.first_line, @$.first_column, @$.last_line, @$.last_column); }
             ;
 vazio   :
         ;
@@ -134,9 +137,10 @@ tipo_retornado  :       INTEGER
                 |       CHAR
                 			{ $$.type = character; }
                 |       vazio
-                			{ $$.type = nulltype; }
+                			{ $$.type = vazio; }
                 ;
 corpo   :       COLON decl_list SEMICOLON compound_stmt after_proc_compound id_return
+					{ $$.addr = $6.addr; }
         |       vazio
         ;
 after_proc_compound	:		vazio
@@ -144,7 +148,9 @@ after_proc_compound	:		vazio
 					;
 						;
 id_return   :       ID
+						{ $$.addr = $1.addr; }
             |       vazio
+            			{ $$.addr = -1; }
             ;
 espec_parametros    :       lpar_espec_params lista_parametros RPAR
                     ;
@@ -223,14 +229,14 @@ expr	:		simple_expr
 simple_expr	:		term
 						{ $$.type = $1.type; }
 			|		simple_expr ADDOP term
-						{ checkExpType(symbol_table, $1.type, $3.type, @$.first_line, @$.first_column, @$.last_line, @$.last_column); $$ = $1; }
+						{ $$.type = checkExpType(symbol_table, $1.type, $3.type, @$.first_line, @$.first_column, @$.last_line, @$.last_column); }
 			|		simple_expr OR term
-						{ checkExpType(symbol_table, $1.type, boolean, @$.first_line, @$.first_column, @$.last_line, @$.last_column); $$ = $1; }
+						{ $$.type = checkExpType(symbol_table, $1.type, boolean, @$.first_line, @$.first_column, @$.last_line, @$.last_column); }
 			;
 term	:		factor_a
 					{ $$.type = $1.type; }
 		|		term MULOP factor_a
-					{ checkExpType(symbol_table, $1.type, $3.type, @$.first_line, @$.first_column, @$.last_line, @$.last_column); $$.type = $1.type; }
+					{ $$.type = checkExpType(symbol_table, $1.type, $3.type, @$.first_line, @$.first_column, @$.last_line, @$.last_column); }
 		|		term AND factor_a
 					{ checkAnd($1.type, $3.type, @$.first_line, @$.first_column, @$.last_line, @$.last_column); $$.type = $1.type; }
 		|		term MOD factor_a

@@ -40,11 +40,22 @@ void checkAssign(SymbolTable *table, int index, Type type, int fline, int fcolum
 		printf("\n\nchecking type of var %s (%s)\n\n", table->items[index]->name, typeStr(type));
 
 
-	if (table->items[index]->type != type) {
-		//extern int linha_atual;
-		printf("Warning (%d,%d-%d,%d): assignment type mismatch! -  %s <- %s\n", fline, fcolumn, lline, lcolumn, typeStr(table->items[index]->type), typeStr(type));
+	if (table->items[index]->type == integer && type == real) {
+		printf("Error (%d,%d-%d,%d): assignment type mismatch! -  %s <- %s\n", fline, fcolumn, lline, lcolumn, typeStr(table->items[index]->type), typeStr(type));
 		if (EXIT_ON_ERROR)
 			exit(EXIT_FAILURE);
+	}
+	else if (table->items[index]->type == real && type == integer) {
+		// nothing to do...
+	}
+	else if (checkNumericalArg(table->items[index]->type) && type == boolean) {
+		printf("Error (%d,%d-%d,%d): assignment type mismatch! -  %s <- %s\n", fline, fcolumn, lline, lcolumn, typeStr(table->items[index]->type), typeStr(type));
+		if (EXIT_ON_ERROR)
+			exit(EXIT_FAILURE);
+	}
+	else if (table->items[index]->type != type) {
+		//extern int linha_atual;
+		printf("Warning (%d,%d-%d,%d): assignment type mismatch! -  %s <- %s\n", fline, fcolumn, lline, lcolumn, typeStr(table->items[index]->type), typeStr(type));
 	}
 }
 
@@ -68,14 +79,21 @@ void checkRepeat(Type expr_type, int fline, int fcolumn, int lline, int lcolumn)
 
 
 
-void checkExpType(SymbolTable *table, Type type1, Type type2, int fline, int fcolumn, int lline, int lcolumn) {
+Type checkExpType(SymbolTable *table, Type type1, Type type2, int fline, int fcolumn, int lline, int lcolumn) {
 	if (DBG)
 		printf("\n\nchecking type of exp (%s x %s)\n", typeStr(type1), typeStr(type2));
 
-	if (type1 != type2) {
+	if ((type1 == integer && type2 == real) || (type1 == real && type2 == integer)) {
+		return real;
+	}
+	else if (type1 != type2) {
 		//extern int linha_atual;
-		printf("Warning (%d,%d-%d,%d): expression type mismatch! -  %s and %s are in the same expression.\n", fline, fcolumn, lline, lcolumn, typeStr(type1), typeStr(type2));
-		//printTable(table);
+		printf("Error (%d,%d-%d,%d): invalid expression operands (have ‘%s’ and ‘%s’)\n", fline, fcolumn, lline, lcolumn, typeStr(type1), typeStr(type2));
+		if (EXIT_ON_ERROR)
+			exit(EXIT_FAILURE);
+	}
+	else {
+		return type1;
 	}
 }
 
@@ -102,7 +120,7 @@ Type checkFunctionCall(SymbolTable *table, int index, int fline, int fcolumn, in
 void checkMod(Type op1, Type op2, int fline, int fcolumn, int lline, int lcolumn) {
 	if (op1 != integer || op2 != integer) {
 		//extern int linha_atual;
-		printf("Warning (%d,%d-%d,%d): 'mod' operator requires integer operands.\n", fline, fcolumn, lline, lcolumn);
+		printf("Error (%d,%d-%d,%d): 'mod' operator requires integer operands.\n", fline, fcolumn, lline, lcolumn);
 
 		if (EXIT_ON_ERROR)
 			exit(EXIT_FAILURE);
@@ -112,7 +130,7 @@ void checkMod(Type op1, Type op2, int fline, int fcolumn, int lline, int lcolumn
 void checkDiv(Type op1, Type op2, int fline, int fcolumn, int lline, int lcolumn) {
 	if (op1 != integer || op2 != integer) {
 		//extern int linha_atual;
-		printf("Warning (%d,%d-%d,%d): 'div' operator requires integer operands.\n", fline, fcolumn, lline, lcolumn);
+		printf("Error (%d,%d-%d,%d): 'div' operator requires integer operands.\n", fline, fcolumn, lline, lcolumn);
 
 		if (EXIT_ON_ERROR)
 			exit(EXIT_FAILURE);
@@ -122,7 +140,7 @@ void checkDiv(Type op1, Type op2, int fline, int fcolumn, int lline, int lcolumn
 void checkAnd(Type op1, Type op2, int fline, int fcolumn, int lline, int lcolumn) {
 	if (op1 != boolean || op2 != boolean) {
 		//extern int linha_atual;
-		printf("Warning (%d,%d-%d,%d): 'and' operator requires boolean operands.\n", fline, fcolumn, lline, lcolumn);
+		printf("Error (%d,%d-%d,%d): 'and' operator requires boolean operands.\n", fline, fcolumn, lline, lcolumn);
 
 		if (EXIT_ON_ERROR)
 			exit(EXIT_FAILURE);
@@ -136,7 +154,7 @@ void checkAnd(Type op1, Type op2, int fline, int fcolumn, int lline, int lcolumn
 Type checkNOT(Type op, int fline, int fcolumn, int lline, int lcolumn) {
 	if (op != boolean) {
 		//extern int linha_atual;
-		printf("Warning (%d,%d-%d,%d): 'NOT' operator requires a boolean operand.\n", fline, fcolumn, lline, lcolumn);
+		printf("Error (%d,%d-%d,%d): 'NOT' operator requires a boolean operand.\n", fline, fcolumn, lline, lcolumn);
 
 		if (EXIT_ON_ERROR)
 			exit(EXIT_FAILURE);
@@ -161,7 +179,7 @@ Type checkBuiltInFunctionCall(enum BuiltInFunction function, Type arg_type, int 
 	case fsin:
 		if (!checkNumericalArg(arg_type)) {
 			//extern int linha_atual;
-			printf("Warning (%d,%d-%d,%d): 'sin' function requires an integer or real argument.\n", fline, fcolumn, lline, lcolumn);
+			printf("Error (%d,%d-%d,%d): 'sin' function requires an integer or real argument.\n", fline, fcolumn, lline, lcolumn);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
@@ -170,7 +188,7 @@ Type checkBuiltInFunctionCall(enum BuiltInFunction function, Type arg_type, int 
 	case fcos:
 		if (!checkNumericalArg(arg_type)) {
 			//extern int linha_atual;
-			printf("Warning (%d,%d-%d,%d): 'cos' function requires an integer or real argument.\n", fline, fcolumn, lline, lcolumn);
+			printf("Error (%d,%d-%d,%d): 'cos' function requires an integer or real argument.\n", fline, fcolumn, lline, lcolumn);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
@@ -179,7 +197,7 @@ Type checkBuiltInFunctionCall(enum BuiltInFunction function, Type arg_type, int 
 	case flog:
 		if (!checkNumericalArg(arg_type)) {
 			//extern int linha_atual;
-			printf("Warning (%d,%d-%d,%d): 'log' function requires an integer or real argument.\n", fline, fcolumn, lline, lcolumn);
+			printf("Error (%d,%d-%d,%d): 'log' function requires an integer or real argument.\n", fline, fcolumn, lline, lcolumn);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
@@ -188,7 +206,7 @@ Type checkBuiltInFunctionCall(enum BuiltInFunction function, Type arg_type, int 
 	case ford:
 		if (arg_type != character) {
 			//extern int linha_atual;
-			printf("Warning (%d,%d-%d,%d): 'ord' function requires a char argument.\n", fline, fcolumn, lline, lcolumn);
+			printf("Error (%d,%d-%d,%d): 'ord' function requires a char argument.\n", fline, fcolumn, lline, lcolumn);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
@@ -197,7 +215,7 @@ Type checkBuiltInFunctionCall(enum BuiltInFunction function, Type arg_type, int 
 	case fabs:
 		if (!checkNumericalArg(arg_type)) {
 			//extern int linha_atual;
-			printf("Warning (%d,%d-%d,%d): 'abs' function requires an integer or real argument.\n", fline, fcolumn, lline, lcolumn);
+			printf("Error (%d,%d-%d,%d): 'abs' function requires an integer or real argument.\n", fline, fcolumn, lline, lcolumn);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
@@ -206,7 +224,7 @@ Type checkBuiltInFunctionCall(enum BuiltInFunction function, Type arg_type, int 
 	case fsqrt:
 		if (!checkNumericalArg(arg_type)) {
 			//extern int linha_atual;
-			printf("Warning (%d,%d-%d,%d): 'sqrt' function requires an integer or real argument.\n", fline, fcolumn, lline, lcolumn);
+			printf("Error (%d,%d-%d,%d): 'sqrt' function requires an integer or real argument.\n", fline, fcolumn, lline, lcolumn);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
@@ -215,7 +233,7 @@ Type checkBuiltInFunctionCall(enum BuiltInFunction function, Type arg_type, int 
 	case fexp:
 		if (!checkNumericalArg(arg_type)) {
 			//extern int linha_atual;
-			printf("Warning (%d,%d-%d,%d): 'exp' function requires an integer or real argument.\n", fline, fcolumn, lline, lcolumn);
+			printf("Error (%d,%d-%d,%d): 'exp' function requires an integer or real argument.\n", fline, fcolumn, lline, lcolumn);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
@@ -224,7 +242,7 @@ Type checkBuiltInFunctionCall(enum BuiltInFunction function, Type arg_type, int 
 	case feofile:
 		if (arg_type != integer) {
 			//extern int linha_atual;
-			printf("Warning (%d,%d-%d,%d): 'eofile' function requires an integer argument.\n", fline, fcolumn, lline, lcolumn);
+			printf("Error (%d,%d-%d,%d): 'eofile' function requires an integer argument.\n", fline, fcolumn, lline, lcolumn);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
@@ -233,7 +251,7 @@ Type checkBuiltInFunctionCall(enum BuiltInFunction function, Type arg_type, int 
 	case feoln:
 		if (arg_type != integer) {
 			//extern int linha_atual;
-			printf("Warning (%d,%d-%d,%d): 'eoln' function requires an integer argument.\n", fline, fcolumn, lline, lcolumn);
+			printf("Error (%d,%d-%d,%d): 'eoln' function requires an integer argument.\n", fline, fcolumn, lline, lcolumn);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
@@ -242,7 +260,7 @@ Type checkBuiltInFunctionCall(enum BuiltInFunction function, Type arg_type, int 
 	case fchr:
 		if (arg_type != integer) {
 			//extern int linha_atual;
-			printf("Warning (%d,%d-%d,%d): 'chr' function requires an integer argument.\n", fline, fcolumn, lline, lcolumn);
+			printf("Error (%d,%d-%d,%d): 'chr' function requires an integer argument.\n", fline, fcolumn, lline, lcolumn);
 			if (EXIT_ON_ERROR)
 				exit(EXIT_FAILURE);
 		}
