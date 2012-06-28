@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/16/trunk/tp2/servidor
+END
+in.txt
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/16/trunk/tp2/servidor/in.txt
+END
+geraentrada.py
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/8/trunk/tp2/servidor/geraentrada.py
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/10/trunk/tp2/servidor/Makefile
+END
+servidor.c
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/16/trunk/tp2/servidor/servidor.c
+END

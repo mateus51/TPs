@@ -1,0 +1,76 @@
+
+set terminal pdf
+set output "teste1.pdf"
+set key inside left top vertical Right noreverse enhanced autotitles box linetype -1 linewidth 1.000
+set style data linespoint
+set grid
+set xlabel "Tamanho do buffer (B)"
+set ylabel "Tempo de execucao (s)"
+set title "Grafico: Tamanho do buffer X Tempo de execucao"
+plot "teste1.txt" using 3:6:7 with yerrorbars t'', "teste1.txt" using 3:6 t'Localhost', "teste1-2.txt" using 3:6:7 with yerrorbars t'', "teste1-2.txt" using 3:6 t'Rede DCC' 
+
+reset
+set terminal png 
+set output "teste1-2.png"
+set key inside left top vertical Right noreverse enhanced autotitles box linetype -1 linewidth 1.000
+set style data linespoint
+set grid
+set xlabel "Tamanho do buffer (B)"
+set ylabel "Throughput (Mb/s)"
+set title "Grafico: Tamanho do buffer X Throughput"
+plot "teste1.txt" using 3:($5/125000) t'Localhost', "teste1-2.txt" using 3:($5/125000) t'Rede DCC'
+
+reset
+set terminal png 
+set output "teste2.png"
+set key inside left top vertical Right noreverse enhanced autotitles box linetype -1 linewidth 1.000
+set style data linespoint
+set grid
+set xlabel "Tamanho do buffer (B) (log(x))"
+set ylabel "Tempo de execucao (s)"
+set title "Grafico: Tamanho do buffer X Tempo de execucao"
+plot "teste2.txt" using (log($3)):6:7 with yerrorbars t'', "teste2.txt" using (log($3)):6 t'' 
+
+reset
+set terminal png 
+set output "teste3.png"
+set key inside left top vertical Right noreverse enhanced autotitles box linetype -1 linewidth 1.000
+set style data linespoint
+set grid
+set xlabel "Tamanho do buffer (B) (log(x))"
+set ylabel "Tempo de execucao (s)"
+set title "Grafico: Tamanho do buffer X Tempo de execucao"
+plot "teste3.txt" using (log($3)):6:7 with yerrorbars t'', "teste3.txt" using (log($3)):6 t'' 
+
+reset
+set terminal png 
+set output "teste4.png"
+set key inside left top vertical Right noreverse enhanced autotitles box linetype -1 linewidth 1.000
+set style data linespoint
+set grid
+set xlabel "Tamanho do buffer (B) (log(x))"
+set ylabel "Tempo de execucao (s)"
+set title "Grafico: Tamanho do buffer X Tempo de execucao"
+plot "teste4.txt" using (log($4)):6:7 with yerrorbars t'', "teste4.txt" using (log($4)):6 t'' 
+
+reset
+set terminal png 
+set output "teste5.png"
+set key inside left top vertical Right noreverse enhanced autotitles box linetype -1 linewidth 1.000
+set style data linespoint
+set grid
+set xlabel "Tamanho do arquivo (B) (log(x))"
+set ylabel "Tempo de execucao (s)"
+set title "Grafico: Tamanho do arquivo X Tempo de execucao"
+plot "teste5.txt" using (log($1)):6:7 with yerrorbars t'', "teste5.txt" using (log($1)):6 t'' 
+
+reset
+set terminal png 
+set output "teste5-2.png"
+set key inside left top vertical Right noreverse enhanced autotitles box linetype -1 linewidth 1.000
+set style data linespoint
+set grid
+set xlabel "Tamanho do arquivo (B) (log(x))"
+set ylabel "Throughput (Mb/s)"
+set title "Grafico: Tamanho do arquivo X Throughput"
+plot "teste5.txt" using (log($1)):($5/125000) t''

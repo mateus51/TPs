@@ -4,5 +4,6 @@
 double get_time() {
 	struct timeval time;
 	gettimeofday(&time, NULL);
-	return time.tv_sec + (time.tv_usec/1000000.0);
+	double secs = time.tv_sec + (time.tv_usec/1000000.0);
+	return secs;
 }

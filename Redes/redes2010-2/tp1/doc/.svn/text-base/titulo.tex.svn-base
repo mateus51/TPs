@@ -1,0 +1,35 @@
+\begin{titlepage}
+\begin{center}
+
+\includegraphics[scale=0.2]{imagens/UFMG.png}\\
+\textsc{\LARGE Universidade Federal de Minas Gerais\\
+	Departamento de Ciência da Computação}\\[1.5cm]
+
+\textsc{\Large Redes de Computadores\\
+	Trabalho Prático 1}\\[0.5cm]
+
+\hrulefill \\[0.4cm]
+{ \LARGE \bfseries Sockets: Medição de desempenho}\\[0.4cm]
+
+\hrulefill \\[1.5cm]
+\vspace{7cm}
+\begin{minipage}{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Alunos:}\\
+Daniel Brasil Magnani\\
+João Paulo Pesce \\
+\end{flushleft}
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+\emph{Professor:}\\
+Dorgival Guedes\\
+\end{flushright}
+\end{minipage}
+
+\vfill
+
+{\large \today}
+
+\end{center}
+\end{titlepage}

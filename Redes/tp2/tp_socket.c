@@ -24,7 +24,7 @@ int tp_mtu(void)
 int tp_sendto(int so, char* buff, int buff_len, so_addr* to_addr)
 {
     int count;
-    fprintf(stderr,"tp_sendto called (%d bytes)\n", buff_len);
+//    fprintf(stderr,"tp_sendto called (%d bytes)\n", buff_len);
     /*******************************************************
      * Aqui seria um bom lugar para injetar erros a fim de *
      * exercitar a funcionalidade do protocolo da camada   *
@@ -32,7 +32,7 @@ int tp_sendto(int so, char* buff, int buff_len, so_addr* to_addr)
      *******************************************************/
     count = sendto(so, (void*)buff, buff_len, 0,
             (struct sockaddr*) to_addr, sizeof(struct sockaddr_in));
-    fprintf(stderr,"tp_sendto returning (sent %d bytes)\n", count);
+//    fprintf(stderr,"tp_sendto returning (sent %d bytes)\n", count);
     return count;
 
 }
@@ -41,7 +41,7 @@ int tp_recvfrom(int so, char* buff, int buff_len, so_addr* from_addr)
 {
     int count;
     unsigned int sockaddr_len = sizeof(struct sockaddr_in);
-    fprintf(stderr,"tp_recvfrom called (%d bytes)\n",buff_len);
+//    fprintf(stderr,"tp_recvfrom called (%d bytes)\n",buff_len);
     /*******************************************************
      * Aqui seria um bom lugar para injetar erros a fim de *
      * exercitar a funcionalidade do protocolo da camada   *
@@ -49,13 +49,13 @@ int tp_recvfrom(int so, char* buff, int buff_len, so_addr* from_addr)
      *******************************************************/
     count = recvfrom(so,(void*)buff,(size_t)buff_len,0,
             (struct sockaddr*) from_addr, &sockaddr_len);
-    fprintf(stderr,"tp_recvfrom returning (received %d bytes)\n",count);
+//    fprintf(stderr,"tp_recvfrom returning (received %d bytes)\n",count);
     return count;
 }
 
 int tp_init(void)
 {
-    fprintf(stderr,"tp_init called\n");
+//    fprintf(stderr,"tp_init called\n");
     /*********************************************************
      * Exceto para fins de automatizar os testes com versões *
      * alteradas deste código (para injetar erros), não deve *
@@ -75,8 +75,8 @@ int tp_socket(unsigned short port)
     struct sockaddr_in local_addr;
     int    addr_len =sizeof(local_addr);
 
-    fprintf(stderr,"tp_socket called\n");
-    if ((so=socket(PF_INET,SOCK_DGRAM,0))<0) {
+//    fprintf(stderr,"tp_socket called\n");
+    if ((so=socket(PF_INET,SOCK_STREAM,0))<0) {
         return -1;
     }
     if (tp_build_addr(&local_addr,INADDR_ANY,port)<0) {
@@ -92,7 +92,7 @@ int tp_build_addr(so_addr* addr, char* hostname, int port)
 {
     struct hostent* he;
 
-    fprintf(stderr,"tp_build_addr called\n");
+//    fprintf(stderr,"tp_build_addr called\n");
     addr->sin_family = PF_INET;
     addr->sin_port   = htons(port);
     if (hostname==NULL) {

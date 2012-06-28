@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 26
+/svn/!svn/ver/19/trunk/tp2
+END
+janela.h
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/16/trunk/tp2/janela.h
+END
+tp_socket.h
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/10/trunk/tp2/tp_socket.h
+END
+janela.c
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/16/trunk/tp2/janela.c
+END
+tp_socket.c
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/16/trunk/tp2/tp_socket.c
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/10/trunk/tp2/Makefile
+END
