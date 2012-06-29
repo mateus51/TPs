@@ -44,6 +44,7 @@ int main (int argc, char **argv) {
 
     char buffer[BUFF_LEN];
     int read_resp;
+	printf("\nwaiting for messages...\n");
     while (1) {
     	bzero(buffer, BUFF_LEN);
     	read_resp = read (sock, buffer, BUFF_LEN);

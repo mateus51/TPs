@@ -87,6 +87,13 @@ int tp_socket(unsigned short port)
     int x = 1;
     setsockopt(so, SOL_SOCKET, SO_REUSEADDR, &x, sizeof(int));
 
+    /* Envia buffer antes de fechar socket. Timeout de 5 segundos.
+     * Para evitar erro "Connection reset by peer". */
+    struct linger linger_opt = { .l_onoff = 1 ,
+    							 .l_linger = 5  };// timeout: 5 second
+    setsockopt(so, SOL_SOCKET, SO_LINGER, &linger_opt, sizeof(linger_opt));
+
+
     if (bind(so, (struct sockaddr*)&local_addr, addr_len)<0) {
         return -3;
     }

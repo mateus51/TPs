@@ -103,7 +103,7 @@ int read_from_client(int sock) {
 					// espaço disponível. Retorna OI.
 					clients[msg.orig_uid] = sock;
 					write (sock, buffer, nbytes);
-					printf("\nasdf client %u connected!\n", msg.orig_uid);
+					printf("\nclient %u connected!\n", msg.orig_uid);
 				}
 				else {
 					// já existe cliente conectado. Retorna ERRO.
@@ -174,17 +174,18 @@ int read_from_client(int sock) {
 
 				// Se é broadcast
 				if (msg.dest_uid == 0) {
+					printf("broadcast!\n");
 					int i;
-					for (i = 0; i < 2000; i++) {
+					for (i = 0; i < 1000; i++) {
 						if (clients[i] != -1) {
-							write (sock, buffer, nbytes);
+							write (clients[i], buffer, BUFF_LEN);
 						}
 					}
 				}
 
 				// Se é cliente de exibição
 				else if (msg.dest_uid < 1000) {
-					write (sock, buffer, nbytes);
+					write (clients[msg.dest_uid], buffer, BUFF_LEN);
 				}
 
 			}
@@ -241,7 +242,7 @@ int main (int argc, char **argv) {
 		for (i = 0; i < FD_SETSIZE; ++i)
 		if (FD_ISSET (i, &read_fd_set)) {
 
-			/* Novo cliente estabelecendo conexão. */
+			/* Novo cliente estabelecendo conexão TCP. */
 			if (i == serversock) {
 				int new;
 				size = sizeof (clientaddr);

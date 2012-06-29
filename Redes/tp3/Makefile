@@ -37,4 +37,4 @@ tp_socket.o: tp_socket.c tp_socket.h
 #	$(COMPILER) $(OPTIONS) listener.c
 
 clean: 
-	@rm -f *.o tp2-server tp3-sender tp3-receiver
+	@rm -f *.o tp3-server tp3-sender tp3-receiver
