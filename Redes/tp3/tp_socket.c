@@ -82,6 +82,11 @@ int tp_socket(unsigned short port)
     if (tp_build_addr(&local_addr,INADDR_ANY,port)<0) {
         return -2;
     }
+
+    /* Corrige bug do address already in use */
+    int x = 1;
+    setsockopt(so, SOL_SOCKET, SO_REUSEADDR, &x, sizeof(int));
+
     if (bind(so, (struct sockaddr*)&local_addr, addr_len)<0) {
         return -3;
     }

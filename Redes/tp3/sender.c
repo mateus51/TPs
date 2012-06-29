@@ -1,88 +1,19 @@
 #include <stdlib.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
 
 #include "tp_socket.h"
 #include "message.h"
+#include "client.h"
 
 so_addr serv_addr;
-int sock, uid;
+int sock;
 
 
-void get_info(int argc, char **argv, char *addr, int *port) {
-	if(argc != 4){
-		printf("Usage:  %s <uid> <server address> <server port>\n", argv[0]);
-		exit(EXIT_SUCCESS);
-	}
-	else {
-		uid = atoi(argv[1]);
-		*port = atoi(argv[3]);
-		strcpy(addr, argv[2]);
-	}
-}
-
-
-/*
- * Tenta se conectar ao servidor. Se conseguir, retorna 0.
- * Caso contrário, retorna -1.
- */
-int connect_to_server () {
-	msg_t msg;
-	bzero(msg.text, BUFF_LEN);
-	msg.type = OI;
-	msg.orig_uid = (unsigned short int) uid;
-	msg.dest_uid = 0;
-	msg.text_len = 0;
-	char buffer[BUFF_LEN];
-	encode(buffer, msg);
-	// enviando OI
-    if (write(sock, buffer, 8) < 0) {
-         perror("write()");
-         exit(EXIT_FAILURE);
-    }
-
-    if (read(sock, buffer, BUFF_LEN) < 0) {
-    	perror("read()");
-    	exit(EXIT_FAILURE);
-    }
-    msg = decode(buffer);
-    switch (msg.type) {
-    case OI:
-    	printf("Connected to server!\n");
-    	return 0;
-    case ERRO:
-    	printf("Could not connect to server. ID already in use.\n");
-    	return -1;
-    default:
-    	printf("Server returned unknown message..\n");
-    	return -1;
-    }
-}
-
-
-/*
- * Desconecta do servidor.
- */
-void disconnect_from_server() {
-	msg_t msg;
-	bzero(msg.text, 141);
-	msg.type = TCHAU;
-	msg.orig_uid = (unsigned short int) uid;
-	msg.dest_uid = 0;
-	msg.text_len = 0;
-	char buffer[BUFF_LEN];
-	encode(buffer, msg);
-    if (write(sock, buffer, 8) < 0) {
-         perror("write()");
-         exit(EXIT_FAILURE);
-    }
-}
-
-
-
-void send_message(unsigned short int to, char *str) {
+void send_message(int uid, int to, char *str) {
 	// FIXME: Os campos inteiros devem ser enviados na ordem de bytes da rede (network byte order
 	msg_t msg;
 	bzero(msg.text, 141);
@@ -102,23 +33,36 @@ void send_message(unsigned short int to, char *str) {
 
 	char buffer[BUFF_LEN];
 	encode(buffer, msg);
-	if (write (sock, buffer, str_size + 8) < 0) {
+	int write_resp = write (sock, buffer, str_size + 8);
+	if (write_resp < 0) {
 		perror("write()");
 		exit(EXIT_FAILURE);
+	}
+	else if (write_resp == 0) {
+		// server hung up
+		printf("server hung up!\n");
+		exit(EXIT_SUCCESS);
 	}
 }
 
 
 
 int main (int argc, char **argv) {
+	unsigned short int uid;
 	int port;
 	char servname[256];
-	get_info(argc, argv, servname, &port);
+	get_info(argc, argv, &uid, servname, &port);
+
+
+	if (uid < 1001 || uid > 1999) {
+		printf("Erro: identificador de envio deve ser entre 1001 e 1999\n");
+		exit(EXIT_FAILURE);
+	}
+
 
 
     // Creating buffer and socket
-    char buffer[BUFF_LEN];
-    sock = tp_socket(port);
+    sock = tp_socket(0);
     tp_build_addr(&serv_addr, servname, port);
 
 
@@ -128,19 +72,31 @@ int main (int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
-    // Enviando OI
-    connect_to_server();
 
-    while (0) {
-    	// ler dest stdin
-    	// ler msg stdin
-    	// enviar tudo
+    // Enviando OI. -1 = ID em uso
+    if (connect_to_server(uid) == -1)
+    	exit(EXIT_FAILURE);
+
+    char msg[142];
+    unsigned short int to;
+    while (1) {
+//    	sleep(20);
+    	printf("\n\nNova Mensagem\npara: ");
+    	fgets(msg, 141, stdin);
+    	msg[strlen(msg) + 1] = '\0';
+    	to = (unsigned short int) atoi(msg);
+    	bzero(msg, 142);
+    	printf("mensagem (max. 140 caracteres): ");
+    	fgets(msg, 141, stdin);
+    	msg[strlen(msg)] = '\0';
+    	send_message(uid, to, msg);
     }
 
-    sleep(1);
+    // sleep for 2 seconds before disconnecting
+//    sleep(20);
 
     // Enviando TCHAU
-    disconnect_from_server();
+    disconnect_from_server(uid);
 
     close(sock);
 

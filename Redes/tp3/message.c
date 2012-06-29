@@ -6,7 +6,7 @@
 
 msg_t decode(const char *buffer) {
 	msg_t msg;
-	bzero(msg.text, BUFF_LEN);
+	bzero(msg.text, 141);
 	memcpy(&msg.type, buffer, 2);
 	memcpy(&msg.orig_uid, buffer + 2, 2);
 	memcpy(&msg.dest_uid, buffer + 4, 2);
@@ -25,4 +25,3 @@ void encode(char *buffer, msg_t msg) {
 	memcpy(buffer + 8, &msg.text, 140);
 	buffer[BUFF_LEN] = '\0';
 }
-

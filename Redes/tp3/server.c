@@ -11,11 +11,6 @@
 #include "tp_socket.h"
 #include "message.h"
 
-//#define PORT    5555
-#define MAXMSG  512
-
-
-/* Variáveis globais. */
 
 /* array p/ controlar clientes de recepção/envio
  *    1-999  -> exibição
@@ -34,6 +29,30 @@ void read_port_number(int argc, char *argv[], int *port) {
 	}
 }
 
+
+/*
+ * Faz verificação do remetente. Verifica se ID da faixa
+ * de envio, e se o socket de recebimento corresponde ao
+ * socket do cliente ID
+ */
+int check_sender(msg_t msg, int sock) {
+	if (msg.orig_uid > 1000 && msg.orig_uid < 2000 && msg.orig_uid != 1000) {
+		if (clients[msg.orig_uid] == sock) {
+			return 1;
+		}
+		else {
+			printf("\nmensagem com remetente forjado (%u)! descartando...\n", msg.orig_uid);
+		}
+	}
+	else {
+		printf("\nmensagem recebida de servidor de exibição. descartando...\n");
+	}
+
+	return 0;
+}
+
+
+
 /*
  * Recebe dados de cliente já conectado.
  * Faz verificação do tipo de mensagem, e executa
@@ -41,27 +60,36 @@ void read_port_number(int argc, char *argv[], int *port) {
  * Retorna o número de byte lidos, ou -1 caso houve
  * algum erro e a conexão precisa ser fechada/
  */
-int read_from_client(int filedes) {
+int read_from_client(int sock) {
 	char buffer[BUFF_LEN];
 	bzero(buffer, BUFF_LEN);
 	int nbytes;
 
-	nbytes = read (filedes, buffer, BUFF_LEN);
+	nbytes = read (sock, buffer, BUFF_LEN);
 	if (nbytes < 0) {
 		/* Read error. */
 		perror ("read()");
 		exit (EXIT_FAILURE);
 	}
 	else if (nbytes == 0) {
-		/* EOF. */
-		perror ("read() - nbytes == 0");
-		exit (EXIT_FAILURE);
+		/* Cliente fechou conexão */
+		unsigned short int i;
+		for (i = 0; i < 2000; i++) {
+			if (i != 0 && i != 1000) {
+				if (clients[i] == sock) {
+					clients[i] = -1;
+					printf("\nclient %d disconnected!\n", i);
+				}
+			}
+		}
+		return -1;
 	}
 	else {
-		/* Data read. */
+		// cliente enviou dados
 		msg_t msg = decode(buffer);
 
 		switch (msg.type) {
+
 		case OI:
 		// Nova conexão de cliente:
 		//   - checar disponibilidade de espaço p/ conexão
@@ -69,33 +97,35 @@ int read_from_client(int filedes) {
 		//   - se conectou, retornar OI
 		//   - se não conectou, retornar ERRO
 
-			// checando disponibilidade de espaço p/ cliente de exibição
-			if (msg.orig_uid > 0 && msg.orig_uid < 1000) {
+			// se for cliente de exibição
+			if (msg.orig_uid < 1000) {
 				if (clients[msg.orig_uid] == -1 && clients[msg.orig_uid + 1000] == -1) {
 					// espaço disponível. Retorna OI.
-					clients[msg.orig_uid] = filedes;
-					write (filedes, buffer, nbytes);
+					clients[msg.orig_uid] = sock;
+					write (sock, buffer, nbytes);
+					printf("\nasdf client %u connected!\n", msg.orig_uid);
 				}
 				else {
 					// já existe cliente conectado. Retorna ERRO.
 					msg.type = ERRO;
 					encode(buffer, msg);
-					write (filedes, buffer, nbytes);
+					write (sock, buffer, nbytes);
 					return -1;
 				}
 			}
 
-			// checando disponibilidade de espaço p/ cliente de envio
+			// se for cliente de envio
 			else if (msg.orig_uid > 1000 && msg.orig_uid < 2000) {
 				if (clients[msg.orig_uid] == -1) {
-					clients[msg.orig_uid] = filedes;
-					write (filedes, buffer, nbytes);
+					clients[msg.orig_uid] = sock;
+					write (sock, buffer, nbytes);
+					printf("\nclient %u connected!\n", msg.orig_uid);
 				}
 				else {
 					// já existe cliente conectado. Retorna ERRO.
 					msg.type = ERRO;
 					encode(buffer, msg);
-					write (filedes, buffer, nbytes);
+					write (sock, buffer, nbytes);
 					return -1;
 				}
 			}
@@ -106,13 +136,15 @@ int read_from_client(int filedes) {
 			}
 			break;
 
+
+
 		case TCHAU:
 		// Cliente fechando conexão:
 		//   - retirar cliente da lista de clientes
 
-			if (msg.orig_uid > 0 && msg.orig_uid < 2000 && msg.orig_uid != 1000) {
+			if (check_sender(msg, sock)) {
 				clients[msg.orig_uid] = -1;
-				return -1;
+				printf("\nclient %d disconnected!\n", msg.orig_uid);
 			}
 			else {
 				// identificador inválido.
@@ -122,10 +154,40 @@ int read_from_client(int filedes) {
 			return -1;
 			break;
 
+
+
 		case MSG:
 			// Cliente enviando mensagem:
 			//   - checar origem da mensagem (descartar msg caso necessário)
 			//   - enviar msg p/ destinatário (0 = broadcast)
+
+			// Se o remetente estiver correto
+			if (check_sender(msg, sock)) {
+
+				printf("\nreceived message!\n");
+				printf("  from: %u\n  to: %u\n  message: %s\n", msg.orig_uid, msg.dest_uid, msg.text);
+
+				if (msg.dest_uid >= 1000) {
+					printf("  mensagem não é para exibidor. descartando...\n\n");
+					return nbytes;
+				}
+
+				// Se é broadcast
+				if (msg.dest_uid == 0) {
+					int i;
+					for (i = 0; i < 2000; i++) {
+						if (clients[i] != -1) {
+							write (sock, buffer, nbytes);
+						}
+					}
+				}
+
+				// Se é cliente de exibição
+				else if (msg.dest_uid < 1000) {
+					write (sock, buffer, nbytes);
+				}
+
+			}
 			break;
 
 		default:
@@ -134,10 +196,9 @@ int read_from_client(int filedes) {
 			return -1;
 			break;
 		}
-
-
-		return 0;
 	}
+
+	return 0;
 }
 
 int main (int argc, char **argv) {
@@ -165,6 +226,8 @@ int main (int argc, char **argv) {
 	FD_ZERO (&active_fd_set);
 	FD_SET (serversock, &active_fd_set);
 
+	printf("Server ready to accept connections\n\n");
+
 	while (1) {
 
 		/* Block until input arrives on one or more active sockets. */
@@ -190,7 +253,7 @@ int main (int argc, char **argv) {
 				/* printing host info */
 				char hostname[256];
 				getnameinfo((struct sockaddr *)&clientaddr, size, hostname, 256, 0, 0, 0);
-				printf("Server: connection from host %s, port %hd.\n", hostname, ntohs(clientaddr.sin_port));
+				printf("Server: connection from %s, port %d.\n", hostname, ntohs(clientaddr.sin_port));
 				/* Adiciona cliente à lista de sockets ativos. */
 				FD_SET (new, &active_fd_set);
 			}
