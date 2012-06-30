@@ -3,13 +3,13 @@ OPTIONS = -c -g -Wall
 
 all: tp3-server tp3-sender tp3-receiver
 
-tp3-server: server.o time.o tp_socket.o message.o
-	$(COMPILER) time.o server.o tp_socket.o message.o -o $@
+tp3-server: server.o time.o tp_socket.o message.o sig_listener.o
+	$(COMPILER) time.o server.o tp_socket.o message.o sig_listener.o -pthread -o $@
 
 tp3-sender: sender.o tp_socket.o time.o message.o client.o
 	$(COMPILER) sender.o tp_socket.o time.o message.o client.o -o $@
 
-tp3-receiver: receiver.o tp_socket.o time.o message.o client.o 
+tp3-receiver: receiver.o tp_socket.o time.o message.o client.o
 	$(COMPILER) receiver.o tp_socket.o time.o message.o client.o -o $@
 
 server.o: server.c
@@ -26,6 +26,9 @@ message.o: message.c message.h
 
 client.o: client.c client.h
 	$(COMPILER) $(OPTIONS) client.c
+
+sig_listener.o: sig_listener.c sig_listener.h
+	$(COMPILER) $(OPTIONS) sig_listener.c
 
 time.o: time.c time.h
 	$(COMPILER) $(OPTIONS) time.c

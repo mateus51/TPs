@@ -77,19 +77,34 @@ int main (int argc, char **argv) {
     if (connect_to_server(uid) == -1)
     	exit(EXIT_FAILURE);
 
-    char msg[142];
+//    char msg[141];
+    char *msg = NULL;
+    int total_read = 0;
+    size_t msg_size = 0;
     unsigned short int to;
     while (1) {
-//    	sleep(20);
+//    	bzero(msg, 141);
     	printf("\n\nNova Mensagem\npara: ");
-    	fgets(msg, 141, stdin);
-    	msg[strlen(msg) + 1] = '\0';
+//    	fgets(msg, 141, stdin);
+    	total_read = getline(&msg, &msg_size, stdin);
     	to = (unsigned short int) atoi(msg);
-    	bzero(msg, 142);
+
     	printf("mensagem (max. 140 caracteres): ");
-    	fgets(msg, 141, stdin);
-    	msg[strlen(msg)] = '\0';
+    	total_read = getline(&msg, &msg_size, stdin);
+    	if (total_read > 140)
+    		msg[140] = '\0';
+    	else
+    		msg[total_read - 1] = '\0';
     	send_message(uid, to, msg);
+
+//    	bzero(msg, 141);
+//    	while (fgets(msg, 141, stdin) != NULL);
+
+//    	fgets(msg, 141, stdin);
+//    	int str_size = strlen(msg);
+//    	if (str_size < 140)
+//    		msg[str_size - 1] = '\0';
+//    	while (fgets(msg, 141, stdin) != NULL);
     }
 
     // sleep for 2 seconds before disconnecting

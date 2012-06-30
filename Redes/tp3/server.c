@@ -10,6 +10,8 @@
 
 #include "tp_socket.h"
 #include "message.h"
+#include "time.h"
+#include "sig_listener.h"
 
 
 /* array p/ controlar clientes de recepção/envio
@@ -17,6 +19,8 @@
  * 1001-1999 -> envio
  */
 int clients[2000];
+
+double start_time;
 
 
 void read_port_number(int argc, char *argv[], int *port) {
@@ -174,7 +178,6 @@ int read_from_client(int sock) {
 
 				// Se é broadcast
 				if (msg.dest_uid == 0) {
-					printf("broadcast!\n");
 					int i;
 					for (i = 0; i < 1000; i++) {
 						if (clients[i] != -1) {
@@ -229,6 +232,10 @@ int main (int argc, char **argv) {
 
 	printf("Server ready to accept connections\n\n");
 
+	start_time = get_time();
+
+	pthread_t listener = start_signal_listener();
+
 	while (1) {
 
 		/* Block until input arrives on one or more active sockets. */
@@ -268,4 +275,6 @@ int main (int argc, char **argv) {
 			}
 		}
 	}
+
+	stop_signal_listener(listener);
 }

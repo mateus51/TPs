@@ -88,6 +88,7 @@ pthread_t start_signal_listener(Window *window) {
 
 	pthread_t thread;
 	pthread_attr_t attr;
+	pthread_mutex_init(&server_window, NULL);
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 	rc = pthread_create(&thread, &attr, signal_listener, (void*) window);
