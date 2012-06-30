@@ -70,7 +70,7 @@ int connect_to_server (char *server_name, int port, unsigned short int uid) {
     	printf("Connected to server!\n");
     	break;
     case ERRO:
-    	printf("%s\n", msg.text);
+    	printf("Erro ao se conectar com o servidor: %s\n", msg.text);
     	exit(EXIT_FAILURE);
     default:
     	printf("Server returned unexpected message..\n");

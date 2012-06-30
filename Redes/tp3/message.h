@@ -3,6 +3,7 @@
 
 
 #define BUFF_LEN 149
+#define MSG_SIZE(msg) (msg).text_len+8
 
 typedef enum {
 	OI, TCHAU, MSG, ERRO

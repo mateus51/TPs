@@ -18,8 +18,10 @@ msg_t decode(const char *buffer) {
 	memcpy(&i, buffer + 6, 2);
 	msg.text_len = ntohs(i);
 	bzero(msg.text, 141);
-	memcpy(&msg.text, buffer + 8, 140);
-	msg.text[140] = '\0';
+	if (msg.text_len > 0) {
+		memcpy(&msg.text, buffer + 8, 140);
+		msg.text[140] = '\0';
+	}
 	return msg;
 }
 
@@ -57,7 +59,7 @@ void send_message(int sock, unsigned short int from, unsigned short int to, cons
 
 	char buffer[BUFF_LEN];
 	encode(buffer, msg);
-	int write_resp = write (sock, buffer, str_size + 8);
+	int write_resp = write (sock, buffer, MSG_SIZE(msg));
 	if (write_resp < 0) {
 		perror("write()");
 		exit(EXIT_FAILURE);

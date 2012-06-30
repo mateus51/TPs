@@ -46,18 +46,17 @@ void close_client_connection(unsigned short int uid) {
 
 void make_status_string(char *str) {
 	int i, exib = 0, env = 0;
-	for (i = 1; i < 2000; i++) {
+	for (i = 1; i < 2000; i++)
 		if (clients[i] != -1) {
 			if (i < 1000)
 				exib++;
 			else
 				env++;
 		}
-	}
-
-	// montando texto da mensagem
-	double elapsed_time = get_time() - start_time;
-	sprintf(str, "[tp3-server] Clientes (exibição/envio/total): %d/%d/%d   Uptime: %.2fs", exib, env, exib+env, elapsed_time);
+	int elapsed_minutes = (get_time() - start_time) / 60;
+	int m = elapsed_minutes < 60 ? elapsed_minutes : elapsed_minutes % 60;
+	int h = elapsed_minutes / 60;
+	sprintf(str, "[tp3-server] Clientes (exibição/envio/total): %d/%d/%d   Uptime: %dh %dm", exib, env, exib + env, h, m);
 }
 
 /*
@@ -150,15 +149,18 @@ int read_from_client(int sock) {
 					// espaço disponível. Retorna OI.
 					clients[msg.orig_uid] = sock;
 					write (sock, buffer, nbytes);
-					sprintf(str, "[tp3-server] cliente %u conectou!", msg.orig_uid);
 					printf("\n%s\n", str);
+					// avisa clientes conectados que alguém conectou
+					sprintf(str, "[tp3-server] cliente %u conectou!", msg.orig_uid);
 					broadcast_message(str);
 				}
 				else {
 					// já existe cliente conectado. Retorna ERRO.
 					msg.type = ERRO;
+					sprintf(msg.text, "identificador %u já está em uso!", msg.orig_uid);
+					msg.text_len = (unsigned short int) strlen(msg.text) + 1;
 					encode(buffer, msg);
-					write (sock, buffer, nbytes);
+					write (sock, buffer, MSG_SIZE(msg));
 					return -1;
 				}
 			}
@@ -173,15 +175,23 @@ int read_from_client(int sock) {
 				else {
 					// já existe cliente conectado. Retorna ERRO.
 					msg.type = ERRO;
+					sprintf(msg.text, "identificador %u já está em uso!", msg.orig_uid);
+					msg.text_len = (unsigned short int) strlen(msg.text) + 1;
 					encode(buffer, msg);
-					write (sock, buffer, nbytes);
+					write (sock, buffer, MSG_SIZE(msg));
 					return -1;
 				}
 			}
 
 			else {
-				// identificador inválido
-				// retornar ERRO e fechar conexão?
+				// identificador inválido.
+				// retorna ERRO e fecha conexão
+				msg.type = ERRO;
+				sprintf(msg.text, "identificador %u inválido!", msg.orig_uid);
+				msg.text_len = (unsigned short int) strlen(msg.text) + 1;
+				encode(buffer, msg);
+				write (sock, buffer, MSG_SIZE(msg));
+				return -1;
 			}
 			break;
 
@@ -235,14 +245,14 @@ int read_from_client(int sock) {
 					int i;
 					for (i = 0; i < 1000; i++) {
 						if (clients[i] != -1) {
-							write (clients[i], buffer, BUFF_LEN);
+							write (clients[i], buffer, nbytes);
 						}
 					}
 				}
 
 				// Se é cliente de exibição
 				else if (msg.dest_uid < 1000) {
-					write (clients[msg.dest_uid], buffer, BUFF_LEN);
+					write (clients[msg.dest_uid], buffer, nbytes);
 				}
 
 			}
