@@ -20,9 +20,12 @@
  */
 int clients[2000];
 
+fd_set active_fd_set;
+
+
 double start_time;
 
-
+// Lê o número da porta passado na chamada do programa
 void read_port_number(int argc, char *argv[], int *port) {
 	if(argc != 2){
 		printf("Usage:  %s <port>\n", argv[0]);
@@ -30,6 +33,42 @@ void read_port_number(int argc, char *argv[], int *port) {
 	}
 	else {
 		*port = atoi(argv[1]);
+	}
+}
+
+
+void close_client_connection(unsigned short int uid) {
+	close(clients[uid]);
+	FD_CLR (clients[uid], &active_fd_set);
+	clients[uid] = -1;
+}
+
+
+void make_status_string(char *str) {
+	int i, exib = 0, env = 0;
+	for (i = 1; i < 2000; i++) {
+		if (clients[i] != -1) {
+			if (i < 1000)
+				exib++;
+			else
+				env++;
+		}
+	}
+
+	// montando texto da mensagem
+	double elapsed_time = get_time() - start_time;
+	sprintf(str, "[tp3-server] Clientes (exibição/envio/total): %d/%d/%d   Uptime: %.2fs", exib, env, exib+env, elapsed_time);
+}
+
+/*
+ * Envia uma mensagem para todos os clientes conectados
+ */
+void broadcast_message(const char *str) {
+	int i;
+	for (i = 0; i < 1000; i++) {
+		if (clients[i] != -1) {
+			send_message(clients[i], 0, 0, str);
+		}
 	}
 }
 
@@ -66,6 +105,7 @@ int check_sender(msg_t msg, int sock) {
  */
 int read_from_client(int sock) {
 	char buffer[BUFF_LEN];
+	char str[141];
 	bzero(buffer, BUFF_LEN);
 	int nbytes;
 
@@ -82,7 +122,10 @@ int read_from_client(int sock) {
 			if (i != 0 && i != 1000) {
 				if (clients[i] == sock) {
 					clients[i] = -1;
-					printf("\nclient %d disconnected!\n", i);
+					sprintf(str, "[tp3-server] cliente %u desconectou!", i);
+					printf("\n%s\n", str);
+					if (i < 1000)
+						broadcast_message(str);
 				}
 			}
 		}
@@ -107,7 +150,9 @@ int read_from_client(int sock) {
 					// espaço disponível. Retorna OI.
 					clients[msg.orig_uid] = sock;
 					write (sock, buffer, nbytes);
-					printf("\nclient %u connected!\n", msg.orig_uid);
+					sprintf(str, "[tp3-server] cliente %u conectou!", msg.orig_uid);
+					printf("\n%s\n", str);
+					broadcast_message(str);
 				}
 				else {
 					// já existe cliente conectado. Retorna ERRO.
@@ -147,16 +192,25 @@ int read_from_client(int sock) {
 		//   - retirar cliente da lista de clientes
 
 			if (check_sender(msg, sock)) {
+				// retira cliente da lista de clientes conectados
 				clients[msg.orig_uid] = -1;
+
+				// se for cliente de envio e tiver um cliente de exibição associado
+				// desconecta o cliente de exibição.
+				if (msg.orig_uid > 1000 && clients[msg.orig_uid - 1000] != -1) {
+					close_client_connection(msg.orig_uid - 1000);
+					sprintf(str, "[tp3-server] cliente %u desconectou!", msg.orig_uid - 1000);
+					printf("\n%s\n", str);
+					broadcast_message(str);
+				}
 				printf("\nclient %d disconnected!\n", msg.orig_uid);
 			}
 			else {
 				// identificador inválido.
 				// retornar ERRO e fechar conexão?
 			}
-
+			// retorna -1 para fechar conexão
 			return -1;
-			break;
 
 
 
@@ -209,7 +263,6 @@ int main (int argc, char **argv) {
 	int serversock;
 	int port;
 	read_port_number(argc, argv, &port);
-	fd_set active_fd_set, read_fd_set;
 	int i;
 	so_addr clientaddr;
 	size_t size;
@@ -221,12 +274,12 @@ int main (int argc, char **argv) {
 		exit (EXIT_FAILURE);
 	}
 
-
 	// Inicializando array de clientes.
 	for (i = 0; i < 2000; i++)
 		clients[i] = -1;
 
 	/* Initialize the set of active sockets. */
+	fd_set read_fd_set;
 	FD_ZERO (&active_fd_set);
 	FD_SET (serversock, &active_fd_set);
 
@@ -234,7 +287,7 @@ int main (int argc, char **argv) {
 
 	start_time = get_time();
 
-	pthread_t listener = start_signal_listener();
+	start_signal_listener();
 
 	while (1) {
 
@@ -275,6 +328,4 @@ int main (int argc, char **argv) {
 			}
 		}
 	}
-
-	stop_signal_listener(listener);
 }

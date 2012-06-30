@@ -1,6 +1,7 @@
+#include <stdlib.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include <netinet/in.h>
 
 #include "message.h"
@@ -35,4 +36,35 @@ void encode(char *buffer, msg_t msg) {
 	memcpy(buffer + 6, &i, 2);
 	memcpy(buffer + 8, &msg.text, 140);
 	buffer[BUFF_LEN] = '\0'; // just to be safe
+}
+
+void send_message(int sock, unsigned short int from, unsigned short int to, const char *str) {
+	msg_t msg;
+	bzero(msg.text, 141);
+	msg.orig_uid = from;
+	msg.dest_uid = to;
+	msg.type = MSG;
+	int str_size = strlen(str) + 1;
+	if (str_size > 141) {
+		msg.text_len = 141;
+		memcpy(msg.text, str, 140);
+		msg.text[140] = '\0';
+	}
+	else {
+		msg.text_len = str_size;
+		memcpy(msg.text, str, str_size);
+	}
+
+	char buffer[BUFF_LEN];
+	encode(buffer, msg);
+	int write_resp = write (sock, buffer, str_size + 8);
+	if (write_resp < 0) {
+		perror("write()");
+		exit(EXIT_FAILURE);
+	}
+	else if (write_resp == 0) {
+		// server hung up
+		printf("server hung up!\n");
+		exit(EXIT_SUCCESS);
+	}
 }

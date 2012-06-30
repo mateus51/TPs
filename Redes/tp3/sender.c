@@ -1,49 +1,9 @@
 #include <stdlib.h>
-#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 
-#include "tp_socket.h"
 #include "message.h"
 #include "client.h"
-
-so_addr serv_addr;
-int sock;
-
-
-void send_message(int uid, int to, char *str) {
-	// FIXME: Os campos inteiros devem ser enviados na ordem de bytes da rede (network byte order
-	msg_t msg;
-	bzero(msg.text, 141);
-	msg.orig_uid = (unsigned short int) uid;
-	msg.dest_uid = (unsigned short int) to;
-	msg.type = MSG;
-	int str_size = strlen(str) + 1;
-	if (str_size > 141) {
-		msg.text_len = 141;
-		memcpy(msg.text, str, 140);
-		msg.text[140] = '\0';
-	}
-	else {
-		msg.text_len = str_size;
-		memcpy(msg.text, str, str_size);
-	}
-
-	char buffer[BUFF_LEN];
-	encode(buffer, msg);
-	int write_resp = write (sock, buffer, str_size + 8);
-	if (write_resp < 0) {
-		perror("write()");
-		exit(EXIT_FAILURE);
-	}
-	else if (write_resp == 0) {
-		// server hung up
-		printf("server hung up!\n");
-		exit(EXIT_SUCCESS);
-	}
-}
 
 
 
@@ -59,61 +19,31 @@ int main (int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
+	// Conectando ao servidor
+	int server = connect_to_server(servname, port, uid);
 
-
-    // Creating buffer and socket
-    sock = tp_socket(0);
-    tp_build_addr(&serv_addr, servname, port);
-
-
-    // Estabelecendo conexão TCP com servidor
-    if (connect(sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-        perror("connect()");
-        exit(EXIT_FAILURE);
-    }
-
-
-    // Enviando OI. -1 = ID em uso
-    if (connect_to_server(uid) == -1)
-    	exit(EXIT_FAILURE);
-
-//    char msg[141];
     char *msg = NULL;
     int total_read = 0;
     size_t msg_size = 0;
-    unsigned short int to;
+    int to;
     while (1) {
-//    	bzero(msg, 141);
-    	printf("\n\nNova Mensagem\npara: ");
-//    	fgets(msg, 141, stdin);
+    	printf("\n\nNova Mensagem\npara (-1 para desconectar): ");
     	total_read = getline(&msg, &msg_size, stdin);
-    	to = (unsigned short int) atoi(msg);
-
+    	to = atoi(msg);
+    	if (to < 0) {
+    		// Desconectando do servidor
+    		printf("\ndesconectando...\n");
+			disconnect_from_server(server, uid);
+			break;
+    	}
     	printf("mensagem (max. 140 caracteres): ");
     	total_read = getline(&msg, &msg_size, stdin);
     	if (total_read > 140)
     		msg[140] = '\0';
     	else
     		msg[total_read - 1] = '\0';
-    	send_message(uid, to, msg);
-
-//    	bzero(msg, 141);
-//    	while (fgets(msg, 141, stdin) != NULL);
-
-//    	fgets(msg, 141, stdin);
-//    	int str_size = strlen(msg);
-//    	if (str_size < 140)
-//    		msg[str_size - 1] = '\0';
-//    	while (fgets(msg, 141, stdin) != NULL);
+    	send_message(server, uid, to, msg);
     }
-
-    // sleep for 2 seconds before disconnecting
-//    sleep(20);
-
-    // Enviando TCHAU
-    disconnect_from_server(uid);
-
-    close(sock);
 
 	return EXIT_SUCCESS;
 }

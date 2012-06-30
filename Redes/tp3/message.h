@@ -1,3 +1,6 @@
+#ifndef __MESSAGE_H__
+#define __MESSAGE_H__
+
 
 #define BUFF_LEN 149
 
@@ -14,15 +17,23 @@ typedef struct {
 } msg_t;
 
 
-// Exibição: 1-999
-// Envio: 1001 - 1999
-
-
-
-
-
-
+/*
+ * retorna o buffer passado com parâmetro decodificado
+ * em uma msg_t
+ */
 msg_t decode(const char *buffer);
 
+/*
+ * Codifica a mensagem msg no buffer
+ */
 void encode(char *buffer, msg_t msg);
 
+/*
+ * Envia a seguinte mensagem:
+ *   de: from
+ *   para: to
+ *   texto: str
+ */
+void send_message(int sock, unsigned short int from, unsigned short int to, const char *str);
+
+#endif

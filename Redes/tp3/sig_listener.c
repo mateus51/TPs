@@ -8,27 +8,11 @@
 #include "time.h"
 #include "message.h"
 
-char keep_listening_for_signals;
-pthread_mutex_t clients_mutex;
-extern double start_time;
+// protótipo das funções do servidor utilizadas
+// pela thread que envia o status do servidor
+void broadcast_message(const char *str);
+char *make_status_string();
 
-extern int clients[2000];
-
-
-//
-//void lock_clients_mutex() {
-//	pthread_mutex_lock(&clients_mutex);
-////	printf("\nMUTEX locked!\n");
-//}
-//
-//void unlock_clients_mutex() {
-////	printf("MUTEX unlocked!\n\n");
-//	pthread_mutex_unlock(&clients_mutex);
-//}
-//
-//void destroy_server_window_mutex() {
-//	pthread_mutex_destroy(&clients_mutex);
-//}
 
 void dummy_handler(int signum) { ; }
 
@@ -36,77 +20,49 @@ void set_alarm() {
 	alarm(60);
 }
 
+int wait_for_alarm() {
+	// configuring signal set.
+	sigset_t set;
+	int rc, sig;
+	rc = sigemptyset(&set);
+	if (rc) {
+		perror("sigemptyset()");
+		exit(EXIT_FAILURE);
+	}
+	rc = sigaddset(&set, SIGALRM);
+	if (rc) {
+		perror("sigaddset()");
+		 exit(EXIT_FAILURE);
+	}
+	rc = sigwait(&set, &sig);
+	if (rc) {
+		 perror("sigwait()");
+		 exit(EXIT_FAILURE);
+	}
+	return sig;
+}
+
 // listener for the SIGALRM signal. Made this way so the handler has access
 // to the window pointer without it being global.
 // When the alarm arrives, resends the older packet in the window.
 void *signal_listener(void *arg) {
-	sigset_t set;
-	int rc, sig;
 	signal(SIGALRM, dummy_handler);
+	char str[141];
+	int sig;
 
-	keep_listening_for_signals = 1;
+	while (1) {
+		// espera pelo alarme
+		sig = wait_for_alarm();
 
-	while (keep_listening_for_signals) {
+		if (sig == SIGALRM) {
+			// Gera string a ser enviada
+			make_status_string(str);
 
-		// configuring signal set.
-		rc = sigemptyset(&set);
-		if (rc) {
-			 printf("ERROR: return code from sigemptyset() is %d\n", rc);
-			 exit(EXIT_FAILURE);
-		}
-		rc = sigaddset(&set, SIGALRM);
-		if (rc) {
-			 printf("ERROR: return code from sigaddset() is %d\n", rc);
-			 exit(EXIT_FAILURE);
-		}
-
-		// waiting for SIGALRM
-		rc = sigwait(&set, &sig);
-		if (rc) {
-			 printf("ERROR: return code from sigwait() is %d\n", rc);
-			 exit(EXIT_FAILURE);
-		}
-
-		if (sig == SIGALRM && keep_listening_for_signals) {
-			// keep_listening_for_signals is checked because it
-			// may have changed while listener was blocked by sigwait()
-
-			int i, exib = 0, env = 0;
-			for (i = 1; i < 2000; i++) {
-				if (clients[i] != -1) {
-					if (i < 1000)
-						exib++;
-					else
-						env++;
-				}
-			}
-
-			// montando mensagem
-			double elapsed_time = get_time() - start_time;
-			char msg_text[141];
-			sprintf(msg_text, "[tp3-server] Clientes (exibição/envio/total): %d/%d/%d   Uptime: %.2fs", exib, env, exib+env, elapsed_time);
-//			printf("[SIG] %s\n", msg_text);
-			msg_t msg;
-			msg.type = MSG;
-			msg.orig_uid = 0;
-			msg.dest_uid = 0;
-			msg.text_len = strlen(msg_text) + 1;
-			strcpy(msg.text, msg_text);
-			char buffer[BUFF_LEN];
-			encode(buffer, msg);
-
-			// envia msg p/ todos os clientes
-			for (i = 0; i < 1000; i++) {
-				if (clients[i] != -1) {
-					write (clients[i], buffer, BUFF_LEN);
-				}
-			}
+			// envia msg p/ todos os clientes de exibição conectados
+			broadcast_message(str);
 
 			// reinicia timer
 			set_alarm();
-		}
-		else if (!keep_listening_for_signals){
-//			printf("keep_listening_for_signals is FALSE!\n");
 		}
 		else {
 //			printf("caugth signal isn't SIGALRM!\n");
@@ -116,13 +72,12 @@ void *signal_listener(void *arg) {
 	return NULL; // only to remove warning.
 }
 
-pthread_t start_signal_listener() {
+void start_signal_listener() {
 	int rc;
 	pthread_t thread;
 	pthread_attr_t attr;
-	pthread_mutex_init(&clients_mutex, NULL);
 	pthread_attr_init(&attr);
-	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 	rc = pthread_create(&thread, &attr, signal_listener, NULL);
 	if (rc) {
 		 printf("ERROR: return code from pthread_create() is %d\n", rc);
@@ -130,7 +85,7 @@ pthread_t start_signal_listener() {
 	}
 	pthread_attr_destroy(&attr);
 
-	// block alarm signal for other threads
+	// block alarm signal for main thread
 	sigset_t set;
 	rc = sigemptyset(&set);
 	if (rc) {
@@ -142,7 +97,7 @@ pthread_t start_signal_listener() {
 		 printf("ERROR: return code from sigaddset() is %d\n", rc);
 		 exit(EXIT_FAILURE);
 	}
-	// FIXME: se der problema, usar pthread_sigmask()
+	// XXX: se der problema, usar pthread_sigmask()
 	rc = sigprocmask(SIG_BLOCK, &set, NULL);
 	if (rc) {
 		 printf("ERROR: return code from sigprocmask() is %d\n", rc);
@@ -150,18 +105,4 @@ pthread_t start_signal_listener() {
 	}
 
 	set_alarm();
-
-	return thread;
 }
-
-// waits for the thread to finish.
-void stop_signal_listener (pthread_t thread) {
-	keep_listening_for_signals = 0;
-	int rc;
-	rc = pthread_join(thread, NULL);
-	if (rc) {
-		printf("ERROR: return code from pthread_join() is %d\n", rc);
-		exit(EXIT_FAILURE);
-	}
-}
-

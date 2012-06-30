@@ -2,10 +2,11 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
+#include <netinet/in.h>
 
+#include "tp_socket.h"
 #include "message.h"
 
-extern int sock;
 
 void get_info(int argc, char **argv, unsigned short int *uid, char *addr, int *port) {
 	if(argc != 4){
@@ -21,17 +22,29 @@ void get_info(int argc, char **argv, unsigned short int *uid, char *addr, int *p
 }
 
 /*
- * Tenta se conectar ao servidor. Se conseguir, retorna 0.
- * Caso contrário, retorna -1.
+ * Tenta se conectar ao servidor. Retorna o socket
+ * através do qual as mensagens devem ser enviadas.
  */
-int connect_to_server (unsigned short int uid) {
+int connect_to_server (char *server_name, int port, unsigned short int uid) {
 //	printf("connecting to server...\nint id: %d (%u)\n", uid, uid);
+
+    int sock = tp_socket(0);
+    so_addr serv_addr;
+    tp_build_addr(&serv_addr, server_name, port);
+
+    // Estabelecendo conexão TCP com servidor
+    if (connect(sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+        perror("connect()");
+        exit(EXIT_FAILURE);
+    }
+
+    // Enviando OI
 	msg_t msg;
-	bzero(msg.text, BUFF_LEN);
 	msg.type = OI;
 	msg.orig_uid = uid;
 	msg.dest_uid = 0;
 	msg.text_len = 0;
+	bzero(msg.text, 141);
 	char buffer[BUFF_LEN];
 	encode(buffer, msg);
 
@@ -43,41 +56,46 @@ int connect_to_server (unsigned short int uid) {
          exit(EXIT_FAILURE);
     }
 
+    // Recebendo resposta do servidor
     bzero(buffer, BUFF_LEN);
-
     if (read(sock, buffer, BUFF_LEN) < 0) {
     	perror("read()");
     	exit(EXIT_FAILURE);
     }
+
+    // verificando resposta
     msg = decode(buffer);
     switch (msg.type) {
     case OI:
     	printf("Connected to server!\n");
-    	return 0;
+    	break;
     case ERRO:
-    	printf("Could not connect to server. ID %u is already in use.\n", msg.orig_uid);
-    	return -1;
+    	printf("%s\n", msg.text);
+    	exit(EXIT_FAILURE);
     default:
-    	printf("Server returned unknown message..\n");
-    	return -1;
+    	printf("Server returned unexpected message..\n");
+    	exit(EXIT_FAILURE);
     }
+
+    return sock;
 }
 
 
 /*
  * Desconecta do servidor.
  */
-void disconnect_from_server(int uid) {
+void disconnect_from_server(int sock, unsigned short int uid) {
 	msg_t msg;
-	bzero(msg.text, 141);
 	msg.type = TCHAU;
-	msg.orig_uid = (unsigned short int) uid;
+	msg.orig_uid = uid;
 	msg.dest_uid = 0;
 	msg.text_len = 0;
+	bzero(msg.text, 141);
 	char buffer[BUFF_LEN];
 	encode(buffer, msg);
     if (write(sock, buffer, 8) < 0) {
          perror("write()");
          exit(EXIT_FAILURE);
     }
+    close(sock);
 }

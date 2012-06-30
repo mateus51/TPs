@@ -89,10 +89,10 @@ int tp_socket(unsigned short port)
 
     /* Envia buffer antes de fechar socket. Timeout de 5 segundos.
      * Para evitar erro "Connection reset by peer". */
-    struct linger linger_opt = { .l_onoff = 1 ,
-    							 .l_linger = 5  };// timeout: 5 second
+    struct linger linger_opt;
+    linger_opt.l_onoff = 1;
+    linger_opt.l_linger = 5; // timeout: 5 seconds
     setsockopt(so, SOL_SOCKET, SO_LINGER, &linger_opt, sizeof(linger_opt));
-
 
     if (bind(so, (struct sockaddr*)&local_addr, addr_len)<0) {
         return -3;
