@@ -4,4 +4,6 @@
 \contentsline {subsection}{\numberline {1.2}Protocolo TCP}{2}
 \contentsline {subsection}{\numberline {1.3}Sistema de mensagens}{3}
 \contentsline {section}{\numberline {2}Implementa\IeC {\c c}\IeC {\~a}o}{3}
+\contentsline {subsection}{\numberline {2.1}Mensagens}{3}
+\contentsline {subsection}{\numberline {2.2}Servidor}{4}
 \contentsline {section}{\numberline {3}Conclus\IeC {\~o}es}{4}

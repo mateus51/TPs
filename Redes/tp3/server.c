@@ -54,9 +54,7 @@ void make_status_string(char *str) {
 				env++;
 		}
 	int elapsed_minutes = (get_time() - start_time) / 60;
-	int m = elapsed_minutes < 60 ? elapsed_minutes : elapsed_minutes % 60;
-	int h = elapsed_minutes / 60;
-	sprintf(str, "[tp3-server] Clientes (exibição/envio/total): %d/%d/%d   Uptime: %dh %dm", exib, env, exib + env, h, m);
+	sprintf(str, "[tp3-server] Clientes (exibição/envio/total): %d/%d/%d   Uptime: %dh %dm", exib, env, exib + env, elapsed_minutes / 60, elapsed_minutes % 60);
 }
 
 /*
@@ -78,17 +76,10 @@ void broadcast_message(const char *str) {
  * socket do cliente ID
  */
 int check_sender(msg_t msg, int sock) {
-	if (msg.orig_uid > 1000 && msg.orig_uid < 2000 && msg.orig_uid != 1000) {
-		if (clients[msg.orig_uid] == sock) {
-			return 1;
-		}
-		else {
-			printf("\nmensagem com remetente forjado (%u)! descartando...\n", msg.orig_uid);
-		}
-	}
-	else {
-		printf("\nmensagem recebida de servidor de exibição. descartando...\n");
-	}
+	if (msg.orig_uid > 1000 && msg.orig_uid < 2000 && clients[msg.orig_uid] == sock)
+		return 1;
+	else
+		printf("\nmensagem com remetente forjado (%u)! descartando...\n", msg.orig_uid);
 
 	return 0;
 }
@@ -115,16 +106,20 @@ int read_from_client(int sock) {
 		exit (EXIT_FAILURE);
 	}
 	else if (nbytes == 0) {
-		/* Cliente fechou conexão */
+		/* Cliente fechou conexão. Tratar como se fosse TCHAU */
 		unsigned short int i;
 		for (i = 0; i < 2000; i++) {
 			if (i != 0 && i != 1000) {
 				if (clients[i] == sock) {
 					clients[i] = -1;
-					sprintf(str, "[tp3-server] cliente %u desconectou!", i);
-					printf("\n%s\n", str);
-					if (i < 1000)
+
+					// se for cliente de envio e tiver um cliente de exibição associado
+					// desconecta o cliente de exibição.
+					if (i > 1000 && clients[i - 1000] != -1) {
+						close_client_connection(i - 1000);
+						sprintf(str, "[tp3-server] cliente %u desconectou!", i - 1000);
 						broadcast_message(str);
+					}
 				}
 			}
 		}
@@ -236,7 +231,7 @@ int read_from_client(int sock) {
 				printf("  from: %u\n  to: %u\n  message: %s\n", msg.orig_uid, msg.dest_uid, msg.text);
 
 				if (msg.dest_uid >= 1000) {
-					printf("  mensagem não é para exibidor. descartando...\n\n");
+					printf("\n  mensagem não é para exibidor. descartando...\n");
 					return nbytes;
 				}
 

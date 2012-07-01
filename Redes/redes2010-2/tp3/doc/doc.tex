@@ -94,22 +94,25 @@ troca de mensagens entre os clientes.
 \item Cliente de exibição: Exibe as mensagens destinadas a este cliente.
 \item Cliente de envio: Envia mensagens para outros clientes.
 \end{itemize}
-\section{Implementação}
 
+\section{Implementação}
+\subsection{Mensagens}
 As mensagens enviadas pela aplicação são enviadas na forma de sequência de
-bytes. Os 4 primeiros bytes são usados no cabeçalho. Os bytes subsequentes contêm o corpo da
-mensagem, que pode ter até 140 caracteres. O formato do cabeçalho é descrito a
+bytes. Os 8 primeiros bytes são usados no cabeçalho. Os bytes subsequentes contêm o corpo da
+mensagem, que pode ter até 141 caracteres, sendo o último reservado para o caractere de término de string. O formato do cabeçalho é descrito a
 seguir:
 
 \begin{itemize}
  \item \textbf{Tipo:}
   \begin{itemize}
-    \item OI: Mensagem utilizada para um cliente se identificar para o
+    \item OI (0): Mensagem utilizada para um cliente se identificar para o
     servidor, e abrir uma conexão entre os dois.
-    \item TCHAU: Mensagem especial para o cliente dizer ao servidor que
+    \item TCHAU (1): Mensagem especial para o cliente dizer ao servidor que
     vai fechar a conexão.
-    \item MSG: Mensagem contendo um texto que pode ser enviado para um
+    \item MSG (2): Mensagem contendo um texto que pode ser enviado para um
     cliente específico ou para todos os clientes conectados ao servidor.
+    \item ERRO (3): Mensagem retornada pelo servidor quando um cliente tenta se
+    conectar com um ID em uso por outro cliente.
   \end{itemize}
  \item \textbf{Origem:} ID do cliente que enviou a mensagem.
  \item \textbf{Destino:} ID do cliente de destino.
@@ -123,6 +126,17 @@ seguir:
 \caption{Formato da mensagem}
 \end{center}
 \end{figure}
+
+\subsection{Servidor}
+
+O servidor é o responsável receber as mensagens dos clientes de envio e enviá-las para seu destinatário.
+Caso chegue uma mensagem com o identificador do origem errado, o servidor descarta a mensagem.
+
+Uma vez por minuto
+o servidor envia uma mensagem para todos os clientes de exibição informando a quantidade de clientes conectados
+e o tempo desde que o servidor foi iniciado. Para implementar o envio periódico de mensagens foi utilizada uma thread
+que é iniciada junto com servidor, e é responsável por receber o sinal de alarme e enviar a mensagem com
+as informações.
 
 \section{Conclusões}
 

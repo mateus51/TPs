@@ -26,8 +26,6 @@ void get_info(int argc, char **argv, unsigned short int *uid, char *addr, int *p
  * através do qual as mensagens devem ser enviadas.
  */
 int connect_to_server (char *server_name, int port, unsigned short int uid) {
-//	printf("connecting to server...\nint id: %d (%u)\n", uid, uid);
-
     int sock = tp_socket(0);
     so_addr serv_addr;
     tp_build_addr(&serv_addr, server_name, port);
@@ -48,8 +46,6 @@ int connect_to_server (char *server_name, int port, unsigned short int uid) {
 	char buffer[BUFF_LEN];
 	encode(buffer, msg);
 
-//	printf("connecting to server...\n uid (msg): %d\n uid (buf): %d\n", msg.orig_uid, *(buffer + 2));
-
 	// enviando OI
     if (write(sock, buffer, 8) < 0) {
          perror("write()");
@@ -67,7 +63,7 @@ int connect_to_server (char *server_name, int port, unsigned short int uid) {
     msg = decode(buffer);
     switch (msg.type) {
     case OI:
-    	printf("Connected to server!\n");
+    	printf("Conectado ao servidor!\n");
     	break;
     case ERRO:
     	printf("Erro ao se conectar com o servidor: %s\n", msg.text);

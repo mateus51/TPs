@@ -19,7 +19,7 @@ msg_t decode(const char *buffer) {
 	msg.text_len = ntohs(i);
 	bzero(msg.text, 141);
 	if (msg.text_len > 0) {
-		memcpy(&msg.text, buffer + 8, 140);
+		memcpy(&msg.text, buffer + 8, msg.text_len);
 		msg.text[140] = '\0';
 	}
 	return msg;

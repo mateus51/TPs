@@ -23,7 +23,6 @@ int main (int argc, char **argv) {
 
     char buffer[BUFF_LEN];
     int read_resp;
-	printf("\nwaiting for messages...\n");
     while (1) {
     	bzero(buffer, BUFF_LEN);
     	read_resp = read (sock, buffer, BUFF_LEN);
@@ -37,10 +36,10 @@ int main (int argc, char **argv) {
     		exit(EXIT_SUCCESS);
     	}
     	msg_t msg = decode(buffer);
-    	char *msg_type = msg.dest_uid == 0 ? "broadcast" : "private";
-    	printf("\n\nMessage Received (%s)\n", msg_type);
-    	printf("  from: %u\n", msg.orig_uid);
-    	printf("  message: %s\n", msg.text);
+    	printf("\n%u", msg.orig_uid);
+    	if (msg.dest_uid != 0) printf(" (private)");
+    	printf(": %s\n", msg.text);
+
     }
 
 	return EXIT_SUCCESS;
