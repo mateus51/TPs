@@ -80,6 +80,8 @@ parameter handling.
 */
 int main()
 {
+	bool shadows = true;
+
 	// ask user for driver
 	video::E_DRIVER_TYPE driverType=driverChoiceConsole();
 	if (driverType==video::EDT_COUNT)
@@ -90,6 +92,7 @@ int main()
 	irr::SIrrlichtCreationParameters params;
 	params.DriverType=driverType;
 	params.WindowSize=core::dimension2d<u32>(640, 480);
+	params.Stencilbuffer = shadows; // dynamic shadows
 	IrrlichtDevice* device = createDeviceEx(params);
 
 	if (device == 0)
@@ -128,8 +131,22 @@ int main()
 	camera->setTarget(core::vector3df(2397*2,343*2,2700*2));
 	camera->setFarValue(42000.0f);
 
+//	// add light
+	scene::ISceneNode* node = smgr->addLightSceneNode(0, core::vector3df(2700*3,255*25,2600*2),
+	                video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 800000.0f);
+
+	// attach billboard to light
+	node = smgr->addBillboardSceneNode(node, core::dimension2d<f32>(5000, 5000));
+	node->setMaterialFlag(video::EMF_LIGHTING, false);
+	node->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
+	node->setMaterialTexture(0, driver->getTexture("media/particlewhite.bmp"));
+
+
+
+
 	// disable mouse cursor
 	device->getCursorControl()->setVisible(false);
+
 
 	/*
 	Here comes the terrain renderer scene node: We add it just like any
@@ -162,12 +179,10 @@ int main()
 		4					// smoothFactor
 		);
 
-	terrain->setMaterialFlag(video::EMF_LIGHTING, false);
+	terrain->setMaterialFlag(video::EMF_LIGHTING, true);
 
-	terrain->setMaterialTexture(0,
-			driver->getTexture("media/terrain-texture.jpg"));
-	terrain->setMaterialTexture(1,
-			driver->getTexture("media/detailmap3.jpg"));
+	terrain->setMaterialTexture(0, driver->getTexture("media/rock-texture.jpg"));
+	terrain->setMaterialTexture(1, driver->getTexture("media/detailmap3.jpg"));
 
 	terrain->setMaterialType(video::EMT_DETAIL_MAP);
 
@@ -231,6 +246,7 @@ int main()
 	// create event receiver
 	MyEventReceiver receiver(terrain, skybox, skydome);
 	device->setEventReceiver(&receiver);
+
 
 	/*
 	That's it, draw everything.
