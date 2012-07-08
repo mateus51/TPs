@@ -73,44 +73,8 @@ private:
 };
 
 
-/*
-The start of the main function starts like in most other example. We ask the
-user for the desired renderer and start it up. This time with the advanced
-parameter handling.
-*/
-int main()
-{
-	bool shadows = true;
 
-	// ask user for driver
-	video::E_DRIVER_TYPE driverType=driverChoiceConsole();
-	if (driverType==video::EDT_COUNT)
-		return 1;
-
-	// create device with full flexibility over creation parameters
-	// you can add more parameters if desired, check irr::SIrrlichtCreationParameters
-	irr::SIrrlichtCreationParameters params;
-	params.DriverType=driverType;
-	params.WindowSize=core::dimension2d<u32>(640, 480);
-	params.Stencilbuffer = shadows; // dynamic shadows
-	IrrlichtDevice* device = createDeviceEx(params);
-
-	if (device == 0)
-		return 1; // could not create selected driver.
-
-
-	/*
-	First, we add standard stuff to the scene: A nice irrlicht engine
-	logo, a small help text, a user controlled camera, and we disable
-	the mouse cursor.
-	*/
-
-	video::IVideoDriver* driver = device->getVideoDriver();
-	scene::ISceneManager* smgr = device->getSceneManager();
-	gui::IGUIEnvironment* env = device->getGUIEnvironment();
-
-	driver->setTextureCreationFlag(video::ETCF_ALWAYS_32_BIT, true);
-
+void create_HUD(video::IVideoDriver* driver, gui::IGUIEnvironment* env) {
 	// add irrlicht logo
 	env->addImage(driver->getTexture("media/irrlichtlogo2.png"),
 		core::position2d<s32>(10,10));
@@ -122,16 +86,18 @@ int main()
 	env->addStaticText(
 		L"Press 'W' to change wireframe mode\nPress 'D' to toggle detail map\nPress 'S' to toggle skybox/skydome",
 		core::rect<s32>(10,421,250,475), true, true, 0, -1, true);
+}
 
-	// add camera
-	scene::ICameraSceneNode* camera =
-		smgr->addCameraSceneNodeFPS(0,100.0f,1.2f);
 
-	camera->setPosition(core::vector3df(2700*2,255*25,2600*2));
-	camera->setTarget(core::vector3df(2397*2,343*2,2700*2));
+
+
+scene::ICameraSceneNode* create_camera_and_light(video::IVideoDriver* driver, scene::ISceneManager* smgr) {
+	scene::ICameraSceneNode* camera = smgr->addCameraSceneNodeFPS(0,100.0f,1.2f);
+	camera->setPosition(core::vector3df(3583, 2673, 6768));
+	camera->setTarget(core::vector3df(4245, 2371, 5786));
 	camera->setFarValue(42000.0f);
 
-//	// add light
+	// add sun light
 	scene::ISceneNode* node = smgr->addLightSceneNode(0, core::vector3df(2700*3,255*25,2600*2),
 	                video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 800000.0f);
 
@@ -140,14 +106,86 @@ int main()
 	node->setMaterialFlag(video::EMF_LIGHTING, false);
 	node->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
 	node->setMaterialTexture(0, driver->getTexture("media/particlewhite.bmp"));
+	return camera;
+}
 
 
 
 
-	// disable mouse cursor
-	device->getCursorControl()->setVisible(false);
+void colide_with_terrain(scene::ISceneManager* smgr, scene::ITriangleSelector* selector, scene::ISceneNode* node) {
+	// create collision response animator and attach it to the camera
+	scene::ISceneNodeAnimator* anim = smgr->createCollisionResponseAnimator(selector, node, core::vector3df(60,100,60),
+		core::vector3df(0,0,0),
+		core::vector3df(0,50,0));
+	node->addAnimator(anim);
+	anim->drop();
+}
 
 
+//void make_camera_colide(scene::ISceneManager* smgr, scene::ITriangleSelector* selector, scene::ICameraSceneNode* camera) {
+//	/*
+//	To be able to do collision with the terrain, we create a triangle selector.
+//	If you want to know what triangle selectors do, just take a look into the
+//	collision tutorial. The terrain triangle selector works together with the
+//	terrain. To demonstrate this, we create a collision response animator
+//	and attach it to the camera, so that the camera will not be able to fly
+//	through the terrain.
+//	*/
+//
+//
+//	// create collision response animator and attach it to the camera
+//	scene::ISceneNodeAnimator* anim = smgr->createCollisionResponseAnimator(
+//		selector, camera, core::vector3df(60,100,60),
+//		core::vector3df(0,0,0),
+//		core::vector3df(0,50,0));
+////	selector->drop();
+//	camera->addAnimator(anim);
+//	anim->drop();
+//}
+
+
+
+
+
+scene::IParticleSystemSceneNode* create_waterfall(video::IVideoDriver* driver, scene::ISceneManager* smgr) {
+	// create a particle system
+//	scene::IParticleSystemSceneNode* ps = smgr->addParticleSystemSceneNode(true, NULL, -1, core::vector3df(3719, 2133, 3701));
+
+	scene::IParticleSystemSceneNode* ps =
+			smgr->addParticleSystemSceneNode(false);
+
+	scene::IParticleEmitter* em = ps->createBoxEmitter(
+			core::aabbox3d<f32>(0, 0, 0, 630, 1, 60), // emitter size
+			core::vector3df(0.0f,0.0f,0.5f),   // initial direction
+			1000,1200,                             // emit rate
+			video::SColor(0,0,0,255),       // darkest color
+			video::SColor(0,0,0,255),       // brightest color
+			1300,1300,0,                         // min and max age, angle
+			core::dimension2df(25.f,100.f),         // min size
+			core::dimension2df(45.f,220.f));        // max size
+
+	ps->setEmitter(em); // this grabs the emitter
+	em->drop(); // so we can drop it here without deleting it
+
+//	scene::IParticleAffector* paf = ps->createFadeOutParticleAffector();
+	scene::IParticleAffector* paf = ps->createGravityAffector(core::vector3df(0.0f,-2.0f, 0.0f));
+
+	ps->addAffector(paf); // same goes for the affector
+	paf->drop();
+
+	ps->setPosition(core::vector3df(3000, 2200, 3700)); //5786
+	ps->setScale(core::vector3df(2,2,2));
+	ps->setMaterialFlag(video::EMF_LIGHTING, false);
+	ps->setMaterialFlag(video::EMF_ZWRITE_ENABLE, false);
+	ps->setMaterialTexture(0, driver->getTexture("media/fire.bmp"));
+	ps->setMaterialType(video::EMT_TRANSPARENT_VERTEX_ALPHA);
+	return ps;
+}
+
+
+
+
+scene::ITerrainSceneNode* create_island(video::IVideoDriver* driver, scene::ISceneManager* smgr) {
 	/*
 	Here comes the terrain renderer scene node: We add it just like any
 	other scene node to the scene using
@@ -167,7 +205,7 @@ int main()
 
 	// add terrain scene node
 	scene::ITerrainSceneNode* terrain = smgr->addTerrainSceneNode(
-		"media/heightmap.bmp",
+		"media/island.bmp",
 		0,					// parent node
 		-1,					// node id
 		core::vector3df(0.f, 0.f, 0.f),		// position
@@ -189,36 +227,109 @@ int main()
 	terrain->scaleTexture(1.0f, 20.0f);
 	//terrain->setDebugDataVisible ( true );
 
+	return terrain;
+}
+
+
+
+void create_water(video::IVideoDriver* driver, scene::ISceneManager* smgr) {
+	scene::IAnimatedMesh* mesh = smgr->addHillPlaneMesh( "lago_cachoeira",
+									core::dimension2d<f32>(250,153),			//tileSize
+									core::dimension2d<u32>(10,10), 0, 0, 	//tileCount, material, hillHeight
+									core::dimension2d<f32>(0,0), 			//countHills
+									core::dimension2d<f32>(10,10)); 		//textureRepeatCount
+
+	scene::ISceneNode* node = smgr->addWaterSurfaceSceneNode(mesh->getMesh(0),
+														3.0f,   //waveHeight
+														300.0f, //waveSpeed
+														30.0f); //waveLength
+	node->setPosition(core::vector3df(3460, 580, 4950));
+	node->setMaterialTexture(0, driver->getTexture("media/stones.jpg"));
+	node->setMaterialTexture(1, driver->getTexture("media/water.jpg"));
+
+	node->setMaterialType(video::EMT_REFLECTION_2_LAYER);
+
+}
+
+
+
+
+/*
+The start of the main function starts like in most other example. We ask the
+user for the desired renderer and start it up. This time with the advanced
+parameter handling.
+*/
+int main()
+{
+	bool shadows = true;
+
+//	// ask user for driver
+//	video::E_DRIVER_TYPE driverType=driverChoiceConsole();
+//	if (driverType==video::EDT_COUNT)
+//		return 1;
+
+	// create device with full flexibility over creation parameters
+	// you can add more parameters if desired, check irr::SIrrlichtCreationParameters
+	irr::SIrrlichtCreationParameters params;
+//	params.DriverType=driverType;
+	params.DriverType = video::EDT_OPENGL;
+	params.WindowSize=core::dimension2d<u32>(800, 480);
+	params.Stencilbuffer = shadows; // dynamic shadows
+	IrrlichtDevice* device = createDeviceEx(params);
+
+	if (device == 0)
+		return 1; // could not create selected driver.
+
+
 	/*
-	To be able to do collision with the terrain, we create a triangle selector.
-	If you want to know what triangle selectors do, just take a look into the
-	collision tutorial. The terrain triangle selector works together with the
-	terrain. To demonstrate this, we create a collision response animator
-	and attach it to the camera, so that the camera will not be able to fly
-	through the terrain.
+	First, we add standard stuff to the scene: A nice irrlicht engine
+	logo, a small help text, a user controlled camera, and we disable
+	the mouse cursor.
 	*/
+
+	video::IVideoDriver* driver = device->getVideoDriver();
+	scene::ISceneManager* smgr = device->getSceneManager();
+	gui::IGUIEnvironment* env = device->getGUIEnvironment();
+
+	driver->setTextureCreationFlag(video::ETCF_ALWAYS_32_BIT, true);
+
+	// create the HUD
+	create_HUD(driver, env);
+
+	// add camera and sun
+	scene::ICameraSceneNode* camera = create_camera_and_light(driver, smgr);
+
+
+	// disable mouse cursor
+	device->getCursorControl()->setVisible(false);
+
+
+	// add terrain scene node
+	scene::ITerrainSceneNode* terrain = create_island(driver, smgr);
+
 
 	// create triangle selector for the terrain
-	scene::ITriangleSelector* selector
-		= smgr->createTerrainTriangleSelector(terrain, 0);
+	scene::ITriangleSelector* selector = smgr->createTerrainTriangleSelector(terrain, 0);
 	terrain->setTriangleSelector(selector);
 
-	// create collision response animator and attach it to the camera
-	scene::ISceneNodeAnimator* anim = smgr->createCollisionResponseAnimator(
-		selector, camera, core::vector3df(60,100,60),
-		core::vector3df(0,0,0),
-		core::vector3df(0,50,0));
-	selector->drop();
-	camera->addAnimator(anim);
-	anim->drop();
 
-	/* If you need access to the terrain data you can also do this directly via the following code fragment.
-	*/
-	scene::CDynamicMeshBuffer* buffer = new scene::CDynamicMeshBuffer(video::EVT_2TCOORDS, video::EIT_16BIT);
-	terrain->getMeshBufferForLOD(*buffer, 0);
-	video::S3DVertex2TCoords* data = (video::S3DVertex2TCoords*)buffer->getVertexBuffer().getData();
-	// Work on data or get the IndexBuffer with a similar call.
-	buffer->drop(); // When done drop the buffer again.
+	// add colision between camera and terrain
+//	make_camera_colide(smgr, selector, camera);
+	colide_with_terrain(smgr, selector, camera);
+
+
+	// all done with selector
+	selector->drop();
+
+
+	// add waterfall
+	scene::IParticleSystemSceneNode* waterfall = create_waterfall(driver, smgr);
+
+
+	// add water to lake
+	create_water(driver, smgr);
+
+
 
 	/*
 	To make the user be able to switch between normal and wireframe mode,
@@ -268,15 +379,18 @@ int main()
 		int fps = driver->getFPS();
 		if (lastFPS != fps)
 		{
-			core::stringw str = L"Terrain Renderer - Irrlicht Engine [";
+			core::stringw str = L"Ilha [";
 			str += driver->getName();
 			str += "] FPS:";
 			str += fps;
 			// Also print terrain height of current camera position
 			// We can use camera position because terrain is located at coordinate origin
-			str += " Height: ";
-			str += terrain->getHeight(camera->getAbsolutePosition().X,
-					camera->getAbsolutePosition().Z);
+			str += " x: ";
+			str += camera->getAbsolutePosition().X;
+			str += " y: ";
+			str += camera->getAbsolutePosition().Y;
+			str += " z: ";
+			str += camera->getAbsolutePosition().Z;
 
 			device->setWindowCaption(str.c_str());
 			lastFPS = fps;

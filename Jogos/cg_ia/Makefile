@@ -11,6 +11,7 @@ CXXFLAGS = -O3 -ffast-math
 
 #default target is Linux
 all: all_linux
+	./$(Target)
 
 ifeq ($(HOSTTYPE), x86_64)
 LIBSELECT=64
