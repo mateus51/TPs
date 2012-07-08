@@ -93,8 +93,8 @@ void create_HUD(video::IVideoDriver* driver, gui::IGUIEnvironment* env) {
 
 scene::ICameraSceneNode* create_camera_and_light(video::IVideoDriver* driver, scene::ISceneManager* smgr) {
 	scene::ICameraSceneNode* camera = smgr->addCameraSceneNodeFPS(0,100.0f,1.2f);
-	camera->setPosition(core::vector3df(3583, 2673, 6768));
-	camera->setTarget(core::vector3df(4245, 2371, 5786));
+	camera->setPosition(core::vector3df(3583, 1000, 6240));
+	camera->setTarget(core::vector3df(3583, 640, 0));
 	camera->setFarValue(42000.0f);
 
 	// add sun light
@@ -113,7 +113,14 @@ scene::ICameraSceneNode* create_camera_and_light(video::IVideoDriver* driver, sc
 
 
 void colide_with_terrain(scene::ISceneManager* smgr, scene::ITriangleSelector* selector, scene::ISceneNode* node) {
-	// create collision response animator and attach it to the camera
+	/*
+	To be able to do collision with the terrain, we create a triangle selector.
+	If you want to know what triangle selectors do, just take a look into the
+	collision tutorial. The terrain triangle selector works together with the
+	terrain. To demonstrate this, we create a collision response animator
+	and attach it to the camera, so that the camera will not be able to fly
+	through the terrain.
+	*/
 	scene::ISceneNodeAnimator* anim = smgr->createCollisionResponseAnimator(selector, node, core::vector3df(60,100,60),
 		core::vector3df(0,0,0),
 		core::vector3df(0,50,0));
@@ -121,66 +128,6 @@ void colide_with_terrain(scene::ISceneManager* smgr, scene::ITriangleSelector* s
 	anim->drop();
 }
 
-
-//void make_camera_colide(scene::ISceneManager* smgr, scene::ITriangleSelector* selector, scene::ICameraSceneNode* camera) {
-//	/*
-//	To be able to do collision with the terrain, we create a triangle selector.
-//	If you want to know what triangle selectors do, just take a look into the
-//	collision tutorial. The terrain triangle selector works together with the
-//	terrain. To demonstrate this, we create a collision response animator
-//	and attach it to the camera, so that the camera will not be able to fly
-//	through the terrain.
-//	*/
-//
-//
-//	// create collision response animator and attach it to the camera
-//	scene::ISceneNodeAnimator* anim = smgr->createCollisionResponseAnimator(
-//		selector, camera, core::vector3df(60,100,60),
-//		core::vector3df(0,0,0),
-//		core::vector3df(0,50,0));
-////	selector->drop();
-//	camera->addAnimator(anim);
-//	anim->drop();
-//}
-
-
-
-
-
-scene::IParticleSystemSceneNode* create_waterfall(video::IVideoDriver* driver, scene::ISceneManager* smgr) {
-	// create a particle system
-//	scene::IParticleSystemSceneNode* ps = smgr->addParticleSystemSceneNode(true, NULL, -1, core::vector3df(3719, 2133, 3701));
-
-	scene::IParticleSystemSceneNode* ps =
-			smgr->addParticleSystemSceneNode(false);
-
-	scene::IParticleEmitter* em = ps->createBoxEmitter(
-			core::aabbox3d<f32>(0, 0, 0, 630, 1, 60), // emitter size
-			core::vector3df(0.0f,0.0f,0.5f),   // initial direction
-			1000,1200,                             // emit rate
-			video::SColor(0,0,0,255),       // darkest color
-			video::SColor(0,0,0,255),       // brightest color
-			1300,1300,0,                         // min and max age, angle
-			core::dimension2df(25.f,100.f),         // min size
-			core::dimension2df(45.f,220.f));        // max size
-
-	ps->setEmitter(em); // this grabs the emitter
-	em->drop(); // so we can drop it here without deleting it
-
-//	scene::IParticleAffector* paf = ps->createFadeOutParticleAffector();
-	scene::IParticleAffector* paf = ps->createGravityAffector(core::vector3df(0.0f,-2.0f, 0.0f));
-
-	ps->addAffector(paf); // same goes for the affector
-	paf->drop();
-
-	ps->setPosition(core::vector3df(3000, 2200, 3700)); //5786
-	ps->setScale(core::vector3df(2,2,2));
-	ps->setMaterialFlag(video::EMF_LIGHTING, false);
-	ps->setMaterialFlag(video::EMF_ZWRITE_ENABLE, false);
-	ps->setMaterialTexture(0, driver->getTexture("media/fire.bmp"));
-	ps->setMaterialType(video::EMT_TRANSPARENT_VERTEX_ALPHA);
-	return ps;
-}
 
 
 
@@ -219,7 +166,7 @@ scene::ITerrainSceneNode* create_island(video::IVideoDriver* driver, scene::ISce
 
 	terrain->setMaterialFlag(video::EMF_LIGHTING, true);
 
-	terrain->setMaterialTexture(0, driver->getTexture("media/rock-texture.jpg"));
+	terrain->setMaterialTexture(0, driver->getTexture("media/grass.jpg"));
 	terrain->setMaterialTexture(1, driver->getTexture("media/detailmap3.jpg"));
 
 	terrain->setMaterialType(video::EMT_DETAIL_MAP);
@@ -233,24 +180,161 @@ scene::ITerrainSceneNode* create_island(video::IVideoDriver* driver, scene::ISce
 
 
 void create_water(video::IVideoDriver* driver, scene::ISceneManager* smgr) {
-	scene::IAnimatedMesh* mesh = smgr->addHillPlaneMesh( "lago_cachoeira",
+
+	// agua do lago onde a cachoeira cai
+	scene::IAnimatedMesh* mesh = smgr->addHillPlaneMesh("lago_cachoeira",
 									core::dimension2d<f32>(250,153),			//tileSize
 									core::dimension2d<u32>(10,10), 0, 0, 	//tileCount, material, hillHeight
 									core::dimension2d<f32>(0,0), 			//countHills
-									core::dimension2d<f32>(10,10)); 		//textureRepeatCount
-
+									core::dimension2d<f32>(1, 1)); 		//textureRepeatCount
 	scene::ISceneNode* node = smgr->addWaterSurfaceSceneNode(mesh->getMesh(0),
-														3.0f,   //waveHeight
-														300.0f, //waveSpeed
-														30.0f); //waveLength
+														20.32432f,   //waveHeight
+														1001.8732f, //waveSpeed
+														3.0672638476f); //waveLength
 	node->setPosition(core::vector3df(3460, 580, 4950));
-	node->setMaterialTexture(0, driver->getTexture("media/stones.jpg"));
-	node->setMaterialTexture(1, driver->getTexture("media/water.jpg"));
+//	node->setMaterialTexture(0, driver->getTexture("media/stones.jpg"));
+	node->setMaterialTexture(0, driver->getTexture("media/rock-texture.jpg"));
+	node->setMaterialTexture(1, driver->getTexture("media/water2.jpg"));
+	node->setMaterialType(video::EMT_REFLECTION_2_LAYER);
 
+
+
+	// agua do rio depois do lago
+	mesh = smgr->addHillPlaneMesh("rio_depois_do_lago",
+									core::dimension2d<f32>(60,150),			//tileSize
+									core::dimension2d<u32>(10,10), 0, 0, 	//tileCount, material, hillHeight
+									core::dimension2d<f32>(0,0), 			//countHills
+									core::dimension2d<f32>(1, 1)); 		//textureRepeatCount
+	node = smgr->addWaterSurfaceSceneNode(mesh->getMesh(0),
+														1.0f,   //waveHeight
+														200.0f, //waveSpeed
+														30.0f); //waveLength
+	node->setPosition(core::vector3df(3530, 580, 6450));
+//	node->setMaterialTexture(0, driver->getTexture("media/stones.jpg"));
+	node->setMaterialTexture(0, driver->getTexture("media/rock-texture.jpg"));
+	node->setMaterialTexture(1, driver->getTexture("media/water2.jpg"));
+	node->setMaterialType(video::EMT_REFLECTION_2_LAYER);
+
+
+
+	// agua do rio antes da cachu
+	mesh = smgr->addHillPlaneMesh("rio_antes_da_cachu",
+									core::dimension2d<f32>(130,320),			//tileSize
+									core::dimension2d<u32>(10,10), 0, 0, 	//tileCount, material, hillHeight
+									core::dimension2d<f32>(0,0), 			//countHills
+									core::dimension2d<f32>(1, 1)); 		//textureRepeatCount
+	node = smgr->addWaterSurfaceSceneNode(mesh->getMesh(0),
+														1.0f,   //waveHeight
+														200.0f, //waveSpeed
+														30.0f); //waveLength
+	node->setPosition(core::vector3df(3600, 2210, 2120));
+//	node->setMaterialTexture(0, driver->getTexture("media/stones.jpg"));
+	node->setMaterialTexture(0, driver->getTexture("media/rock-texture.jpg"));
+	node->setMaterialTexture(1, driver->getTexture("media/water2.jpg"));
 	node->setMaterialType(video::EMT_REFLECTION_2_LAYER);
 
 }
 
+
+
+
+
+void create_waterfall(video::IVideoDriver* driver, scene::ISceneManager* smgr) {
+	scene::IParticleSystemSceneNode* ps;
+	scene::IParticleEmitter* cachu;
+
+	// rio antes da cachoeira
+	ps = smgr->addParticleSystemSceneNode(false);
+	cachu = ps->createBoxEmitter(
+				core::aabbox3d<f32>(0, 0, 0, 1200, 1, 60), // emitter size
+				core::vector3df(0.0f, 0.0f, 1.0f),   // initial direction
+				1000,1200,                             // emit rate
+				video::SColor(0,0,0,255),       // darkest color
+				video::SColor(0,0,0,255),       // brightest color
+				3100, 3100, 0,                         // min and max age, angle
+				core::dimension2df(80.f,80.f),         // min size
+				core::dimension2df(150.f,150.f));        // max size
+	ps->setEmitter(cachu); // this grabs the emitter
+	cachu->drop(); // so we can drop it here without deleting it
+	ps->setPosition(core::vector3df(3000, 2200, 600));
+//	ps->setScale(core::vector3df(1, 1, 18));
+	ps->setMaterialFlag(video::EMF_LIGHTING, false);
+	ps->setMaterialFlag(video::EMF_ZWRITE_ENABLE, false);
+	ps->setMaterialTexture(0, driver->getTexture("media/fire.bmp"));
+	ps->setMaterialType(video::EMT_TRANSPARENT_VERTEX_ALPHA);
+
+
+
+	// cachoeira
+	ps = smgr->addParticleSystemSceneNode(false);
+	cachu = ps->createBoxEmitter(
+			core::aabbox3d<f32>(0, 0, 0, 1200, 1, 60), // emitter size
+			core::vector3df(0.0f, 0.0f, 1.0f),   // initial direction
+			1000,1200,                             // emit rate
+			video::SColor(0,0,0,255),       // darkest color
+			video::SColor(0,0,0,255),       // brightest color
+			1300,1300,0,                         // min and max age, angle
+			core::dimension2df(35.f,100.f),         // min size
+			core::dimension2df(65.f,220.f));        // max size
+	ps->setEmitter(cachu); // this grabs the emitter
+	cachu->drop(); // so we can drop it here without deleting it
+	// gravidade para as partículas
+	scene::IParticleAffector* paf = ps->createGravityAffector(core::vector3df(0.0f,-2.0f, 0.2f));
+	ps->addAffector(paf); // same goes for the affector
+	paf->drop();
+	ps->setPosition(core::vector3df(3000, 2200, 3700)); //5786
+//	ps->setScale(core::vector3df(2,2,2));
+	ps->setMaterialFlag(video::EMF_LIGHTING, false);
+	ps->setMaterialFlag(video::EMF_ZWRITE_ENABLE, false);
+	ps->setMaterialTexture(0, driver->getTexture("media/fire.bmp"));
+	ps->setMaterialType(video::EMT_TRANSPARENT_VERTEX_ALPHA);
+
+
+
+
+	// lago depois do cachoeira
+	ps = smgr->addParticleSystemSceneNode(false);
+	cachu = ps->createBoxEmitter(
+				core::aabbox3d<f32>(0, 0, 0, 2200, 1, 60), // emitter size
+				core::vector3df(0.0f, 0.0f, 0.7f),   // initial direction
+				1000,1200,                             // emit rate
+				video::SColor(0,0,0,255),       // darkest color
+				video::SColor(0,0,0,255),       // brightest color
+				2300, 2300, 0,                         // min and max age, angle
+				core::dimension2df(150.f,150.f),         // min size
+				core::dimension2df(150.f,150.f));        // max size
+	ps->setEmitter(cachu); // this grabs the emitter
+	cachu->drop(); // so we can drop it here without deleting it
+	ps->setPosition(core::vector3df(2500, 550, 4000));
+//	ps->setScale(core::vector3df(1, 1, 18));
+	ps->setMaterialFlag(video::EMF_LIGHTING, false);
+	ps->setMaterialFlag(video::EMF_ZWRITE_ENABLE, false);
+	ps->setMaterialTexture(0, driver->getTexture("media/fire.bmp"));
+	ps->setMaterialType(video::EMT_TRANSPARENT_VERTEX_ALPHA);
+
+
+
+
+	// rio depois do lago
+	ps = smgr->addParticleSystemSceneNode(false);
+	cachu = ps->createBoxEmitter(
+				core::aabbox3d<f32>(0, 0, 0, 550, 1, 60), // emitter size
+				core::vector3df(0.0f, 0.0f, 1.2f),   // initial direction
+				1000,1200,                             // emit rate
+				video::SColor(0,0,0,255),       // darkest color
+				video::SColor(0,0,0,255),       // brightest color
+				1200, 1200, 0,                         // min and max age, angle
+				core::dimension2df(80.f,80.f),         // min size
+				core::dimension2df(120.f,120.f));        // max size
+	ps->setEmitter(cachu); // this grabs the emitter
+	cachu->drop(); // so we can drop it here without deleting it
+	ps->setPosition(core::vector3df(3250, 580, 5650));
+//	ps->setScale(core::vector3df(1, 1, 18));
+	ps->setMaterialFlag(video::EMF_LIGHTING, false);
+	ps->setMaterialFlag(video::EMF_ZWRITE_ENABLE, false);
+	ps->setMaterialTexture(0, driver->getTexture("media/fire.bmp"));
+	ps->setMaterialType(video::EMT_TRANSPARENT_VERTEX_ALPHA);
+}
 
 
 
@@ -273,7 +357,7 @@ int main()
 	irr::SIrrlichtCreationParameters params;
 //	params.DriverType=driverType;
 	params.DriverType = video::EDT_OPENGL;
-	params.WindowSize=core::dimension2d<u32>(800, 480);
+	params.WindowSize=core::dimension2d<u32>(640, 480);
 	params.Stencilbuffer = shadows; // dynamic shadows
 	IrrlichtDevice* device = createDeviceEx(params);
 
@@ -314,7 +398,6 @@ int main()
 
 
 	// add colision between camera and terrain
-//	make_camera_colide(smgr, selector, camera);
 	colide_with_terrain(smgr, selector, camera);
 
 
@@ -323,11 +406,11 @@ int main()
 
 
 	// add waterfall
-	scene::IParticleSystemSceneNode* waterfall = create_waterfall(driver, smgr);
+	create_waterfall(driver, smgr);
 
 
 	// add water to lake
-	create_water(driver, smgr);
+//	create_water(driver, smgr);
 
 
 
