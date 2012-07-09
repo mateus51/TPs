@@ -16,7 +16,10 @@ toggles between solid and detail mapped material.
 */
 #include "irrlicht/irrlicht.h"
 #include "irrlicht/driverChoice.h"
-//#include "irrlicht/IMesh.h"
+
+
+#include "3dmodels.h"
+#include "bird.cpp"
 
 using namespace irr;
 
@@ -340,66 +343,19 @@ void create_river(video::IVideoDriver* driver, scene::ISceneManager* smgr) {
 
 
 
-void create_coqueiro1(video::IVideoDriver* driver, scene::ISceneManager* smgr, int x, int y, int z, scene::ISceneNode* parent = 0) {
-	scene::IMesh* mesh = smgr->getMesh("media/3dmodels/coqueiro1.3ds");
-	scene::IMeshSceneNode* coqueiro = smgr->addMeshSceneNode(mesh,
-															parent,
-															-1, //id
-															core::vector3df(x, y, z), //position
-															core::vector3df(0, 0, 0), //rotation
-															core::vector3df(0.2f, 0.8f, 0.2f), //scale
-															false); //also Add If Mesh Pointer is Zero
-	coqueiro->setMaterialTexture(0, driver->getTexture("media/3dmodels/coqueiro1.jpg"));
-	coqueiro->setMaterialFlag(video::EMF_LIGHTING, false);
+
+
+void follow(scene::ISceneManager* smgr, scene::IAnimatedMeshSceneNode* eagle, scene::IAnimatedSceneNode* leader) {
+   core::vector3df leader_pos = leader->getPosition();
+
+   irr::scene::ISceneNodeAnimator* anim = smgr->createFlyStraightAnimator(eagle.getPosition(), 	// start point
+		   	   	   	   	   	   	   	   	   	   	   	   	   	   	   	   	  leader.getPosition(),	// end point
+		   	   	   	   	   	   	   	   	   	   	   	   	   	   	   	   	  10,					// time for way
+		   	   	   	   	   	   	   	   	   	   	   	   	   	   	   	   	  false);				// pingpong
+   eagle->addAnimator(anim);
+   anim->drop();
 }
 
-
-
-void create_coqueiro2(video::IVideoDriver* driver, scene::ISceneManager* smgr, int x, int y, int z, scene::ISceneNode* parent = 0) {
-	scene::IMesh* mesh = smgr->getMesh("media/3dmodels/coqueiro2.3ds");
-	scene::IMeshSceneNode* coqueiro = smgr->addMeshSceneNode(mesh,
-															parent,
-															-1, //id
-															core::vector3df(x, y, z), //position
-															core::vector3df(0, 0, 0), //rotation
-															core::vector3df(1.0f, 1.0f, 1.0f), //scale
-															false); //also Add If Mesh Pointer is Zero
-//	coqueiro->setMaterialTexture(0, driver->getTexture("media/3dmodels/coqueiro1.jpg"));
-	coqueiro->setMaterialFlag(video::EMF_LIGHTING, false);
-}
-
-
-
-
-void create_papiro(video::IVideoDriver* driver, scene::ISceneManager* smgr, int x, int y, int z, scene::ISceneNode* parent = 0) {
-	scene::IMesh* mesh = smgr->getMesh("media/3dmodels/papiro1.3ds");
-	scene::IMeshSceneNode* papiro = smgr->addMeshSceneNode(mesh,
-															parent,
-															-1, //id
-															core::vector3df(x, y, z), //position
-															core::vector3df(0, 0, 0), //rotation
-															core::vector3df(0.1f, 0.1f, 0.1f), //scale
-															false); //also Add If Mesh Pointer is Zero
-	papiro->setMaterialTexture(0, driver->getTexture("media/3dmodels/papiro1.jpg"));
-	papiro->setMaterialFlag(video::EMF_LIGHTING, false);
-}
-
-
-
-
-void create_tree(video::IVideoDriver* driver, scene::ISceneManager* smgr, int x, int y, int z, scene::ISceneNode* parent = 0) {
-	scene::IMesh* mesh = smgr->getMesh("media/3dmodels/tree1.3ds");
-	scene::IMeshSceneNode* tree = smgr->addMeshSceneNode(mesh,
-															parent,
-															-1, 								//id
-															core::vector3df(x, y, z), 			//position
-															core::vector3df(0, 0, 0),			//rotation
-															core::vector3df(1.0f, 1.0f, 1.0f),	//scale
-															false); //also Add If Mesh Pointer is Zero
-//	tree->setMaterialTexture(0, driver->getTexture("media/3dmodels/papiro1.jpg"));
-	tree->setMaterialFlag(video::EMF_LIGHTING, true);
-	tree->setVisible(true);
-}
 
 
 /*
@@ -467,14 +423,47 @@ int main()
 
 
 	// rio de emissor de partículas
-//	create_river(driver, smgr);
+	create_river(driver, smgr);
 
 
 	// plantes
-	create_coqueiro1(driver, smgr, 2500, 340, 6139);
-	create_coqueiro2(driver, smgr, 5000, 340, 6139);
-	create_papiro(driver, smgr, 5000, 630, 4500);
-//	create_tree(driver, smgr, 2500, 340, 6139);
+	create_coqueiro1(smgr, 2500, 620, 6139);
+	create_coqueiro3(smgr, 3500, 780, 6139);
+	create_papiro(smgr, 5000, 630, 4500);
+
+
+
+	// bando de águias
+	scene::IMeshSceneNode* leader = create_eagle(driver, smgr, 4000, 2500, 6139);
+	scene::IMeshSceneNode* eagle1 = create_eagle(driver, smgr, 4000, 2500, 7000);
+	scene::IMeshSceneNode* eagle2 = create_eagle(driver, smgr, 3500, 2500, 7000);
+
+
+	// fazendo líder do bando voar em círculos
+	scene::ISceneNodeAnimator* anim = 0;
+	anim = smgr->createFlyCircleAnimator(core::vector3df(4000, 2500, 6139),							// centro do círculo
+																	2500.0f,							// raio da trajetória
+																	0.0005f,							// velocidade
+																	core::vector3df(0.f, 1.f, 0.f), // direção
+																	0.f,							// startPosition
+																	0.f);							// radiusEllipsoid
+	leader->addAnimator(anim);
+	anim->drop();
+	anim = smgr->createRotationAnimator(core::vector3df(0.f, 0.2875f, 0.f)); // rotationSpeed
+	leader->addAnimator(anim);
+	anim->drop();
+
+
+	// fazendo outras águias voarem em linha reta
+	anim = smgr->createFlyStraightAnimator(core::vector3df(0, 0, 0), // startPoint
+			const core::vector3df(0, 0, 0), // endPoint
+			u32  	timeForWay,
+			bool  	loop = false,
+			bool  	pingpong = false
+		)
+
+
+
 
 
 	// add water to lake
@@ -523,6 +512,8 @@ int main()
 
 		smgr->drawAll();
 		env->drawAll();
+
+		follow(smgr, eagle1, leader);
 
 		driver->endScene();
 

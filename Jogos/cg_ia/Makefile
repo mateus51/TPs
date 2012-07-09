@@ -2,12 +2,12 @@
 # It's usually sufficient to change just the target name and source file list
 # and be sure that CXX is set to a valid compiler
 Target = ilha
-Sources = main.cpp
+Sources = main.cpp 3dmodels.cpp
 
 # general compiler settings
 CPPFLAGS = -I../../include -I/usr/X11R6/include
 CXXFLAGS = -O3 -ffast-math
-#CXXFLAGS = -g -Wall
+CXXFLAGS = -g -Wall
 
 #default target is Linux
 all: all_linux
