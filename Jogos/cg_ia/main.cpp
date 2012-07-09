@@ -15,7 +15,8 @@ switches to wireframe mode, the 'P' key to pointcloud mode, and the 'D' key
 toggles between solid and detail mapped material.
 */
 #include "irrlicht/irrlicht.h"
-#include "irrlicht/driverChoice.h"
+//#include "BoidSceneNode.h"
+#include "boids.cpp"
 
 
 #include "3dmodels.h"
@@ -345,16 +346,15 @@ void create_river(video::IVideoDriver* driver, scene::ISceneManager* smgr) {
 
 
 
-void follow(scene::ISceneManager* smgr, scene::IAnimatedMeshSceneNode* eagle, scene::IAnimatedSceneNode* leader) {
-   core::vector3df leader_pos = leader->getPosition();
-
-   irr::scene::ISceneNodeAnimator* anim = smgr->createFlyStraightAnimator(eagle.getPosition(), 	// start point
-		   	   	   	   	   	   	   	   	   	   	   	   	   	   	   	   	  leader.getPosition(),	// end point
-		   	   	   	   	   	   	   	   	   	   	   	   	   	   	   	   	  10,					// time for way
-		   	   	   	   	   	   	   	   	   	   	   	   	   	   	   	   	  false);				// pingpong
-   eagle->addAnimator(anim);
-   anim->drop();
-}
+//void follow(scene::ISceneManager* smgr, scene::ISceneNode* eagle, scene::ISceneNode* leader) {
+//   scene::ISceneNodeAnimator* anim = smgr->createFlyStraightAnimator(eagle->getPosition(), 	// start point
+//																	  leader->getPosition(),// end point
+//																	  1000,					// time for way
+//																	  false,				// loop
+//																	  false);				// pingpong
+//   eagle->addAnimator(anim);
+//   anim->drop();
+//}
 
 
 
@@ -426,7 +426,7 @@ int main()
 	create_river(driver, smgr);
 
 
-	// plantes
+	// plantas
 	create_coqueiro1(smgr, 2500, 620, 6139);
 	create_coqueiro3(smgr, 3500, 780, 6139);
 	create_papiro(smgr, 5000, 630, 4500);
@@ -435,10 +435,6 @@ int main()
 
 	// bando de águias
 	scene::IMeshSceneNode* leader = create_eagle(driver, smgr, 4000, 2500, 6139);
-	scene::IMeshSceneNode* eagle1 = create_eagle(driver, smgr, 4000, 2500, 7000);
-	scene::IMeshSceneNode* eagle2 = create_eagle(driver, smgr, 3500, 2500, 7000);
-
-
 	// fazendo líder do bando voar em círculos
 	scene::ISceneNodeAnimator* anim = 0;
 	anim = smgr->createFlyCircleAnimator(core::vector3df(4000, 2500, 6139),							// centro do círculo
@@ -453,17 +449,12 @@ int main()
 	leader->addAnimator(anim);
 	anim->drop();
 
-
-	// fazendo outras águias voarem em linha reta
-	anim = smgr->createFlyStraightAnimator(core::vector3df(0, 0, 0), // startPoint
-			const core::vector3df(0, 0, 0), // endPoint
-			u32  	timeForWay,
-			bool  	loop = false,
-			bool  	pingpong = false
-		)
-
-
-
+	Boids* boids = new Boids(smgr, leader);
+	boids->addBoid(create_eagle(driver, smgr, 4000, 2500, 7100));
+	boids->addBoid(create_eagle(driver, smgr, 3200, 2500, 6800));
+	boids->addBoid(create_eagle(driver, smgr, 3600, 2500, 6600));
+	boids->addBoid(create_eagle(driver, smgr, 3800, 2500, 6400));
+	boids->addBoid(create_eagle(driver, smgr, 4200, 2500, 6200));
 
 
 	// add water to lake
@@ -513,7 +504,10 @@ int main()
 		smgr->drawAll();
 		env->drawAll();
 
-		follow(smgr, eagle1, leader);
+		boids->update();
+
+//		follow(smgr, eagle1, leader);
+//		follow(smgr, eagle2, leader);
 
 		driver->endScene();
 
