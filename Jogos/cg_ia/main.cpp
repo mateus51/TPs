@@ -24,15 +24,31 @@ toggles between solid and detail mapped material.
 
 using namespace irr;
 
+scene::ICameraSceneNode* create_eagle_camera(scene::ISceneManager* smgr, scene::ISceneNode* eagle) {
+	video::IVideoDriver* driver = smgr->getVideoDriver();
+	scene::ICameraSceneNode* camera = smgr->addCameraSceneNode(eagle,
+			core::vector3df(0, 0, 0), 			// position
+			core::vector3df(3664, 1816, 7000), 	// look at
+			-1,									// id
+			true);								// active
+
+//	camera->setPosition(core::vector3df(3583, 1000, 6400));
+//	camera->setTarget(core::vector3df(3583, 650, 0));
+	camera->setFarValue(42000.0f);
+	return camera;
+}
+
 class MyEventReceiver : public IEventReceiver
 {
 public:
 
-	MyEventReceiver(scene::ISceneNode* terrain, scene::ISceneNode* skybox, scene::ISceneNode* skydome) :
+	MyEventReceiver(scene::ISceneNode* terrain, scene::ISceneNode* skybox, scene::ISceneNode* skydome, scene::ISceneManager* smgr, scene::ISceneNode* eagle) :
 		Terrain(terrain), Skybox(skybox), Skydome(skydome), showBox(true)
 	{
 		Skybox->setVisible(true);
 		Skydome->setVisible(false);
+		this->smgr = smgr;
+		this->eagle = eagle;
 	}
 
 	bool OnEvent(const SEvent& event)
@@ -48,9 +64,11 @@ public:
 				Terrain->setMaterialFlag(video::EMF_POINTCLOUD, false);
 				return true;
 			case irr::KEY_KEY_P: // switch wire frame mode
-				Terrain->setMaterialFlag(video::EMF_POINTCLOUD,
-						!Terrain->getMaterial(0).PointCloud);
-				Terrain->setMaterialFlag(video::EMF_WIREFRAME, false);
+//				Terrain->setMaterialFlag(video::EMF_POINTCLOUD,
+//						!Terrain->getMaterial(0).PointCloud);
+//				Terrain->setMaterialFlag(video::EMF_WIREFRAME, false);
+//				caemra1->setActive();
+				create_eagle_camera(smgr, eagle);
 				return true;
 			case irr::KEY_KEY_D: // toggle detail map
 				Terrain->setMaterialType(
@@ -74,6 +92,8 @@ private:
 	scene::ISceneNode* Terrain;
 	scene::ISceneNode* Skybox;
 	scene::ISceneNode* Skydome;
+	scene::ISceneManager* smgr;
+	scene::ISceneNode* eagle;
 	bool showBox;
 };
 
@@ -98,21 +118,30 @@ void create_HUD(video::IVideoDriver* driver, gui::IGUIEnvironment* env) {
 
 scene::ICameraSceneNode* create_camera_and_light(video::IVideoDriver* driver, scene::ISceneManager* smgr) {
 	scene::ICameraSceneNode* camera = smgr->addCameraSceneNodeFPS(0,100.0f,1.2f);
-	camera->setPosition(core::vector3df(3583, 1000, 6240));
-	camera->setTarget(core::vector3df(3583, 640, 0));
+	camera->setPosition(core::vector3df(3583, 1000, 6400));
+	camera->setTarget(core::vector3df(3583, 650, 0));
 	camera->setFarValue(42000.0f);
 
 	// add sun light
-	scene::ISceneNode* node = smgr->addLightSceneNode(0, core::vector3df(2700*3,255*25,2600*2),
-	                video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 800000.0f);
+	scene::ISceneNode* node = smgr->addLightSceneNode(0, core::vector3df(0,10000,8000),
+	                video::SColorf(1.0f, 0.6f, 0.7f, 1.0f), 25000000.0f);
 
 	// attach billboard to light
 	node = smgr->addBillboardSceneNode(node, core::dimension2d<f32>(5000, 5000));
 	node->setMaterialFlag(video::EMF_LIGHTING, false);
 	node->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
 	node->setMaterialTexture(0, driver->getTexture("media/particlewhite.bmp"));
+
+	node = smgr->addLightSceneNode(0, core::vector3df(0,200,-500),
+		                video::SColorf(1.0f, 0.6f, 0.7f, 1.0f), 2500.0f);
 	return camera;
 }
+
+
+
+
+
+
 
 
 
@@ -157,7 +186,7 @@ scene::ITerrainSceneNode* create_island(video::IVideoDriver* driver, scene::ISce
 
 	// add terrain scene node
 	scene::ITerrainSceneNode* terrain = smgr->addTerrainSceneNode(
-		"media/island.bmp",
+		"media/new_island.bmp",
 		0,					// parent node
 		-1,					// node id
 		core::vector3df(0.f, 0.f, 0.f),		// position
@@ -184,59 +213,61 @@ scene::ITerrainSceneNode* create_island(video::IVideoDriver* driver, scene::ISce
 
 
 
-void create_water(video::IVideoDriver* driver, scene::ISceneManager* smgr) {
+void create_water(scene::ISceneManager* smgr) {
 
+	video::IVideoDriver* driver = smgr->getVideoDriver();
 	// agua do lago onde a cachoeira cai
 	scene::IAnimatedMesh* mesh = smgr->addHillPlaneMesh("lago_cachoeira",
-									core::dimension2d<f32>(250,153),			//tileSize
-									core::dimension2d<u32>(10,10), 0, 0, 	//tileCount, material, hillHeight
+									core::dimension2d<f32>(10,10),			//tileSize
+									core::dimension2d<u32>(100,100), 0, 0, 	//tileCount, material, hillHeight
 									core::dimension2d<f32>(0,0), 			//countHills
 									core::dimension2d<f32>(1, 1)); 		//textureRepeatCount
-	scene::ISceneNode* node = smgr->addWaterSurfaceSceneNode(mesh->getMesh(0),
-														20.32432f,   //waveHeight
-														1001.8732f, //waveSpeed
-														3.0672638476f); //waveLength
-	node->setPosition(core::vector3df(3460, 580, 4950));
-//	node->setMaterialTexture(0, driver->getTexture("media/stones.jpg"));
-	node->setMaterialTexture(0, driver->getTexture("media/rock-texture.jpg"));
+	scene::ISceneNode* node = smgr->addWaterSurfaceSceneNode(mesh->getMesh(0), 3.0f, 300.0f, 30.0f);
+//														20.32432f,   //waveHeight
+//														1001.8732f, //waveSpeed
+//														3.0672638476f); //waveLength
+	node->setPosition(core::vector3df(0, 250, 0));
+	node->setScale(core::vector3df(100.0f, 20.0f, 100.0f));
+	node->setMaterialTexture(0, driver->getTexture("media/stones.jpg"));
+//	node->setMaterialTexture(0, driver->getTexture("media/rock-texture.jpg"));
 	node->setMaterialTexture(1, driver->getTexture("media/water2.jpg"));
 	node->setMaterialType(video::EMT_REFLECTION_2_LAYER);
 
 
 
-	// agua do rio depois do lago
-	mesh = smgr->addHillPlaneMesh("rio_depois_do_lago",
-									core::dimension2d<f32>(60,150),			//tileSize
-									core::dimension2d<u32>(10,10), 0, 0, 	//tileCount, material, hillHeight
-									core::dimension2d<f32>(0,0), 			//countHills
-									core::dimension2d<f32>(1, 1)); 		//textureRepeatCount
-	node = smgr->addWaterSurfaceSceneNode(mesh->getMesh(0),
-														1.0f,   //waveHeight
-														200.0f, //waveSpeed
-														30.0f); //waveLength
-	node->setPosition(core::vector3df(3530, 580, 6450));
-//	node->setMaterialTexture(0, driver->getTexture("media/stones.jpg"));
-	node->setMaterialTexture(0, driver->getTexture("media/rock-texture.jpg"));
-	node->setMaterialTexture(1, driver->getTexture("media/water2.jpg"));
-	node->setMaterialType(video::EMT_REFLECTION_2_LAYER);
-
-
-
-	// agua do rio antes da cachu
-	mesh = smgr->addHillPlaneMesh("rio_antes_da_cachu",
-									core::dimension2d<f32>(130,320),			//tileSize
-									core::dimension2d<u32>(10,10), 0, 0, 	//tileCount, material, hillHeight
-									core::dimension2d<f32>(0,0), 			//countHills
-									core::dimension2d<f32>(1, 1)); 		//textureRepeatCount
-	node = smgr->addWaterSurfaceSceneNode(mesh->getMesh(0),
-														1.0f,   //waveHeight
-														200.0f, //waveSpeed
-														30.0f); //waveLength
-	node->setPosition(core::vector3df(3600, 2210, 2120));
-//	node->setMaterialTexture(0, driver->getTexture("media/stones.jpg"));
-	node->setMaterialTexture(0, driver->getTexture("media/rock-texture.jpg"));
-	node->setMaterialTexture(1, driver->getTexture("media/water2.jpg"));
-	node->setMaterialType(video::EMT_REFLECTION_2_LAYER);
+//	// agua do rio depois do lago
+//	mesh = smgr->addHillPlaneMesh("rio_depois_do_lago",
+//									core::dimension2d<f32>(60,150),			//tileSize
+//									core::dimension2d<u32>(10,10), 0, 0, 	//tileCount, material, hillHeight
+//									core::dimension2d<f32>(0,0), 			//countHills
+//									core::dimension2d<f32>(1, 1)); 		//textureRepeatCount
+//	node = smgr->addWaterSurfaceSceneNode(mesh->getMesh(0),
+//														1.0f,   //waveHeight
+//														200.0f, //waveSpeed
+//														30.0f); //waveLength
+//	node->setPosition(core::vector3df(3530, 580, 6450));
+////	node->setMaterialTexture(0, driver->getTexture("media/stones.jpg"));
+//	node->setMaterialTexture(0, driver->getTexture("media/rock-texture.jpg"));
+//	node->setMaterialTexture(1, driver->getTexture("media/water2.jpg"));
+//	node->setMaterialType(video::EMT_REFLECTION_2_LAYER);
+//
+//
+//
+//	// agua do rio antes da cachu
+//	mesh = smgr->addHillPlaneMesh("rio_antes_da_cachu",
+//									core::dimension2d<f32>(130,320),			//tileSize
+//									core::dimension2d<u32>(10,10), 0, 0, 	//tileCount, material, hillHeight
+//									core::dimension2d<f32>(0,0), 			//countHills
+//									core::dimension2d<f32>(1, 1)); 		//textureRepeatCount
+//	node = smgr->addWaterSurfaceSceneNode(mesh->getMesh(0),
+//														1.0f,   //waveHeight
+//														200.0f, //waveSpeed
+//														30.0f); //waveLength
+//	node->setPosition(core::vector3df(3600, 2210, 2120));
+////	node->setMaterialTexture(0, driver->getTexture("media/stones.jpg"));
+//	node->setMaterialTexture(0, driver->getTexture("media/rock-texture.jpg"));
+//	node->setMaterialTexture(1, driver->getTexture("media/water2.jpg"));
+//	node->setMaterialType(video::EMT_REFLECTION_2_LAYER);
 
 }
 
@@ -398,7 +429,7 @@ int main()
 	driver->setTextureCreationFlag(video::ETCF_ALWAYS_32_BIT, true);
 
 	// create the HUD
-	create_HUD(driver, env);
+//	create_HUD(driver, env);
 
 	// add camera and sun
 	scene::ICameraSceneNode* camera = create_camera_and_light(driver, smgr);
@@ -425,11 +456,26 @@ int main()
 	// rio de emissor de partículas
 	create_river(driver, smgr);
 
+	// oceano
+	create_water(smgr);
+
 
 	// plantas
 	create_coqueiro1(smgr, 2500, 620, 6139);
 	create_coqueiro3(smgr, 3500, 780, 6139);
+
 	create_papiro(smgr, 5000, 630, 4500);
+	create_papiro(smgr, 5000, 630, 4600);
+	create_papiro(smgr, 4900, 630, 4650);
+	create_papiro(smgr, 4700, 630, 4650);
+	create_papiro(smgr, 4600, 630, 4450);
+
+	create_papiro(smgr, 2520, 630, 4650);
+	create_papiro(smgr, 2520, 630, 4350);
+	create_papiro(smgr, 2520, 630, 4550);
+	create_papiro(smgr, 2520, 630, 4450);
+
+	create_papiro(smgr, 3850, 630, 5750);
 
 
 
@@ -454,12 +500,14 @@ int main()
 	boids->addBoid(create_eagle(driver, smgr, 3200, 2500, 6800));
 	boids->addBoid(create_eagle(driver, smgr, 3600, 2500, 6600));
 	boids->addBoid(create_eagle(driver, smgr, 3800, 2500, 6400));
-	boids->addBoid(create_eagle(driver, smgr, 4200, 2500, 6200));
+//	boids->addBoid(create_eagle(driver, smgr, 4200, 2500, 6200));
 
 
 	// add water to lake
 //	create_water(driver, smgr);
 
+
+//	scene::ICameraSceneNode* eagle_camera = create_eagle_camera(smgr, leader);
 
 
 	/*
@@ -486,9 +534,12 @@ int main()
 	driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, true);
 
 	// create event receiver
-	MyEventReceiver receiver(terrain, skybox, skydome);
+	MyEventReceiver receiver(terrain, skybox, skydome, smgr, leader);
 	device->setEventReceiver(&receiver);
 
+
+	skybox->setVisible(false);
+	skydome->setVisible(true);
 
 	/*
 	That's it, draw everything.

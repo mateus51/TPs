@@ -29,7 +29,7 @@ scene::IMeshSceneNode* create_coqueiro3(scene::ISceneManager* smgr, int x, int y
 															core::vector3df(0, 0, 0), //rotation
 															core::vector3df(0.05f, 0.05f, 0.05f), //scale
 															false); //also Add If Mesh Pointer is Zero
-//	coqueiro->setMaterialTexture(0, driver->getTexture("media/3dmodels/coqueiro1.jpg"));
+	coqueiro->setMaterialTexture(0, driver->getTexture("media/3dmodels/coqueiro1.jpg"));
 	coqueiro->setMaterialFlag(video::EMF_LIGHTING, false);
 	return coqueiro;
 }

@@ -6,6 +6,7 @@ class Boids {
 public:
 
 	Boids(scene::ISceneManager* smgr, scene::ISceneNode* leader) {
+		rotation = smgr->createRotationAnimator(core::vector3df(0.f, 0.2875f, 0.f)); // rotationSpeed
 		MIN_DIST = 1000;
 		num_boids = 0;
 		this->smgr = smgr;
@@ -18,6 +19,7 @@ public:
 	void addBoid(scene::ISceneNode* boid) {
 		if (num_boids < 5) {
 			boids[num_boids] = boid;
+			boid->addAnimator(rotation);
 			num_boids++;
 		}
 	}
@@ -113,4 +115,5 @@ private:
 	scene::ISceneNode* boids[5];
 	s32 num_boids;
 	s32 MIN_DIST;
+	scene::ISceneNodeAnimator* rotation;
 };
