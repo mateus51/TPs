@@ -20,15 +20,15 @@ toggles between solid and detail mapped material.
 
 
 #include "3dmodels.h"
-#include "bird.cpp"
+//#include "bird.cpp"
 
 using namespace irr;
 
 scene::ICameraSceneNode* create_eagle_camera(scene::ISceneManager* smgr, scene::ISceneNode* eagle) {
 	video::IVideoDriver* driver = smgr->getVideoDriver();
 	scene::ICameraSceneNode* camera = smgr->addCameraSceneNode(eagle,
-			core::vector3df(0, 0, 0), 			// position
-			core::vector3df(3664, 1816, 7000), 	// look at
+			core::vector3df(-10, -20, -10), 			// position
+			core::vector3df(3664, 1816, 6500), 	// look at
 			-1,									// id
 			true);								// active
 
@@ -496,11 +496,11 @@ int main()
 	anim->drop();
 
 	Boids* boids = new Boids(smgr, leader);
-	boids->addBoid(create_eagle(driver, smgr, 4000, 2500, 7100));
-	boids->addBoid(create_eagle(driver, smgr, 3200, 2500, 6800));
+	boids->addBoid(create_eagle(driver, smgr, 3000, 2510, 7100));
+	boids->addBoid(create_eagle(driver, smgr, 3200, 2450, 6800));
 	boids->addBoid(create_eagle(driver, smgr, 3600, 2500, 6600));
-	boids->addBoid(create_eagle(driver, smgr, 3800, 2500, 6400));
-//	boids->addBoid(create_eagle(driver, smgr, 4200, 2500, 6200));
+	boids->addBoid(create_eagle(driver, smgr, 3800, 2475, 6400));
+	boids->addBoid(create_eagle(driver, smgr, 4000, 2520, 6200));
 
 
 	// add water to lake
@@ -546,6 +546,8 @@ int main()
 	*/
 
 	int lastFPS = -1;
+
+	u32 i = 0;
 
 	while(device->run())
 	if (device->isWindowActive())

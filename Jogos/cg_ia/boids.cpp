@@ -7,7 +7,7 @@ public:
 
 	Boids(scene::ISceneManager* smgr, scene::ISceneNode* leader) {
 		rotation = smgr->createRotationAnimator(core::vector3df(0.f, 0.2875f, 0.f)); // rotationSpeed
-		MIN_DIST = 1000;
+		MIN_DIST = 600;
 		num_boids = 0;
 		this->smgr = smgr;
 		this->leader = leader;

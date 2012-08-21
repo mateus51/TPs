@@ -60,7 +60,7 @@ scene::IMeshSceneNode* create_eagle(video::IVideoDriver* driver, scene::ISceneMa
 															-1, 								//id
 															core::vector3df(x, y, z), 			//position
 															core::vector3df(0, -90, 0),			//rotation
-															core::vector3df(0.1f, 0.1f, 0.1f),	//scale
+															core::vector3df(0.05f, 0.05f, 0.05f),	//scale
 															false); //also Add If Mesh Pointer is Zero
 	eagle->setMaterialFlag(video::EMF_LIGHTING, false);
 	eagle->setVisible(true);
