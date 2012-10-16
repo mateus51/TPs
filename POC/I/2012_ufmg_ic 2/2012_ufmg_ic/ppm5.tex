@@ -1,0 +1,578 @@
+\documentclass[12pt]{article}
+\usepackage[portuges]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[left=2.5cm,top=2.5cm,right=2cm,bottom=3cm,nohead]{geometry}
+\usepackage{eurosans} 
+\usepackage{multirow}
+
+\input macros.tex
+
+\begin{document}
+
+\thispagestyle{empty}
+
+\newpage
+\begin{center}
+
+
+{\Large \bf FAPEMIG 03/2011 - Programa Pesquisador Mineiro V}\\
+\vspace*{0.5cm}
+
+\vspace*{6cm}
+
+{\LARGE \bf Técnicas, Ferramentas e Métricas} \\[.5cm]
+{\LARGE \bf para Remodularização de Sistemas}
+
+\vspace*{4.6cm}
+
+{\Large \bf Plano de Trabalho}
+
+\vspace*{5cm}
+
+{\Large \bf Marco Túlio Valente} 
+
+\vspace*{2cm}
+
+{\large \bf Abril 2011}
+\newpage
+
+\addtocounter{page}{-1}
+
+\end{center}
+
+\section{Introdução}
+
+
+Devido à sua própria natureza, sistemas de software devem ser continuamente mantidos e evoluídos. Por outro lado, manutenções contínuas ao longo dos anos contribuem para degradar a qualidade interna de um sistema, tornando-o mais difícil de entender, adaptar e evoluir~\cite{lehman97,parnas94}. Assim, frequentemente, atividades de reengenharia são necessárias para incrementar ou restaurar a manutenibilidade de um sistema, incluindo atividades de {\em remodularização}, as quais são voltadas especificamente para melhoria da organização de um sistema em módulos~\cite{sar,anquetil09}. 
+
+Assim, o solicitante tem centrado seus esforços recentes de pesquisa na {\em investigação de técnicas, ferramentas e métricas para remodularização de sistemas}. Mais especificamente, suas pesquisas atuais  -- para as quais solicita-se renovação do auxílio concedido por meio do Programa Pesquisador Mineiro -- estão organizadas em quatro linhas principais: 
+
+\begin{enumerate}
+
+\item{\em Extração de Linhas de Produtos de Software:} Linhas de produto constituem uma abordagem de desenvolvimento que advoga a construção de famílias de sistemas a partir de um conjunto de componentes e artefatos comuns~\cite{parnas76,spl,spl_acm}.  Especificamente nessa linha de pesquisa, o solicitante tem trabalhado no projeto, implementação e avaliação de ferramentas para extração semi-automática de linhas de produtos~\cite{sbcars09,tse2011,csmr11spl}. 
+
+\item {\em Extração de Aspectos}. Aspectos têm como objetivo viabilizar a implementação modularizada de interesses transversais, isto é, interesses cuja implementação ocorre de forma espalhada e entrelaçada quando são empregadas técnicas tradicionais de modularização~\cite{aop}. Especificamente nessa linha de pesquisa, o solicitante tem centrado seu trabalho na investigação de transformações de código para viabilizar a extração de aspectos~\cite{nassau_ist09,nassau09} e na investigação de métricas para quantificação de interesses transversais~\cite{jbcs2010,wmswm2009}. 
+
+\item {\em Erosão Arquitetural}. Durante a implementação e evolução de um sistema, sua arquitetura concreta pode se desviar da arquitetura com que ele foi planejado. Mais importante, esses desvios normalmente não são detectados, dando origem ao fenômeno conhecido como erosão arquitetural. Especificamente nessa linha de pesquisa, o solicitante tem investigado soluções para conformação de arquiteturas de software (isto é, para detectar desvios entre a arquitetura planejada e a arquitetura efetivamente implementada de um sistema~\cite{sar,ieeesw2010}). Basicamente, está sendo desenvolvida e avaliada uma linguagem de domínio específico para controlar o estabelecimento de dependências estruturais em sistemas orientados por objetos~\cite{dcl,ecsa2008,sbcars2008,wmswm2010}.
+
+\item{\em Avaliação de Métricas de Modularidade}. Métricas de software são frequentemente usadas para avaliar a qualidade interna de um sistema~\cite{chidamber94,lanza2005,demarco86}. No entanto, paradoxalmente, existe uma quantidade muito menor de trabalhos com o objetivo de avaliar o efetivo poder de avaliação de tais métricas. Assim, nessa linha de pesquisa pretende-se investigar os efetivos impactos de métricas tradicionais de qualidade interna -- especificamente métricas de modularidade -- em atributos de qualidade externa de um sistema (tais como correção e manutenibilidade). Os primeiros trabalhos nessa linha encontram-se em andamento, procurando validar uma métrica
+em particular: o número de {\em warnings} levantados por ferramentas para detecção de defeitos~\cite{sbqs10_cor,sbqs10_fb}.
+
+\end{enumerate}
+
+
+O restante desta proposta de pesquisa está organizado conforme descrito a seguir. Na Seção~\ref{projetos}, são apresentados os projetos de pesquisa que estão sendo coordenados atualmente pelo solicitante. Na Seção~\ref{resultados}, são destacados os resultados que se espera alcançar com a pesquisa proposta. A Seção~\ref{infra} descreve a infraestrutura existente para
+realização da pesquisa e a Seção~\ref{orc} apresenta uma indicação preliminar do destino que se pretende dar ao {\em grant} solicitado. A Seção~\ref{finais} apresenta alguns comentários finais. Ainda como parte da proposta, o Apêndice~\ref{ppmiii} sumariza as principais atividades  de pesquisa do solicitante no último biênio e o Apêndice~\ref{pub_ppmiii} relaciona as publicações obtidas no período.
+
+\section{Projetos de Pesquisa em Andamento}
+\label{projetos}
+
+Nesta seção, apresenta-se um resumo executivo dos projetos de pesquisa que estão sendo atualmente desenvolvidos pelo solicitante.
+Nas subseções~\ref{lps} a \ref{metricas} descreve-se cada uma das quatro linhas de pesquisa mencionadas na Introdução. Para cada 
+linha, quatro pontos principais são destacados:  (a) uma caracterização do principal problema investigado na  linha de pesquisa; (b) uma descrição dos principais trabalhos já realizados; (c) uma descrição dos trabalhos que pretende-se desenvolver no próximo biênio, com apoio do Programa Pesquisador Mineiro; (d) uma descrição da equipe que trabalhará nos trabalhos propostos.
+
+\subsection{Extração de Linhas de Produtos de Software}
+\label{lps}
+
+\noindent{\bf Caracterização do Problema:} Do ponto de vista de implementação, as soluções  para extração de linhas de produtos de software podem ser classificadas em dois grandes grupos: baseadas em composição e baseadas em anota\-ções~\cite{cide_icse}. Soluções baseadas em composição -- tais como programação orientada por aspectos~\cite{aop,jai-aop} -- propõem que as variabilidades de uma família de produtos devem ser lexicamente implementadas em módulos distintos. No entanto, tais  tecnologias disponibilizam um modelo de granularidade grossa ({\em coarse-grained}) para extensão de componentes. Por exemplo, em AspectJ desenvolvedores podem instrumentar apenas pontos pré-definidos da execução de um sistema, os quais são chamados de pontos de junção ({\em join points})~\cite{aspectj}. Caso uma variabilidade seja demandada em uma parte do sistema que não corresponde a um ponto de junção, desenvolvedores são obrigados a lançar mão de diversos artifícios para transformar o código base, de forma a permitir a sua extensão por meio de aspectos~\cite{nassau_ist09,kastner07,murphy01}.
+
+Por outro lado, soluções baseadas em anotações permitem marcar e associar trechos arbitrários de código a uma determinada variabilidade. Portanto, disponibilizam um modelo de granularidade mais fina ({\em fine-grained}) para extensão de componentes. Diretivas de pré-processamento, tais como {\tt \#ifdef} e {\tt \#endif}, consistem  na solução baseada em anotações mais conhecida~\cite{c}.
+Porém, tais diretivas dificultam o entendimento e a evolução de um sistema, pois ficam entrelaçadas  em diversas partes do código~\cite{spencer92}. 
+
+A fim de atenuar os problemas típicos de diretivas de pré-processamento, foi recentemente proposta uma solução para extração de linhas de produto baseada em anotações, chamada CIDE ({\em Colored IDE})~\cite{cide_icse,kastner08}. 
+Essa ferramenta permite colorir manualmente trechos de código associados a uma determinada {\em feature} (de forma similar, por exemplo, àquela que se usa em editores de texto para mudar a cor de uma sentença). Assim, em vez de estender uma linguagem de programação com diretivas de  pré-processamento, essa solução estende uma IDE com recursos para coloração de trechos de código. Dessa forma, disponibiliza-se um mecanismo para separação virtual de interesses, por meio do qual atenua-se o problema de entrelaçamento de código típico de diretivas de  pré-processamento. No entanto, em sistemas complexos, a coloração manual de trechos de código associados a variabilidades  é uma tarefa tediosa, repetitiva e sujeita a erros. \\
+
+
+\noindent{\bf Pesquisa Desenvolvida:} Nos últimos dois anos, o solicitante investigou abordagens semi-automáticas para acelerar a extração de linhas de produtos usando anotações~\cite{sbcars09,cbsoft10}. Basicamente, foi projetada e implementada uma extensão da ferramenta CIDE que permite  a coloração semi-automática de trechos de código relativos às {\em features} opcionais de uma linha de produtos. Na solução proposta,
+os desenvolvedores interessados na extração de uma LPS devem inicialmente fornecer um conjunto de elementos sintáticos -- incluindo, por exemplo, pacotes, classes, métodos e campos -- associados às {\em features} que se deseja extrair. Esses elementos são chamados de sementes de {\em features}. O algoritmo de coloração proposto é basicamente um algoritmo de ponto fixo com duas fases: propagação e expansão. Na fase de propagação, os trechos de código $C_1$ que usam diretamente as sementes $S$ fornecidas como entrada são coloridos; em seguida, os trechos de código $C_2$ que referenciam elementos declarados em $C_1$ são coloridos e assim sucessivamente, até que nenhum novo elemento de código possa ser colorido. Já o objetivo da fase de expansão é verificar se a vizinhança de um trecho de código colorido deve também ser colorida. Por exemplo, se o corpo de um comando {\tt while} foi colorido, então a expressão desse comando também deve ser colorida. 
+
+A solução investigada no trabalho foi aplicada na extração de três linhas de produtos não-triviais. Primeiro, foram extraídas cinco {\em features} de um sistema de banco de dados em memória principal, chamado
+Prevayler, o qual já foi usado em outros estudos visando a extração de linhas de produtos~\cite{batory-for,prevayler-aop}. No entanto, em tais estudos, diversas transformações prévias tiveram que ser aplicadas no código original do sistema, de forma a viabilizar sua  instrumentação por meio de linguagens como AspectJ~\cite{aspectj} e Jak~\cite{ahead}. Por outro lado, o algoritmo investigado no trabalho não impõe nenhuma restrição à localização sintática do código das {\em features} no código original. Em um segundo estudo, foram extraídas três {\em features} da biblioteca gráfica JFreeChart. Neste caso, usando apenas expressões regulares para descrever as sementes foi possível anotar cerca de 99\% do código de cada uma das {\em features} consideradas no estudo. Por fim, no último estudo, foram extraídas quatro {\em features} da ferramenta de modelagem ArgoUML, as quais correspondem a cerca de 20\% do total de 1.8 MB de código fonte desse sistema. Neste caso, as taxas de {\em recall} conseguidas pelo algoritmo variaram de 88\% a 97\% (quando comparada com uma extração manual realizada de forma independente~\cite{csmr11spl}).\\
+
+\noindent{\bf Próximos Passos:} No próximo biênio, pretende-se avançar com essa pesquisa em quatro direções principais:
+
+\begin{enumerate}
+
+\item {\em Estratégias para Transformação de Expansões Semi-Automáticas em Expansões Automá\-ticas}: Atualmente, quando uma expansão de cores não é segura, a solução proposta requer o apoio do desenvolvedor. Por exemplo, suponha que o corpo de um comando {\tt while} foi colorido e que a expressão desse comando inclua uma chamada de uma determinada função $f$. De forma conservadora, a solução atual {\em pergunta} ao desenvolvedor se $f$ é uma função livre de efeito colateral. Caso seja, uma expansão é aplicada para colorir todo o comando {\tt while}. De forma genérica, a verificação se uma função é livre de efeito colateral é computacionalmente complexa~\cite{purity-java}. No entanto, em casos particulares, essa verificação pode ser realizada de forma trivial. No entanto, mesmo nesses casos triviais, a atual solução é dependente de apoio externo. Assim, pretende-se avaliar estratégias {\em seguras} e {\em computacionalmente eficientes} para transformar expansões semi-automáticas em expansões automáticas.
+
+\item {\em Estratégias para Coloração Contínua do Código de Features:} Atualmente, a solução proposta é adequada apenas para extração da primeira versão baseada em linha de produtos de um determinado sistema monolítico. Apenas para ilustrar, ela é capaz de gerar uma primeira versão de um sistema onde todas as chamadas de {\em logging} estão coloridas. No entanto, a solução proposta não trata o problema de evolução da linha de produtos extraída. Assim, no exemplo anterior, uma nova chamada de {\em logging} inserida na versão baseada em LPS não será colorida. Logo, pretende-se investigar soluções que permitam a anotação contínua do código de {\em features}, de forma a auxiliar a manter o sistema anotado aderente aos princípios de linhas de produto mesmo quando ele venha a sofrer manutenções.
+
+\item {\em Usabilidade de IDEs Coloridas:} A experiência com a ferramenta CIDE mostrou que a coloração da cor de fundo de um programa pode ser bastante invasiva, gerando um destaque excessivo do código colorido, que pode inclusive prejudicar a sua leitura. Em última instância, essa dificuldade pode contribuir para dificultar a adoção prática da ferramenta, pois a mesma foi projetada exatamente para atuar sobre os problemas de legibilidade caracterizam um código repleto de diretivas {\tt \#ifdef} e {\tt \#endif}. Adicionalmente, tais problemas são ampliados quando múltiplas cores são associadas a um trecho de código responsável pela implementação
+de mais de uma {\em feature}. Nesse caso, o CIDE fisicamente funde as diversas cores (exemplo: verde+vermelho= amarelo). Assim, pretende-se investigar soluções menos invasivas e com menor grau de \aspas{poluição visual} para coloração de código (por exemplo, incluindo apenas marcadores nas barras de rolagem da IDE).
+
+\item {\em Novos Exemplos de Uso:} A solução proposta já foi usada com sucesso na extração de {\em features} de três sistemas complexos, grandes e não-triviais. No entanto, pretende-se prosseguir com sua aplicação em novos sistemas. As extrações bem-sucedidas certamemte contribuirão para fortalecer os argumentos a favor do potencial de aplicação prática da solução. Por outro lado, eventuais insucessos na aplicação da solução proposta irão contribuir para formatação de novos temas de pesquisa.\\
+
+\end{enumerate}
+
+\noindent{\bf Equipe:} A equipe envolvida neste projeto de pesquisa será constituída por:
+
+\begin{itemize}
+
+\item Uma aluna de doutorado (Luciana Silva, que acabou de ser aceita no PPGCC). Essa aluna irá trabalhar essencialmente nas duas primeiras atividades mencionadas anteriormente: estratégias para transformação de expansões semi-automáticas em expansões automáticas e estratégias para coloração contínua do código de {\em features}.
+
+\item Dois alunos de mestrado (João Eduardo Montandon e Rógel Garcia, que iniciaram o curso no primeiro semestre de 2011). Esses alunos irão trabalhar, respectivamente, nas duas últimas atividades mencionadas anteriormente: usabilidade de IDEs coloridas e novos exemplos de uso.
+\end{itemize}
+
+
+\subsection{Extração de Aspectos}
+\label{aop}
+
+\noindent{\bf Caracterização do Problema:} Apesar do interesse gerado por orientação por aspectos nos últimos quinze anos, ainda são consideráveis os desafios que devem ser vencidos de forma que aspectos sejam largamente utilizados em ambientes reais de desenvolvimento de software. Basicamente, sabe-se que aspectos -- tal como implementado por linguagens como AspectJ~\cite{aspectj} -- são adequados para modularizar determinados interesses, notadamente aqueles com uma implementação homogênea, como transações, persistência e {\em tracing}~\cite{jbcs2010}. Por outro lado, a separação física de interesses transversais implica em problemas como os descritos a seguir:
+
+\begin{itemize}
+
+\item Interesses transversais estão normalmente dispersos pelos mais diversos pontos do código de um sistema (e não apenas
+naqueles pontos passíveis de interceptação por uma linguagem para captura de {\em join points})
+~\cite{binkley06,nassau_ist09,yuen07}. Com isso, o código orientado por objetos tem que ser implementado de maneira
+cuidadosa -- e muitas vezes, pouco natural -- de forma a habilitar pontos de junção. 
+
+\item Aspectos implicam em uma quebra importante de princípios clássicos de programação modular~\cite{aop-paradoxical}.
+Basicamente, aspectos podem mudar a semântica de qualquer ponto de junção do programa base, dificultando assim o raciocínio local sobre os módulos desse programa. 
+
+\end{itemize}
+
+Por outro lado, os trabalhos na área de avaliação quantitativa do uso de aspectos normalmente se baseiam em métricas que demandam a disponibilidade de uma versão orientada por aspectos do sistema a ser avaliado~\cite{garcia05,herrejon07,eaddy06_metrics}. Suponha, no entanto, que se queira avaliar os eventuais benefícios de se migrar -- ou evoluir -- um sistema existente para a tecnologia de aspectos. Nesse caso, as métricas propostas não são exatamente úteis, pois elas são calculadas {\em a posteriori}, isto é, apenas após a \aspas{aspectização} do sistema alvo.\\
+
+\noindent{\bf Pesquisa Desenvolvida:} Nos últimos dois anos, o solicitante trabalhou em duas extensões da ferramenta ConcernMapper~\cite{concernmapper}. Essa ferramenta é um {\em plugin} do Eclipse que permite indexar interesses transversais em estruturas hierárquicas semelhantes a uma árvore de diretórios. Foram projetadas e implementadas as seguintes extensões do ConcernMapper:
+
+\begin{itemize}
+
+\item {\em TransformationMapper}: Essa extensão auxilia um desenvolvedor a identificar as transformações necessárias em um código legado a fim de habilitar sua extração para aspectos~\cite{nassau09,nassau_ist09}. Basicamente, para cada método presente no mapa lógico de interesses transversais disponibilizado pelo ConcernMapper, a ferramenta realiza duas tarefas: (a) localiza todas as chamadas desses métodos no código legado do sistema; (b) verifica se tais chamadas estão estaticamente localizadas em um ponto do código que pode ser instrumentado pela linguagem de captura de pontos de junção de AspectJ. Em resumo, o objetivo é permitir a um desenvolvedor {\em avaliar a priori} o número e a complexidade das transformações necessárias no código orientado por objetos de um sistema candidato a \aspas{aspectização}.
+
+\item {\em ConcernMetrics:} A partir do mapa lógico de interesses transversais disponibilizado pela ferramenta ConcernMapper, essa extensão estima métricas clássicas de separação de interesses e uma nova métrica de quantificação proposta como resultado da pesquisa~\cite{jbcs2010,wmswm2009}. O objetivo é permitir que desenvolvedores possam comparar os valores correntes de tais métricas (medidas no código original do sistema) com os valores estimados para as mesmas caso os desenvolvedores realizem uma migração física dos interesses mapeados para aspectos. Em resumo, o objetivo é permitir que desenvolvedores possam {\em avaliar a priori} os eventuais benefícios de uma migração para a tecnologia de aspectos.
+
+\end{itemize}
+
+\noindent{\bf Próximos Passos:} No próximo biênio, planeja-se avançar essa pesquisa nas seguintes direções:
+
+\begin{enumerate}
+
+\item {\em Integração e Disponibilização Pública das Ferramentas TransformationMapper e ConcernMetrics}: Atualmente, essas
+duas ferramentas estão implementadas de forma independente. Assim, pretende-se integrar as ferramentas, testá-las de forma mais exaustiva e disponibilizá-las para uso público. Ressalte-se que, no melhor conhecimento do solicitante, não existem propostas de ferramentas semelhantes, que procurem estimar propriedades do código orientado por aspectos a partir do código orientado por objetos.
+
+\item {\em Sistema de Recomendação para Separação de Interesses:} Com base na experiência adquirida com o desenvolvimento das ferramentas TransformationMapper e ConcernMetrics, pretende-se projetar e implementar um sistema de recomendação para separação de interesses, que seja capaz de sugerir diversas estratégias de modularização, incluindo separação virtual~\cite{apel09a} e separação física. No caso de separação física, esse sistema deveria ainda recomendar e avaliar alternativas de linguagens (exemplo: AspectJ, Jak~\cite{ahead}, CaesarJ~\cite{ahead}) e/ou unidades de modularização (aspectos, {\em feature modules}~\cite{ahead}, {\em mixins}~\cite{bracha90} etc). Por outro lado, no caso de separação virtual, o sistema de recomendação deveria ser capaz de sugerir e/ou avaliar eventuais tecnologias (pré-processadores, CIDE etc).
+
+\item {\em Integração com a Ferramenta CIDE:} Atualmente, as duas ferramentas se baseiam no mapa lógico de interesses transversais disponibilizado pela ferramenta ConcernMapper. Pretende-se investigar novas versões das duas ferramentas, que avaliem os desafios e benefícios de uma eventual \aspas{aspectização} física a partir de um código visualmente anotado pela ferramenta CIDE. 
+
+\end{enumerate}
+
+\noindent{\bf Equipe:} A equipe envolvida neste projeto de pesquisa será constituída por:
+
+\begin{itemize}
+
+\item Um aluno de mestrado, responsável pelas duas primeiras atividades mencionadas anteriormente (Integração e disponibilização pública das ferramentas TransformationMapper e ConcernMetrics; Sistema de recomendação para separação de interesses). Esse aluno de mestrado ainda
+não foi selecionado. Vislumbra-se duas possibilidades para sua seleção: um aluno que tenha se matriculado no curso no primeiro semestre de 2011 (e que ainda não tenha decidido seu tema de pesquisa e orientador) ou um aluno que venha a ingressar no curso em 2012.
+
+\item Um aluno de Iniciação Científica (Christofer Silva), responsável pela última atividade mencionada anteriormente (Integração com a ferramenta CIDE).
+
+\end{itemize}
+
+\subsection{Erosão Arquitetural} 
+\label{arqsw}
+
+\noindent{\bf Caracterização do Problema:} Apesar de sua inegável importância, componentes e abstrações arquiteturais
+não possuem uma representação explícita em código fonte. Como resultado, durante a implementação e
+evolução de um sistema, sua arquitetura concreta pode se desviar da arquitetura com que ele foi planejado. Mais
+importante, esses desvios normalmente não são detectados ou documentados, dando origem ao fenômeno
+conhecido como erosão arquitetural~\cite{foundations-arqsw}.  
+
+Diversas técnicas já foram propostas para controlar o processo de erosão arquitetural de sistemas. Dentre elas, podemos citar:
+
+\begin{itemize}
+
+\item Modelos de Reflexão: Esses modelos são resultantes da comparação entre um modelo arquitetural de alto nível (fornecido pelos arquitetos) e um modelo de código fonte (extraído automaticamente)~\cite{reflexion-model2}. Como resultado, duas formas de desvios arquiteturais podem ser detectadas: divergências e ausências. No entanto, o processo de comparação entre os dois modelos é, em geral, custoso e requer uma fase de mapeamento manual.
+
+\item Matrizes de Dependência Estrutural (DSM): Essas matrizes são usadas para representar e revelar dependências entre os módulos de um sistema de software~\cite{sullivan_dsm}. Normalmente, ferramentas para recuperação de DSM incluem uma linguagem bastante simples
+para especificação de {\em design rules} que devem ser obedecidas pela implementação~\cite{dsm}.
+
+\item Linguagens de Restrições Estruturais: Linguagens como .QL~\cite{ql} e SCL~\cite{scl} podem ser usadas para restringir o espectro de dependências que podem ser estabelecidas entre os módulos de um sistema. No entanto, essas linguagens não são exatamente voltadas para lidar com o problema de erosão arquitetural. 
+
+\end{itemize}
+
+Em resumo, erosão arquitetural é frequentemente apontada como a principal causa para obsolescência de aplicações~\cite{borchers11}. Por outro lado, as soluções propostas até o momento para lidar com esse problema não foram incorporados ao conjunto de ferramentas normalmente usadas por arquitetos e engenheiros de software. Em virtude desse cenário, a detecção e o controle de erosão arquitetural foram recentemente citados por Clemens e Shaw como um dos problemas em aberto na área de Arquitetura de Software~\cite{clemens09}.\\
+
+
+\noindent{\bf Pesquisa Desenvolvida:} A pesquisa recente do solicitante nesta área foi centrada na observação de que dependências inter-modulares impró\-prias são uma fonte importante de violações arquiteturais e, portanto, contribuem para o processo de erosão arquitetural. Assim, trabalhou-se no projeto e implementação de uma linguagem de restrição de dependências inter-modulares, denominada DCL ({\it Dependency Constraint Language}), que permite a arquitetos de software restringir o espectro de dependências que podem ser estabelecidas em um dado sistema. Basicamente, a linguagem DCL permite definir dependências aceitáveis e inaceitáveis de acordo com a arquitetura planejada de um sistema. Uma vez definidas, tais restrições são verificadas por uma ferramenta de conformação integrada à plataforma Eclipse. Em resumo, o objetivo principal da solução proposta é prover conformação arquitetural por construção, via uma linguagem de restrição de dependências declarativa  e estaticamente verificável.
+
+A abordagem proposta já foi aplicada em um sistema de gerenciamento de recursos humanos de grande porte, chamado SGP (Sistema de Gestão de Pessoas), que atualmente é utilizado pelo SERPRO para gestão de seus mais de 12 mil empregados. Foram consideradas três versões do sistema SGP, em diferentes estágios do seu desenvolvimento, sendo que a última versão escolhida possui mais de 240 KLOC e 2300 classes e interfaces. Nessa última versão, foram detectadas 245 classes -- ou 10,5\% das classes do sistema -- com alguma forma de dependência estrutural que representa uma violação da arquitetura planejada do sistema.\\
+
+\noindent{\bf Próximos Passos:} Como continuação desta pesquisa, pretende-se iniciar uma investigação sobre técnicas e ferramentas para {\em remoção} de violações arquiteturais. O objetivo é não apenas detectar tais violações -- como viabilizado pela linguagem DCL --, mas também apoiar atividades de reestruturação e refatoração destinadas à remoção das mesmas. Mais especificamente, pretende-se
+trabalhar nas seguintes atividades:
+
+\begin{enumerate}
+
+\item {\em Elaboração e Avaliação de um Catálogo de Refactorings-in-the-large}: A hipótese básica é que os catálogos tradicionais de refatorações -- com aqueles propostos por Fowler~\cite{fowler99} e Kerievsky~\cite{joshua04} -- atuam basicamente no nível de classe ou pacote. Portanto, não são adequados para tratar reestrurações arquiteturais, que podem envolver diversas classes, localizadas em módulos distintos. Assim, pretende-se inicialmente prospectar e catalogar de modo ainda informal um conjunto de refactorings com validade arquitetural, os quais pretende-se chamar de {\em refactorings-in-the-large}. Um ponto crucial na proposição de qualquer catálogo de {\em refactorings} consiste em uma demonstração de sua utilidade em ambientes reais de desenvolvimento de software. Diante disso, pretende-se atuar em duas etapas: (a) inicialmente, pretende-se extrair e motivar a aplicação dos {\em refactorings} em um sistema pequeno, com fins meramente ilustrativos e construído pelos próprios membros da pesquisa; (b) em um segundo passo, pretende-se prospectar e extrair os {\em refactorings} propostos de sistemas reais, possivelmente de código aberto.
+	
+\item {\em Formalização}: Cada {\em refactoring-in-the-large} do catálogo proposto terá sua mecânica descrita em termos formais. Podem ser vislumbradas possíveis abordagens para essa formalização, como aquela proposta por Schäfer e Moor~\cite{schaefer10}. O objetivo é formalizar a operação de cada {\em refactoring}, de forma a facilitar a implementação dos mesmos, bem como detectar eventuais limitações ou falhas na definição informal realizada no passo anterior. 
+	
+\item {\em Implementação}: Por fim, pretende-se projetar e implementar uma ferramenta para automatizar a aplicação dos {\em refactorings} catalogados e formalizados nas atividades anteriores. Basicamente, nessa ferramenta, o arquiteto indicará a refatoração desejada e informará os parâmetros necessários para que ela seja aplicada no código. Para avaliar a ferramenta, pretende-se mostrar sua aplicabiliadde no sistema hipotético e nos sistemas reais prospectados no primeiro passo.
+	
+\end{enumerate}
+
+\noindent{\bf Equipe:} A equipe envolvida neste projeto de pesquisa será constituída por:
+
+\begin{itemize}
+
+\item Um aluno de doutorado (Ricardo Terra), que terminou no segundo semestre de 2010 a primeira fase de seu exame de qualificação e que, portanto, está dedicado a essa pesquisa. Esse aluno ficará responsável por todas as atividades descritas anteriormente.
+
+\item Um aluno de Iniciação Científica, ainda a ser definido. A partir do segundo semestre de 2012, pretende-se que esse aluno ajude na implementação da ferramenta de automatização dos {\em refactorings-in-the-large}. Basicamente, planeja-se que ele atue em atividades de integração dessa ferramenta com o ambiente Eclipse.
+
+\item Prof.~Roberto Bigonha, com o qual o solicitante divide a orientação do aluno Ricardo Terra.
+
+\end{itemize}
+
+\noindent{\bf Colaboração Internacional:} No segundo semestre de 2011 e primeiro semestre de 2012, o aluno Ricardo Terra irá realizar um doutorado-sanduíche na Universidade de Waterloo, sob orientação do Prof.~Krzysztof Czarnecki. O Prof.~Czarnecki possui vasta experiência em transformação de programas e programação generativa e, portanto, contribuirá com as etapas de proposição e formalização do catálogo de {\em refactorings-in-the-large}. No final de 2011, o solicitante pretende realizar uma visita ao grupo do Prof.~Czarnecki, para acompanhar as atividades de pesquisa do aluno Ricardo Terra.
+
+
+
+
+\subsection{Avaliação de Métricas de Modularidade}
+\label{metricas}
+
+\noindent{\bf Caracterização do Problema:} Nas últimas décadas, dezenas de métricas foram propostas para se avaliar diversos aspectos da estrutura interna de sistemas de software, incluindo propriedades como acoplamento, coesão, tamanho, separação de interesses, complexidade etc~\cite{chidamber94,lanza2005}. A justificativa sempre foi centrada no argumento de que \aspas{não se consegue controlar aquilo que não se pode medir}~\cite{demarco86}. Assim, por meio de métricas, engenheiros de software poderiam avaliar e controlar a qualidade interna de um software antes de sua entrega para os clientes finais. Potencialmente, tal controle poderia inclusive viabilizar a descoberta e correção de eventuais problemas e defeitos, antes que esses se transformem em falhas. 
+
+Por outro lado, pouco se conhece sobre os reais impactos de métricas na qualidade externa de um software, avaliada por exemplo, por meio do número de defeitos reportados por seus usuários. A grande maioria dos estudos visando a validação empírica de métricas de software baseia-se, por exemplo, em testes de correlação, como o Teste de Spearman~\cite{dambros10msr,nagappan06,nagappan05,zimmermann08}. No entanto, reconhecidamente correlação não implica em causalidade, ou seja, quando se encontra uma medida de correlação entre duas variáveis não se pode afirmar que uma delas é a \aspas{causa} da outra. Em outras palavras, correlações espúrias constituem um fenômeno bastante comum em qualquer área. Por exemplo, quando se detecta uma eventual correlação positiva entre o grau de acoplamento das classes de um sistema e o número de defeitos reportados por seus usuários, não se pode concluir sumariamente que existe uma relação de causalidade entre essas duas variáveis.\\
+
+\noindent{\bf Pesquisa Desenvolvida:} Esse trabalho sobre avaliação empírica de software constitui uma linha de pesquisa recentemente iniciada pelo solicitante. A fim de começar suas pesquisas nessa área, o solicitante decidiu realizar alguns experimentos visando a avaliação da relevância dos {\em warnings} gerados por ferramentas para detecção de defeitos baseadas em análise estática, como, por exemplo, as ferramentas FindBugs~\cite{findbugs} e PMD~\cite{pmd}. Basicamente, foram realizados os seguintes experimentos envolvendo amostras significativas de sistemas de código aberto: 
+
+\begin{itemize}
+
+\item Um experimento destinado a verificar se a ferramenta FindBugs ajudaria a detectar defeitos de campo reportados por usuários dos sistemas {\tt ajc} (um compilador de aspectos) e Rhino (um interpretador de JavaScript)~\cite{sbqs10_cor}.
+
+\item Um experimento destinado a verificar se existe correlação estatística entre o número de {\em warnings} reportados pelo FindBugs e o número de defeitos reportados em trinta sistemas da Fundação Apache, totalizando mais de 2 milhões de linhas de código~\cite{sbqs10_cor}.
+
+\item Um experimento destinado a calcular o tempo de vida dos {\em warnings} reportados pelas ferramentas FindBugs e PMD quando aplicadas retrospectivamente sobre cinco versões da plataforma de desenvolvimento Eclipse (cada versão possuindo pelo menos um milhão de linhas de código)~\cite{sbqs10_fb}.
+
+\item Uma reprodução do experimento anterior, mas agora visando determinar o tempo de vida dos {\em warnings} reportado pela ferramenta FindBugs quando aplicada sobre uma amostra de doze sistemas de código aberto, totalizando quase um milhão e meio de linhas de código.
+
+\end{itemize}
+
+\noindent{\bf Próximos Passos:} No próximo biênio, com apoio do projeto PPM, pretende-se avançar com essa pesquisa conforme descrito a seguir:
+
+\begin{enumerate}
+
+\item Os trabalhos desenvolvidos até o momento consideraram: uma única métrica de qualidade interna (número de {\em warnings} levantados por ferramentas como PMD e FindBugs), uma única métrica de qualidade externa (número de defeitos) e um teste de correlação (Spearman). Basicamente, pretende-se então ampliar e aprofundar esse trabalho, passando a considerar: outras métricas de qualidade interna (notadamente métricas de modularidade, como aquelas propostas por Chidamber e Kemerer~\cite{chidamber94}), outras métricas de qualidade externa (por exemplo, tempo de resolução de defeitos, {\em througput} do processo de resolução de defeitos etc) e outras técnicas estatísticas, que não sejam baseadas em correlação, como testes de causalidade. Mais especificamente, pretende-se avaliar e adaptar ao contexto de qualidade de software um teste de causalidade proposto pelo prêmio Nobel de Economia Clive Granger~\cite{granger69}. Em econometria, tal teste -- conhecido como Teste de Granger -- é extensivamente usado para avaliar causalidade entre séries temporais de variáveis econômicas e financeiras, tais como produto interno bruto, inflação, preço de {\em commodities}, salários, dentre outras. Pretende-se então aplicar esse teste a séries
+históricas de métricas de modularidade e métricas de qualidade externa.
+
+\item Pretende-se trabalhar na proposição de um modelo integrado para manutenção e evolução de software, que combine diversas
+métricas de qualidade interna, com ênfase em métricas de modularidade. Pretende-se com esse modelo fornecer critérios quantitativos para
+guiar, sugerir e avaliar manutenções e evoluções em um sistema. Pretende-se avaliar retrospectivamente esse modelo analisando atividades de manutenção realizadas em sistemas de código aberto.
+
+\end{enumerate}
+
+\noindent{\bf Equipe:} A equipe envolvida neste projeto de pesquisa será constituída por:
+
+\begin{itemize}
+
+\item Um aluno de doutorado (César Couto), que terminou no segundo semestre de 2010 a primeira fase de seu exame de qualificação e que, portanto, está dedicado a essa pesquisa. Esse aluno ficará responsável pela primeira atividade descrita anteriormente
+
+\item Um aluno de doutorado (Paloma Oliveira), que deve terminar a primeira fase de seu exame de qualificação no final do primeiro semestre de 2011.
+
+\item Uma aluna de Iniciação Científica (Clarisse Simões), que encontra-se trabalhando na disponibilização de um repositório de versões de sistemas de código aberto que sirva como infraestrutura para realização da pesquisa mencionada.
+
+\item Prof.~Roberto Bigonha, com o qual o solicitante divide a orientação do aluno César Couto.\\
+
+\end{itemize}
+
+\noindent{\bf Colaboração Internacional:} Esse projeto contará com a participação dos professores Nicolas Anquetil e Stephane 
+Ducasse, do Grupo de Pesquisa RMoD do INRIA Lille (Nord Europe). Notadamente, o Prof.~Anquetil tem uma vasta experiência em métricas
+de modularidade e, no momento, está particularmente interessado em trabalhos de avaliação de tais métricas. 
+
+Para incrementar essa parceria, um projeto de cooperação internacional encontra-se submetido ao Edital FAPEMIG 22/2010 (Cooperação FAPEMIG-INRIA). Caso esse projeto seja aprovado, estarão assegurados recursos para missões de trabalho (uma missão do Prof.~Anquetil ao Brasil e uma missão do solicitante ao INRIA) e uma missão de estudo (uma bolsa de três meses, para que o doutorando César Couto realize uma visita ao INRIA Lille). Caso o projeto não seja aceito, vislumbra-se duas alternativas: (a) busca de recursos junto a outros editais/agências ou mesmo junto ao INRIA; (b) desenvolvimento do projeto à distância, sem missões presenciais de trabalho e estudo.
+
+
+\section{Resultados Esperados}
+\label{resultados}
+
+Nesta seção, são descritos os principais resultados -- em termos de formação de RH e de publicações -- que se espera obter com a pesquisa proposta neste documento. As contribuições científicas que se espera obter foram apresentadas na Seção 2.\\
+
+\noindent{\bf Formação de Recursos Humanos:} Espera-se que o projeto contribua para a formação de quatro doutores (todos eles já aceitos no PPGCC), três mestres (sendo dois deles já matriculados no PPGCC) e três alunos de Iniciação Científica (dois deles já trabalhando em seus projetos). A Tabela~\ref{tab_rh} mostra a distribuição desses alunos pelas linhas de pesquisa propostas neste projeto de pesquisa.\\
+
+
+\begin{table}[htp]
+\centering
+\begin{tabular}{|c|l|l|l|c|} 
+\hline
+\multicolumn{2}{|c|}{\bf Aluno}       & \multicolumn{1}{|c|}{\bf Nível}    & \multicolumn{1}{|c|}{\bf Projeto } &   {\bf Término} \\ \hline \hline
+1 & Luciana Silva  & Doutorado & Extração de LPS            & 2015/1 \\ \hline
+2 & João Montandon & Mestrado & Extração de LPS            & 2013/1 \\ \hline
+3 & Rógel Garcia  & Mestrado  & Extração de LPS            & 2013/1 \\ \hline
+4 & A ingressar & Mestrado & Extração de Aspectos    & 2014/2 \\ \hline
+5 & Christofer Silva & IC & Extração de Aspectos & 2012/2 \\ \hline
+6 & Ricardo Terra & Doutorado & Arquitetura de Software & 2013/2 \\ \hline
+7 & A ingressar & IC & Arquitetura de Software & 2012/2 \\ \hline
+8 & César Couto   & Doutorado & Avaliação de Métricas      & 2013/2 \\ \hline
+9 & Paloma Oliveira        & Doutorado & Avaliação de Métricas      & 2014/2 \\ \hline
+10 & Clarisse Simões & IC & Avaliação de Métricas & 2011/2 \\ \hline
+\end{tabular}
+\caption{Formação de RH}
+\label{tab_rh}
+\end{table}
+
+
+\noindent{\bf Produção Científica:} A Tabela \ref{tab_prodrh} resume a produção científica que se espera alcançar no próximo biênio. Basicamente, pretende-se que pelo dois trabalhos de doutorado e um trabalho de mestrado gerem publicações em periódicos de qualidade.
+Pretende-se ainda que mais dois trabalhos de doutorado gerem publicações em conferências internacionais de qualidade. Por fim, espera-se que todos os alunos orientados pelo solicitante (incluindo alunos de IC) publiquem pelo menos um artigo em simpósio ou workshop nacional.
+
+\begin{table}[t]
+\centering
+\begin{tabular}{|l|c|}
+\hline
+\multicolumn{1}{|c|}{\bf Tipo}                     & {\bf Total}  \\ \hline \hline
+Artigos em periódicos internacionais     &    3               \\ \hline
+Artigos em conferências internacionais  &    2              \\ \hline
+Artigos em simpósios e workshops nacionais                  &    10               \\ \hline
+\end{tabular}
+\caption{Produção científica}
+\label{tab_prodrh}
+\end{table}
+
+
+\section{Estrutura de Apoio à Pesquisa Proposta}
+\label{apoio}
+
+\subsection{Projetos de Pesquisa}
+
+A pesquisa proposta nesta solicitação ao Programa Pesquisador Mineiro já possui financiamento dos seguintes projetos:
+
+\begin{itemize}
+
+\item {\em Evolução e Modularidade de Sistemas Orientados por Aspectos:} Projeto de pesquisa relativo à bolsa de produtividade
+em pesquisa, nível 2, do solicitante, financiado pelo CNPq (302805/2008-7). Esse projeto possui duração de três anos, até março de 2012.
+O valor financiado é de R\$ 39.600,00. 
+
+\item {\em Separação Virtual de Interesses Transversais:} Projeto de pesquisa relativo à orientação de um aluno de mestrado, financiado pelo CNPq (Edital MCT/CNPq 70/2009, Bolsas de Mestrado/Doutorado, processo 558244/2010-6). Esse projeto possui duração de dois anos, até março de 2013. O valor financiado é de R\$ 28.800,00. Esta bolsa esta alocada atualmente ao aluno João Eduardo Montandon.
+
+\item {\em Avaliação de Soluções para Separação Virtual de Interesses Transversais:} Projeto de pesquisa relativo à orientação de um aluno de Iniciação Científica, financiado pelo CNPq (Edital MCT/CNPq 12/2010, bolsas de IC, processo 507804/2010-4). Esse projeto possui duração de dois anos, até agosto de 2012. O valor financiado é de R\$ 8.640,00.
+
+\item {\em Um Repositório de Sistemas para Avaliação de Ferramentas nas Áreas de Manutenção e Evolução de Software:} Projeto de pesquisa
+relativo à orientação de um aluno de Iniciação Científica financiado pela FUNDEP/Santander (Edital UFMG/PRPq 01/2010). Esse projeto possui duração de um ano, até agosto de 2011. O valor financiado é de R\$ 4.320,00. Essa bolsa está alocada atualmente à aluna Clarisse Simões.
+
+\end{itemize}
+
+Como um todo, os projetos acima somam R\$ 81.360,00.
+
+
+
+
+\subsection{Laboratórios}
+\label{infra}
+
+A pesquisa será realizada nas instalações do Laboratório de Linguagens de Programação (LLP) do Departamento de Ciência da Computação (DCC) da UFMG. Esse laboratório possui atualmente cerca de seis estações de trabalho, duas impressoras e três laptops. 
+
+
+
+\subsection{Colaborações}
+
+O solicitante mantém colaborações com as seguintes instituições:
+
+\begin{itemize}
+
+\item DCC/UFMG: o solicitante tem colaborado com outros professores do DCC/UFMG, incluindo os professores Roberto Bigonha (duas co-orientações de doutorado em andamento), Mariza Bigonha (uma co-orientação de doutorado em andamento) e Eduardo Figueiredo (um trabalho publicado em 2011~\cite{csmr11spl}).
+
+\item Instituições Mineiras: o solicitante tem desenvolvido trabalhos em conjuntos com os professores Vladimir Iorio (UFV) e Humberto Marques-Neto (PUC Minas). Com o Prof.~Vladimir, possui um trabalho publicado em 2011~\cite{vladimir2011}. Com o Prof.~Humberto, possui trabalhos publicados em 2010 e 2011~\cite{gladston2011,gladston2010}.
+
+\item Instituições de outros Estados: o solicitante tem desenvolvido trabalhos em conjunto com o Prof.~Sérgio Soares (UFPE), com o qual possui um trabalho publicado em 2010~\cite{jbcs2010}.
+
+\item Colaboração Internacional: Conforme descrito na Seção 2, o solicitante tem planos seguros de iniciar duas colaborações internacionais em 2011: uma com a Universidade de Waterloo (Prof.~Krzysztof Czarnecki) e outra com o INRIA Lille (Prof.~Nicolas Anquetil).
+
+\end{itemize}
+
+\section{Orçamento}
+
+Apresenta-se na Tabela~\ref{orc} a destinação que se pretende dar ao {\em grant} que está
+sendo solicitado neste projeto PPM-V.
+
+
+\begin{table}[htp]
+\centering
+\begin{tabular}{|l|c|r|c|}
+\hline
+\multicolumn{1}{|c|}{\bf Item}          & {\bf Qtd}  & \multicolumn{1}{|c|}{\bf R\$}       & {\bf \%} \\ \hline \hline
+Participação em eventos nacionais       &    4       &     6.900,00    & 14     \\ \hline
+Visita a universidade no exterior       &    1       &     8.610,00   & 18     \\ \hline
+Microcomputadores                       &    5       &     20.000,00   & 42   \\ \hline
+Equipamentos de informática e software  &    -       &     4.290,00 & 9\\ \hline
+Material bibliográfico                  &    20      &     3.400,00    & 7   \\ \hline
+Material de consumo                     &    -       &     4.800,00    & 10  \\ \hline
+Total                                   &    -       &    48.000,00    & 100    \\ \hline
+\end{tabular}
+\caption{Orçamento PPM-V (24 meses)}
+\label{orc}
+\end{table}
+
+\paragraph{Justificativa dos item previstos no orçamento:}
+
+\begin{enumerate}
+
+\item Participação em quatro eventos nacionais (CBSoft e SBQS, em 2011 e 2012), nos quais planeja-se publicar os primeiros resultados do projeto (conforme  previsto na Tabela~\ref{tab_prodrh}). O custo orçado por evento inclui uma passagem nacional 
+(R\$ 900,00), taxa de inscrição (R\$ 450,00) e cinco diárias nacionais (R\$ 950,00).
+
+\item Visita à Universidade de Waterloo (Canadá), para acompanhamento do trabalho de doutorado-sanduíche do aluno Ricardo Terra e discussão de trabalhos de pesquisa em conjunto com o Prof.~Krzysztof Czarnecki. O custo orçado inclui uma passagem internacional (R\$ 3.000,00) e quinze diárias (R\$ 5.610,00).
+
+\item Aquisição de quatro microcomputadores e um {\em laptop}, para atualização do laboratório do LLP, ao custo de R\$ 20.000,00 (incluindo garantia estendida de 24 meses).
+
+\item Aquisição de outros equipamentos de informática (por exemplo, impressora, nobreak, scanner, discos externos) 
+e software (Adobe Acrobat, Microsoft Office etc), ao custo de R\$ 4.290,00.
+
+\item Aquisição de 20 livros, ao custo unitário médio de US\$ 100,00 (ou R\$ 170,00), incluindo despesas de frete.
+
+
+\item Aquisição de material de consumo (toner e papel), no valor mensal médio de R\$ 200,00.
+
+\end{enumerate}
+
+
+
+\section{Comentários Finais}
+\label{finais}
+
+Baseado nos critérios de julgamento relacionados no Anexo I do Edital 03/2011, finaliza-se este plano de trabalho com uma descrição das
+principais qualificações da proposta e de seu solicitante, incluindo os seguintes parâmetros:
+
+\begin{itemize}
+
+\item Produção científica do solicitante: Nos últimos cinco anos (2006-2010), o solicitante publicou seis artigos em periódicos indexados no ISI. Publicou também outros cinco artigos em periódicos de qualidade (indexados na base DBLP, bastante usada na área de Ciência de Computação). Por fim, possui dois artigos em fase de {\em minor revision}.
+
+\item Experiência no tema da proposta: Desde o término do seu doutorado (em 2002), o solicitante tem voltado sua pesquisa para temas relacionados com modularização e remodularização de sistemas. Neste período, já orientou (ou co-orientou) com sucesso quatorze dissertações de mestrado e cerca de duas dezenas de alunos de IC. Algumas dessas orientações já foram premiadas em concursos e em eventos nacionais. O solicitante participa também dos comitês de programa das principais conferências nacionais da área.
+
+\item Perspectiva de melhoria de sua atividade de pesquisa: Até o final de 2009, o solicitante era professor da PUC Minas. A partir de então, se transferiu para o DCC/UFMG, que atualmente possui um dos três cursos brasileiros de pós-graduação em Ciência da Computação com Conceito 7, na avaliação da CAPES. Assim, considera-se que esse projeto PPM será fundamental para que o solicitante possa: (a) manter uma produção de qualidade em periódicos internacionais; (b) iniciar um fluxo de orientações de doutorado; (c) estabelecer parcerias internacionais, com centros de excelência, como a Universidade de Waterloo e o INRIA Lille.
+
+\item Originalidade da Proposta: A proposta trata de um tema relevante -- e ainda em aberto -- na área de Engenharia de Software: técnicas, ferramentas e métricas para auxiliar em processos de remodularização de sistemas.
+
+\item Relevância da Proposta para o Estado de Minas Gerais: O estado de Minas Gerais e, particularmente Belo Horizonte, possuem uma clara vocação para a atividade de desenvolvimento de software. Por outro lado, a pesquisa contribuirá ainda para a formação de doutores que são atualmente docentes em instituições de ensino localizadas na capital do estado (CEFET BH, doutorando César Couto) e no interior (CEFET Bambuí e CEFET Formiga, alunas Luciana Silva e Paloma Oliveira, respectivamente).
+
+\item Formação de Recursos Humanos: O projeto proposto contribuirá para formação de dez alunos, incluindo quatro doutores, três mestres e três alunos de IC.
+
+\item Indicadores e Impactos para a Área de Conhecimento: A proposta prevê a produção de resultados inovadores nas áreas de Extração de Linhas de Produtos de Software, Extração de Aspectos, Arquitetura de Software e Qualidade de Software (todas elas áreas nas quais se realiza atualmente pesquisa de ponta em Engenharia de Software). Prevê-se que esses resultados sejam publicados nos melhores periódicos da área.
+ 
+\end{itemize}
+
+\newpage
+\appendix
+
+
+
+\section{Resumo das Atividades do Solicitante no PPM-III}
+\label{ppmiii}
+
+Resume-se a seguir as principais atividades de pesquisa do solicitante no biênio 2009-2011 (período de vigência de seu atual projeto PPM). É importante mencionar que em novembro de 2009 o solicitante se transferiu da PUC Minas para a UFMG. Assim, parte das atividades listadas abaixo foram realizadas em sua antiga instituição.
+
+\paragraph{Produção Científica:} Neste período, foram {\em aceitas} as seguintes publicações: três publicações em perió\-di\-cos (SPE, JBCS e IEEE SW); duas publicações em conferências internacionais (CSMR-2); cinco publicações em simpósios nacionais (SBCARS-2, SBLP e SBQS-2) e sete publicações em workshops (WMSWM-6, DSAL-1). Essas publicações estão listadas no Apêndice B. É importante mencionar ainda que todas essas publicações foram lideradas pelo próprio solicitante, tendo sempre com co-autores seus alunos de mestrado e/ou iniciação científica.
+
+O solicitante possui ainda dois artigos em fase de {\em minor revision} em periódicos, sendo um deles na {\em IEEE Transactions on Software Engineering}. Essa é a revista com maior fator de impacto na área de Engenharia de Software (JCR= 3.75)\footnote{O último mail enviado pelo editor da IEEE TSE diz o seguinte:  \aspas{I look forward to accepting your paper once you have made some minor edits to the paper}.}.
+
+\paragraph{Formação de RH:} Neste período, foram formados seis mestres e um aluno de IC. Uma das dissertações de mestrado orientadas foi classificada para a segunda fase do CTD 2010. Atualmente, o solicitante encontra-se orientando dois alunos de IC, três alunos de mestrado e quatro alunos de doutorado.
+
+\paragraph{Premiações:} Neste biênio, foram recebidos os seguintes prêmios: melhor artigo do SBQS 2010; melhor artigo do WMSWM 2010; um dos cinco melhores artigos do SBLP 2010; um dos três melhores artigos do SBCARS 2010. 
+
+\paragraph{Coordenação de Comitês de Programa:} Neste período, o solicitante coordenou os seguintes
+comitês de programa: LTPD 2009, Workshops CBSoft 2011 e Workshops AOSD 2011 (junto com Johan Fabry).
+
+\paragraph{Participação em Comitês de Programa:} O solicitante participou dos seguintes comitês de programa: SBLP (2009-2010); SBCARS (2010); SBQS (2010-2011); WMSWM (2010); CTD (2010); WTES (2010); Workshops CBSoft (2010); LA-WASP (2009-2010) e WTDQS (2011).
+
+\paragraph{Participação em Bancas:} O solicitante participou como membro externo de cinco bancas de mestrado (UFSCAR, UFCG-2, UFPE e UFU), três bancas de doutorado (UFPE e PUC Minas-2) e de uma banca de concurso público para professor adjunto (UFSCar).
+
+\paragraph{Mini-curso:} O solicitante foi co-autor de um mini-curso ministrado no CBSoft 2010.
+
+%\paragraph{Software:} Neste período, foram disponibilizados publicamente dois sistemas de software:CIDE+ (uma ferramenta para extração semi-automática de linhas de produtos de software) e ArgoUML-SPL (uma linha de produtos de software para a plataforma ArgoUML).
+
+\newpage
+
+\section{Publicações Relativas ao PPM-III}
+\label{pub_ppmiii}
+
+\paragraph{Periódicos:}
+
+\begin{enumerate}
+
+\item Leonardo Passos; Ricardo Terra; Renato Diniz; Marco Tulio Valente; Nabor Mendonça. Static Architecture Conformance Checking: An Illustrative Overview. IEEE Software, v. 27, n. 5, p. 82-89, 2010. JCR 2009: 2.039.
+
+\item Marco Tulio Valente; Cesar Couto; Jaqueline Faria; Sergio Soares. On the Benefits of Quantification in AspectJ Systems. Journal of the Brazilian Computer Society, v. 16, n. 2, p. 133-146, Springer, 2010.
+
+\item Ricardo Terra; Marco Tulio Valente. A Dependency Constraint Language to Manage Object-Oriented Software Architectures. Software: Practice and Experience, v. 32, n. 12, p. 1073-1094, John Wiley \& Sons, 2009. JCR 2009: 0.667.
+
+\end{enumerate}
+
+\noindent O solicitante possui ainda dois artigos em fase de {\em minor revision}  em periódicos:
+
+\begin{enumerate}
+
+\item Virgilio Borges; Leonardo Passos; Marco Túlio Valente. A Semi-automatic Approach for Extracting Software Product Lines. IEEE Transactions on Software Engineering, p. 1-39. JCR 2009: 3.750.
+
+\item João Eduardo Montandon; Silvio Souza; Marco Túlio Valente. A Study about the Relevance of the Warnings Reported by Java Bug Finding Tools. IET Software, p. 1-27. JCR 2009: 0.620.
+
+\end{enumerate}
+
+\paragraph{Conferências Internacionais:}
+
+\begin{enumerate}
+
+\item Gladston Aparecido Junio; Marcelo Nassau; Humberto Mossri; Humberto Marques-Neto; Marco Tulio Valente. On the Benefits of Planning and Grouping Software Maintenance Requests. 15th European Conference on Software Maintenance and Reengineering (CSMR), p. 55-64, 2011.
+Taxa de aceitação: 29/101.
+
+\item Marcus Vinicius Couto; Marco Tulio Valente; Eduardo Figueiredo. Extracting Software Product Lines: A Case Study Using Conditional Compilation. 15th European Conference on Software Maintenance and Reengineering (CSMR), p. 191-200, 2011.
+Taxa de aceitação: 29/101.
+
+\end{enumerate}
+
+\paragraph{Simpósios Nacionais:}
+
+\begin{enumerate}
+
+\item Hugo Alves; Henrique Rocha; Ricardo Terra; Marco Tulio Valente. Uma Abordagem para Recuperação da Arquitetura Dinâmica de Sistemas de Software. IV Simpósio Brasileiro de Componentes, Arquiteturas e Reutilização de Software (SBCARS), p. 145-154, 2010. Taxa de aceitação: 16/47.
+
+\item Ricardo Terra; Jussara Almeira; Roberto Bigonha; Marco Tulio Valente. Análise Comparativa do Código Gerado por Compiladores Java e C++. XIV Simpósio Brasileiro de Linguagens de Programação (SBLP), p. 69-82, 2010. Taxa de aceitação: 13/34.
+
+\item João Eduardo Montandon; César Francisco de Moura Couto; Silvio José de Souza; Marco Tulio Valente. Um Estudo sobre a Correlação entre Defeitos de Campo e Warnings Reportados por uma Ferramenta de Análise Estática. IX Simpósio Brasileiro de Qualidade de Software (SBQS), p. 9-23, 2010. Taxa de aceitação:  17/63 (prêmio de melhor artigo).
+
+\item Gladston Aparecido Junio; Marcelo Nassau Malta; Humberto Mossri de Almeida; Humberto Torres Marques-Neto; Marco Tulio Valente. Proposta e Avaliação de um Processo para Agrupamento de Solicitações de Manutenções. IX Simpósio Brasileiro de Qualidade de Software (SBQS), p. 183-197, 2010. Taxa de aceitação: 17/63.
+
+\item Virgilio Borges; Marco Tulio Valente. Coloração Automática de Variabilidades em Linhas de Produtos de Software. III Simpósio Brasileiro de Componentes, Arquiteturas e Reutilização de Software (SBCARS), p. 67-80, 2009. Taxa de aceitação: 16/43.
+
+\end{enumerate}
+
+\paragraph{Workshops (e Resumos em Simpósios):}
+
+\begin{enumerate}
+
+\item Vladimir Iorio; Leonardo Reis; Marco Túlio Valente; Roberto Bigonha. Weave Time Macros. 6th Domain-Specific Aspect Languages Workshop (DSAL), p. 1-3. Taxa de Aceitação: 4/5.
+
+\item Virgílio Borges; Rógel Garcia; Marco Tulio Valente. Uma Ferramenta para Extração Semi-automática de Linhas de Produtos de Software Usando Coloração de Código. I Congresso Brasileiro de Software: Teoria e Prática (Sessão de Ferramentas), p. 73-78, 2010. Taxa de aceitação: 16/40.
+
+\item Ricardo Terra; Marco Tulio Valente. Definição de Padrões Arquiteturais e seu Impacto em Atividades de Manutenção de Software. VII Workshop de Manutenção de Software Moderna (WMSWM), p. 1-8, 2010. Taxa de aceitação: 11/22 (prêmio de melhor artigo).
+
+\item Silvio José de Souza; João Eduardo Montandon de Araújo Filho; Marco Tulio Valente. Uma Meta-Ferramenta para Detecção de Defeitos. VII Workshop de Manutenção de Software Moderna (WMSWM), p. 1-8, 2010. Taxa de aceitação: 11/22.
+
+\item João Eduardo Montandon de Araújo Filho; Silvio José de Souza; Marco Tulio Valente. Os Defeitos Detectados pela Ferramenta de Análise Estática FindBugs são Relevantes? IX Simpósio Brasileiro de Qualidade de Software (SBQS), p. 383-390, 2010 (Relato de Experiência). Taxa de aceitação: 14/54.
+
+\item Marcelo Nassau Malta; Humberto Mossri de Almeida; Marco Tulio Valente; Carlos Alberto Pietrobon; Humberto Torres Marques-Neto. Modelo de Gestão de Demandas de Manutenção de Software: a Experiência da PUC Minas. VI Workshop de Manutenção de Software Moderna (WMSWM), p. 1-4, 2009 (Relato de Experiência). Taxa de aceitação: 1/3.
+
+\item César Francisco de Moura Couto; Jaqueline Faria; Marco Tulio Valente. Estimativa de Métricas de Separação de Interesses em Processos de Refatoração para Extração de Aspectos. VI Workshop de Manutenção de Software Moderna (WMSWM), p. 1-8, 2009. Taxa de aceitação: 11/21.
+
+\end{enumerate}
+
+\paragraph{Artigos em Fase de Julgamento:}
+
+O solicitante possui os seguintes artigos submetidos:
+
+\begin{enumerate}
+
+\item Um artigo em revisão na Science of Computer Programming (Elsevier).
+\item Um artigo em revisão no Journal of Systems and Software (Elsevier).
+\item Um artigo em revisão no Journal of Software Quality (Springer).
+\item Dois artigos submetidos ao Simpósiso Brasileiro de Qualidade de Software (edição 2011).
+\item Um artigo submetido à International Conference on Software Engineering and Knowledge Engineering (edição 2011).
+\item Um artigo submetido ao Workshop de Manutenção de Software Moderna (edição 2011).
+
+\end{enumerate}
+
+\newpage
+
+\small
+\bibliographystyle{abbrv}
+\bibliography{bib_mtov}
+
+
+
+\end{document}
+

@@ -1,0 +1,43 @@
+\documentclass[11pt]{article}
+\usepackage[portuges]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[left=2.5cm,top=2.5cm,right=2cm,bottom=3cm,nohead]{geometry}
+\usepackage{eurosans} 
+\usepackage{multirow}
+
+\input macros.tex
+
+\begin{document}
+
+\thispagestyle{empty}
+
+\newpage
+
+\begin{center}
+\bf 
+{\Large Projeto e Implementação de uma Ferramenta para} \\[.3cm] {\Large Refactorings-in-the Large} \\[.5cm]
+
+{\large Marco Túlio Valente - mtov@dcc.ufmg.br}\\[.5cm]
+
+\end{center}
+
+\noindent{\bf Caracterização do Problema:} Apesar de sua inegável importância, componentes e abstrações arquiteturais
+não possuem uma representação explícita em código fonte. Como resultado, durante a implementação e
+evolução de um sistema, sua arquitetura concreta pode se desviar da arquitetura com que ele foi planejado. Mais
+importante, esses desvios normalmente não são detectados ou documentados, dando origem ao fenômeno
+conhecido como erosão arquitetural~\cite{foundations-arqsw,ieeesw2010}.  
+
+Por outro lado, as soluções propostas até o momento para lidar com esse problema não foram incorporadas ao conjunto de ferramentas normalmente usadas por arquitetos e engenheiros de software. Em virtude desse cenário, a detecção e o controle de erosão arquitetural foram recentemente citados por Clemens e Shaw como um dos problemas em aberto na área de Arquitetura de Software~\cite{clemens09}.\\
+
+\noindent{\bf Pesquisa Desenvolvida:} A pesquisa recente do solicitante nesta área foi centrada na observação de que dependências inter-modulares impró\-prias são uma fonte importante de violações arquiteturais e, portanto, contribuem para o processo de erosão arquitetural. Assim, trabalhou-se no projeto e implementação de uma linguagem de restrição de dependências inter-modulares, denominada DCL ({\it Dependency Constraint Language})~\cite{dcl}, que permite a arquitetos de software restringir o espectro de dependências que podem ser estabelecidas em um dado sistema. Basicamente, a linguagem DCL permite definir dependências aceitáveis e inaceitáveis de acordo com a arquitetura planejada de um sistema. \\
+
+\noindent{\bf Próximos Passos:} Como continuação desta pesquisa, pretende-se iniciar uma investigação sobre técnicas e ferramentas para {\em remoção} de violações arquiteturais. O objetivo é não apenas detectar tais violações -- como viabilizado pela linguagem DCL --, mas também apoiar atividades de remodularização destinadas à remoção das mesmas. Mais especificamente, Pretende-se trabalhar nas seguintes atividades: (a) Elaborar um catálogo de {\em refactorings-in-the-large}; (b) Formalizar o catálogo proposto; (c) Projetar e implementar uma ferramenta para automatizar a aplicação dos {\em refactorings} propostos.\\
+
+\noindent{\bf Equipe:} A equipe deste projeto será constituída por: (a) Um aluno de doutorado (Ricardo Terra), que ficará responsável por todas as atividades descritas anteriormente; (b) Um aluno de IC, cuja bolsa está sendo solicitada no presente Edital PRPq. Especificamente, pretende-se que esse aluno ajude na implementação da ferramenta de automatização dos {\em refactorings-in-the-large}, conforme detalhado em Plano de Trabalho em anexo.
+
+\small
+\bibliographystyle{abbrv}
+\bibliography{bib_mtov}
+
+\end{document}
+
