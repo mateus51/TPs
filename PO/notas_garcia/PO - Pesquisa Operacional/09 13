@@ -1,0 +1,216 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Resolução de problema de programação linear.
+  
+  Hoje vamos falar sobre nosso primeiro método de resolução de problema de programação linear.
+
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+  1) Método Gráfico:
+  
+  Nosso problema é: Queremos o máximo de uma equação linear, e temos algumas restrições lineares que limitam nosso problema.
+                    E por fim, todas as nossas variáveis são necessáriamente maior ou igual à 0.
+  
+  Escreveremos ele assim:
+  
+    max 3 x1 + 5 x2
+  
+    1 x1 + 0 x2 <= 4
+    0 x1 + 2 x2 <= 12
+    3 x1 + 2 x2 <= 18
+  
+    x1,x2 >= 0
+  
+  Vamos desenhar nosso dominio de soluções (é o método gráfico afinal né?):
+  
+  Com minha habilidade artistica vai ficar assim:
+  
+       ^ x2
+       |
+    12 |----\
+       |     \
+       |      \
+       |      |
+       |      |
+       |      |
+       |------|---------->
+      0       4          x1
+  
+  Notem então que primeiro:
+    - O problema nescessáriamente tem alguma solução, porque a área é > 0.
+  
+  Segundo:
+    - A área é < infinito, logo necessáriamente existe uma solução ótima pro problema, seja ele de maximização ou minimização.
+  
+  Terceiro:
+    - Podemos desenhar um vetor para indicar a direção do ponto ótimo.
+  
+  Esse terceiro vamos discutir mais um pouco.
+  
+  Vejam como queremos o ponto de máximo queremos o ponto onde a função objetivo:
+  
+    3 x1 + 5 x2
+  
+  Tem o maior valor possível
+  
+  Se eu formar a linha:
+  
+    3 x1 + 5 x2 = 15
+  
+  e depois a linha
+  
+    3 x1 + 5 x2 = 20
+  
+  Verei que são paralelas indicando um sentido único de crescimento (por ser um prob. linear)
+  
+  O vetor normal à essas duas linhas é fácil de se obter.
+  
+  Como x1 tem coeficiente 3 e x2 coeficiente 5 o vetor é:
+  
+    (3,5)
+  
+  Assim vemos claramente que a solução deve estar mais pro lado do x2 do que do x1 devido ao tamanho do coeficiente.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  E agora como descobrir o ponto ótimo?
+  
+  Bem se pensarmos bem a solução com certeza será um vertice ou uma aresta do dominio de solução.
+  Porque ele é um poligono convexo devido a forma como as restrições de PPLs são construídas.
+  
+  Um macete bom é caminharmos de vertice em vertice com os olhos sempre escolhendo o próximo
+  vertice adjacente, e escolhendo aquele que melhor satisfizer o vetor gradiente: (3,5)
+  
+  Primeiro vamos contar todos os vertices eles são:
+  
+    (0,0), (4,0), (4,3), (2,6), (0,6)
+  
+  Vamos começar do vertice (0,0)
+  
+  Quais os vizinhos dele? São o (4,0) e o (0,6).
+  
+  Qual deles satisfaz melhor o vetor objetivo: (3,5)?
+  
+  Claramente é o (0,6), ele cresce 6 posições em x2 apesar de não crescer nada em x1.
+  
+  Agora estamos no vertice (0,6), Quais os vizinhos? (0,0) e (2,6)
+  
+  Caminhar para (0,0) é caminhar sobre o vetor -(0,6) o que seria ruim.
+  Caminhar para (2,6) é caminhar sobre o vetor  (2,0) o que aumentaria um pouco nosso objetivo.
+  
+  Então a decisão está tomada né? vamos para o vetor (2,6).
+  
+  E agora quem são os vizinhos dele? (0,6) de onde acabamos de sair e (4,3).
+  
+  Voltar para o (0,6) já sabemos que não será uma boa idéia,
+  Agora andar para o (4,3) é uma boa?
+  
+    (4,3) - (2,6) = (2,-3)
+  
+  Ou seja diminuíriamos em 3 unidades a variável x2 mas aumentariamos em 2 a variável x1.
+  
+  Com base no vetor gradiente: (3,5)
+  
+  Sabemos que cada unidade de crescimento/decrescimento em x1 varia nosso objetivo em 3 unidades enquanto
+              cada unidade de crescimento/decrescimento em x2 varia nosso objetivo em 5 unidades
+  
+  Variação total: (2,-3)*(3,5)T = 3*2 + 5*-3 = -9
+  
+  Com isso em mente fica obvio que não é uma boa caminhar para (4,3).
+  Nem voltar para o (0,6)
+  
+  Que conclusão tiramos disso?
+  
+    Temos a solução ótima do nosso PPL =] que é o ponto (2,6).
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  // Observação do professor:
+  // Um vertice também pode ser expresso como "ponto extremo" ou "solução básica" em prog. linear.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+  Bem a partir da próxima aula, vamos falar do nosso primeiro método não gráfico de resolução de PPLs.
+  
+  O método Simplex.
+  
+  Mas o método simplex só funciona se o dominio do problema estiver expresso na forma padrão,
+  então vamos definir essa forma padrão já nessa aula e aprender a converter um problema qualquer para esse formato.
+
+CONCEITO:
+  Poliedro na Forma Padrão é a forma padrão de se expressar os dominios de solução para Problemas de Programação Lineares.
+  
+  Um poliedro na forma padrão é diferenciado porque ele não contém desigualdades exceto as de não negatividade (x1,x2 >= 0)
+  
+  Para transformarmos o poliedro (o nosso desenho no gráfico) no formato padrão precisamos alterar as restrições dele, vejam:
+  
+    max 3 x1 + 5 x2
+  
+    1 x1 + 0 x2 <= 4
+    0 x1 + 2 x2 <= 12
+    3 x1 + 2 x2 <= 18
+  
+    x1,x2 >= 0
+  
+  Vira:
+  
+    max 3 x1 + 5 x2
+  
+    1 x1 + 0 x2 = 4
+    0 x1 + 2 x2 = 12
+    3 x1 + 2 x2 = 18
+  
+    x1,x2 >= 0
+  
+  Mas ficou estranho né? Agora mudou o dominio do problema.
+  Antes a solução (1,1) era uma solução viável, ainda que não fosse ótima e agora não mais.
+  
+  Para expressarmos então as desigualdades e ainda manter a forma padrão podemos definir novas variáveis
+  responsáveis pela folga, vejam como ficaria:
+
+    max 3 x1 + 5 x2
+  
+    1 x1 + 0 x2 + x3 = 4
+    0 x1 + 2 x2 + x4 = 12
+    3 x1 + 2 x2 + x5 = 18
+  
+    x1,x2,x3,x4,x5 >= 0
+  
+  Assim quando as novas variáveis forem iguais à 0, estaremos nas bordas do poliedro,
+  e quando forem diferentes estaremos nos pontos intermediarios como o ponto (1,1).
+  
+  Mantivemos assim o mesmo dominio do problema =].
+  
+  Vantagem da Forma Padrão:
+  
+    Agora podemos aplicar o método Simplex de resolução de PPLs.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// Alguns conceitos que podemos usar nas próximas aulas:
+  
+CONCEITO:
+  Ponto extremo (vertice) é um ponto que não pode ser expresso como combinação convexa de nenhum outro ponto
+  dentro do dominio de soluções de um problema.
+
+CONCEITO:
+  Combinação Convexa (CC) é a combinação de todos os pontos existentes entre dois pontos iniciais digamos "A" e "B".
+  (ou seja todos os pontos na linha (A,B))
+  
+  Formalmente podemos expressar isso na forma:
+  
+    CC(A,B) = lambda A + (1 - lambda) B
+  
+  Onde lambda é um valor entre 0 e 1.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  // Fim da Aula!
+  
+  
+  

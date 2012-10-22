@@ -1,0 +1,299 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Prof. Alexandre Salles da Cunha
+    e-mail: acunha@dcc.ufmg.br
+    site: www.dcc.ufmg.br/~acunha/dcc035/2012_2
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  Livro Texto:
+    Otimização combinatória e Programação Linear - Modelos e Algoritmos, Editora Campus, Primeira Edição, 2000.
+ 
+  Literatura complementar disponível no site.
+  
+  Notas sobre a literatura complementar:
+    os 2 primeiros no site são simpleszinhos,
+    os que tem um (+) são os com nível de pós graduação.
+  
+  Livro tido como perfeito pelo professor na bibliografia complementar:
+  Vasek Chvátal, Linear Programming, Editora Freeman, 1983.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  Presença só é cobrada se voce tirar menos de 60 pts.
+  (implicando que infrequencia te impossibilita de fazer exame especial).
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  Cronograma disponível no site. (o cronograma é confiável de acordo com ele)
+
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+Conceito:
+  Pesquisa Operacional é a ciência da tomada de decisão.
+  
+  // Impressão pessoal:
+  // Em PO vamos estudar a resolução eficientes de problemas NP-Completo em otimizações de processos.
+  
+  O professor comentou a existencia de duas vertentes em PO;
+    - Otimização
+    - Simulação
+    - E o caso que combina os 2
+  
+  Esse curso será focado na vertente da otimização.
+
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+  Vamos agora apresentar o foco de nossas aulas (ao menos das primeiras aulas até onde eu sei):
+  
+  O que é um problema de otimização?
+  
+  Vamos dizer que eu tenho uma fórmula e quero otimizar ela.
+  
+  Esse objetivo meu pode ser expresso no formato abaixo:
+  
+    "Max cTx"
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+NOTAÇÃO:
+  "cTx" significa "c Transposto e multiplicado por x".
+  
+  Usaremos os nomes c = vetor de custos, x = variável de decisão (vetor).
+  
+  // Usaremos ele quase como um operador multiplicativo, é simples de entender e fácil de digitar para mim =P.
+  // Sem falar que é a mesma notação utilizada pelo professor.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  Para ficar mais claro vamos dar um exemplo:
+  
+    c = | 1 | x = | x1 |
+        | 4 |     | x2 |
+        | 5 |     | x3 |
+  
+  e cTx fica:
+  
+    x1 + 4x2 + 5x3
+  
+  Ficou claro?
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  // Agora continuando o problema de otimizar uma fórmula:
+  
+  Voltando ao prob. de otimização, é preciso saber o que limita minha otimização.
+  
+  em via de regra utilizaremos nessa disciplina inequações da forma: c1 x1 + c2 x2 <= b
+  
+  Para expressar várias inequações em uma única formula basta utilizarmos uma matriz Ax contendo uma equação por linha:
+  
+    Ax <= b - (Conjunto de restrições) (A = matriz, x = vetor, b = vetor)
+  
+  E para simplificar os problemas garantimos variáveis não nulas:
+  
+    x >= 0 - (x e 0 são vetores, onde 0 é o vetor nulo)
+  
+  Assim nosso problema é escolher o valor de x tal que cTx obtenha o maior valor possível sem infringir a restrição Ax <= b.
+  
+  // Nota: As restrições no mundo real normalmente são coisas como o limite que tenho em estoque de um material.
+  
+  Nomes que vamos usar:
+    c = vetor de custos de altura n
+    x = variável de decisão (com uma coluna) de altura m
+    A = matriz de tecnologia com dimensões m×n
+    b = vetor de capacidade, é o limite fisíco de cada material (ex: minerio, madeira, papel) que voce tem diponível.
+  
+  Esse problema é considerado linear por não apresentar não-linearidades do tipo: uma variável ao quadrado ou uma multiplicando a outra.
+  
+  // Notas: Problema de otimização linear inteira é quando o x ou outras variáveis só podem ser compostas por valores inteiros.
+  //        Problema de otimização combinatória é quando existem variáveis que só possuem o valor 0 ou 1.
+  
+  // Outra nota: Vamos trabalhar somente com os casos mais simples com matrizes constantes e lineares.
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Otimização linear é um problema NP Polinomial.
+  Otimização linear inteira é NP Difícil.
+  Existem outros que são NP-Completo
+  
+  Vamos trabalhar só nas duas primeiras partes que citei acima.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+CONCEITO:
+  Função objetivo: f(x) = cTx
+  
+  É a função sobre a qual tenho de trabalhar. Objetivando Maximiza-las ou Minimiza-las.
+  
+  Por exemplo: "max cTx" ou "min cTx"
+  
+CONCEITO:
+  Variáveis de decisão ou variáveis em nível de atividade:
+  
+  São as variáveis sobre as quais temos a flexibilidade de escolher os valores,
+  com o objetivo de otimizar o objetivo.
+  
+  Nós usamos os nomes: x1, x2, x3, xi ... e assim por diante durante as aulas.
+  É fácil de identifica-las.
+
+CONCEITO:
+  Restrições:
+  
+  É o conjunto de regras que limitam a flexibilidade das variáveis de decisão.
+  Se uma variável de decisão ou um conjunto delas infringir uma restrição a solução obtida se torna inviável.
+  Se não infringiu nada a solução é viável.
+  
+CONCEITO:
+  PPL é sigla para Problema de Programação Linear.
+  
+CONCEITO:
+  O Dominio do problema é o espaço no qual as soluções para o problema são viáveis,
+  matemáticamente:
+  
+    D = { x € R^n | Ax >= b, x>=0 }
+  
+  // Esse é o dominio do problema-exemplo 1
+  
+  Como em programação linear todas as restrições formam retas ou planos
+  Chamamos esse espaço também de poliedro.
+
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+  Passos para Modelar um problema de otimização Linear
+  
+  Uma vez que voce tenha um problema do mundo real (ou um exercicio desse materia) que voce queira otimizar,
+  voce deve seguir os seguintes passos:
+  
+    1° passo: Identificar as variáveis de decisão - Entenda o problema e escolha quais serão os valores x1,x2 e etc.
+    2° passo: Descrever analiticamente por meio de funções LINEARES o objetivo do problema.
+    3° passo: Descrever analiticamente por meio de funções LINEARES as restrições do problema.
+  
+  Nota do professor: Pode acontecer de voce escolher uma variável de decisão e não conseguir fazer o passo 2 com funções lineares,
+                     nesse caso pode ser necessário voltar ao passo 1 e escolher outra(s) variávei(s) de decisão.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  // Agora vamos dar um exemplo de um PPL típico:
+  
+  Seja o problema das ligas metálicas:
+  
+  Veja a tabela de ligas:
+  
+             Liga de baixa resistência | liga de alta resistencia | Disponibilidade de Insumos
+    Cobre  |           0,5                        0,2                        16 ton
+    Zinco  |           0,25                       0,3                        11 ton
+    Chumbo |           0,25                       0,5                        15 ton
+    
+    Valor  |           3000                       5000
+  
+  
+  Agora vamos modelar o problema segundo os passos que falamos anteiormente.
+  
+  Passo 1: Qual a nossa variável de decisão?
+  
+    No caso as variáveis de decisão são a quantidade em toneladas a serem produzidas de cada liga.
+    Sendo a quantidade B = quantidade de liga de baixa resistencia e B a quantidade de liga de alta resistencia.
+  
+  Passo 2: Qual a função objetivo?
+  
+    A função objetivo é a soma do valor de venda das toneladas das duas ligas:
+    
+      3000*B + 5000*A
+  
+    E nós desejamos máximizar esse valor:
+  
+      max 3000*B + 5000*C
+  
+  Passo 3: Precisamos agora então modelar as restrições.
+  
+    - A produção não pode ser menor que 0: A,B >= 0
+    - Não pode-se exceder a capacidade em estoque dos insumos. 
+      
+      Seja b1, b2 e b3 o uso efetivo de cada um dos 3 materiais: cobre, zinco e chumbo:
+   
+        b1 <= 16
+        b2 <= 11
+        b3 <= 15
+     
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Agora podemos escrever de forma explicita nosso problema:
+  
+    max 3000x1 + 5000x2
+    
+    0,5  x1 + 0,2 x2 <= 16
+    0,25 x1 + 0,3 x2 <= 11
+    0,25 x1 + 0,5 x2 <= 15
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  // Não passei a limpo o prob. abaixo e não pretendo passar:
+  Problema 2:
+  
+  Vamos otimizar o número de funcionarios de uma empresa para que os clientes sejam adequadamente atendidos com o menor custo possível com RH
+  
+  Há diferentes turnos de trabalho para os funcionários e eles ganham salários diferentes dependendo do turno.
+  Há também um número minímo de funcionário durante cada periodo do dia.
+  (e há intercessões tanto entre os turnos dos funcionarios como também há diferentes números de funcionarios necessários para cada periodo do dia)
+  
+  Parte 1: Variáveis de decisão:
+  
+    Façamos xi ser o número de funcionarios trabalhando em cada uma das 5 opções de turno:
+  
+    Turno 1:  6h 14h: 170,00
+    Turno 2:  8h 16h: 160,00
+    Turno 3: 12h 20h: 175,00
+    Turno 4: 16h  0h: 180,00
+    Turno 5: 22h  6h: 195,00
+  
+  Parte 2: Objetivo:
+  
+    Objetivo é minimizar o custo total de contração dos funcionarios ou seja:
+
+      min zum (i€I) ci*xi, onde ci é o custo de cada turno.
+  
+  Parte 3: Restrições:
+    
+    xi >= 0 para todo i€I
+    xi € Z (inteiros)
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Vamos chamar de J o conjunto de periodos de serviço
+  Chamemos de qj a quantidade mínima de agentes contratados que satisfaçam a demanda no periodo j.
+  
+  Seja Aij € {0,1} um indicador de se determinado turno i, cobre o periodo j de funcionamento da empresa.
+  
+  Façamos agora nossa matriz A:
+  
+  A:
+                |  T1  |  T2  |  T3  |  T4  |  T5  | Demanda:
+   6:00 a  8:00 |  1                               |   48
+   8:00 a 10:00 |  1      1                        |   79
+  10:00 a 12:00 |  1      1                        |   65
+  12:00 a 14:00 |  1      1      1                 |   87
+  14:00 a 16:00 |         1      1                 |   64
+  16:00 a 18:00 |                1      1          |   73
+  18:00 a 20:00 |                1      1          |   82
+  20:00 a 22:00 |                       1          |   43
+  22:00 a 24:00 |                       1      1   |   52
+  
+  // Ainda faltaria mais da tabela mas parece que ninguém se importa nem os slides.
+
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  // Fim da aula!
+  
+  // Nós aconselhou a fazer esses exercicios em casa.
+  
+  
+  
+  
+  
+  

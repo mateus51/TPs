@@ -1,0 +1,70 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Análise de Sensibilidade
+  
+  (P) max cTx
+      Ax = b
+      x >= 0
+  
+  Hipótese: 
+  (P) foi resolvida à otimalidade pelo método simplex e que a base ótima associada é B.
+  
+  1) O que ocorreria se uma variável fosse adicionada no programa P?
+  
+  // Um exemplo mais realista:
+  
+  max 5x1 + 4x2 + 3x3
+  2x1 + 3x2 +  x3 + x4 = 5
+  4x1 +  x2 + 2x3 + x5 = 11
+  3x1 + 4x2 + 2x3 + x6 = 8
+  
+  Se eu já souber a solução para esse problema e adicionar x7 ainda terei uma solução para o problema.
+  Mas poderá não ser uma solução ótima, pois agora o meu problema é um pouco diferente.
+  
+  A Viabilidade do dual é portanto afetada. já que a otimálidade do primal foi afetado.
+  
+  Por exemplo se o primal se tornar ilimitado o dual poderá ser inviável.
+  
+  A nova coluna altera a viabilidade do dual, e deveria portanto entrar na base.
+  
+  Note então que se o crescimento dessa nova variável diminuir o objetivo, e for um problema de maximização ela terá o valor 0.
+  E nada será alterado, sendo a solução ótima de (P) também a solução ótima do novo problema.
+  Porém no caso contrário onde o aumento dela é desejável, por exemplo aumentando o objetivo, teremos de buscar um novo ponto ótimo.
+  Fazendo com que a restrição na qual x7 foi inserida seja ilimitada.
+  Se as demais restrições não limitarem o problema, haverá solução ilimitada.
+  
+  2° Pergunta:
+  O que acontece se alterarmos o custo/vetor tecnológico de uma variável existente?
+  
+  a) Custo:
+    variável considerada é básica: xj(básica)
+    cj  ^: não altera.
+    cj \/: recalcular os custos reduzidos.
+  
+  b) modificar o vetor tecnológico?
+  
+  xj for básica: há chance de afetar a otimalidade primal ( na nova inversa da base ) e viabilidade dual ( otimalidade primal )
+  nova base B, xb = ~B⁻¹ b >= 0 => viabilidade primal mantida.
+               xb =  B⁻¹ b <  0 => viabilidade primal violada.
+  
+  3) Modificação no vetor b.
+  ~xb B⁻¹ (b+ deltab) >= 0
+  
+  Qual o valor delta que pode ser decrescido do vetor tecnologico do termo b1 (primeiro item do vetor b) de forma que a base atual ainda seja viável p/ o primal?
+  
+  // (delta é usado para representar a alteração)
+  
+  4) Suponha que eu tenho uma desigualdade adicional entre as restrições.
+     E que essa nova restrição não viabilize a solução do problema original.
+  
+  Da mesma forma que uma nova variável no primal gera uma nova restrição no dual.
+  Uma nova restrição no primal gera uma nova variável no dual.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  // Fim da aula!

@@ -1,0 +1,589 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Hoje vamos formalizar o método Simplex:
+  
+  Vamos escrever um PPL de uma forma matricial:
+  
+    max cTx
+    Ax = b
+    x >= 0
+  
+  - cT é o vetor de coeficientes ou custos Transposto.
+  - x são todas as nossas variáveis x1, x2, ..., xn.
+  - A é a nossa matriz tecnológica da qual falei antes.
+  - b são os valores das nossas restrições de igualdade.
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Na aula passada vimos as variáveis básicas "B" e não básicas "N"
+  
+  Chamaremos a partir de hoje: B de xb e N de xn.
+  
+  Ou seja xb é o conjunto de variáveis "x" que são básicas.
+          xn é o conjunto de variáveis "x" que são não-básicas.
+  
+  Motivo da troca: Utilizaremos B e N para outro significado:
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Nossas variáveis A, x e c possuem celulas ou colunas que podemos dizer que pertence a parte básica ou não básica do nosso problema.
+  
+    A = [B|N]
+  
+  No caso do exemplo da última aula "A" B são as colunas com os coeficientes de x1, x2 e x4 que seriam as básicas.
+                                        N são as colunas com os coeficientes de     x3 e x5 que seriam as não-básicas.
+
+    x = | xb |
+        | xn |
+  
+    c = | cb |
+        | cn |
+  
+  A divisão de "x" entre básicas e não básicas fica fácil de ver.
+  E os coeficientes que multiplicam as variáveis básicas são "cb" e os demais "cn"
+  
+  Podemos então re-escrever o problema em termo dessas novas variáveis.
+  Mas eu não acho isso absolutamente nada didatico (eu pessoalmente fico super perdido)
+  Então vou pular essa parte.
+  
+    max cb T xb + cn T xn
+    B xb + N xn = b
+    xb, xn >= 0
+  
+  Podemos ainda escrever de forma mais especifica:
+  
+    max cb T xb + cn T xn
+    B xb + N xn = b
+    xb >= 0, xn = 0
+  
+  Pois sabemos que as variáveis xn são sempre zeradas.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+  Agora vamos falar das formalidades do simplex.
+  
+  Dado um problema na forma padrão do tipo:
+  
+    max 3 x1 + 5 x2
+    
+    1 x1 + 0 x2 + x3 = 4
+    0 x1 + 2 x2 + x4 = 12
+    3 x1 + 2 x2 + x5 = 18
+  
+    x1,x2,x3,x4,x5 >= 0 
+  
+  O primeiro passo é re-escrever as restrições de forma a isolar as variáveis básicas.
+  
+  Inicialmente xb = {x1,x2,x4} e xn = {x3, x5}
+  
+  Assim temos:
+  
+    x1 = 4  -  1  x3
+    x4 = 12 -  2  x2
+    x2 = 9  - 3/2 x1 - 1/2 x5
+  
+  Agora tem um problema.
+  Ainda temos variáveis básicas do lado direito certo?
+  Como faremos para realmente isola-las?
+  Substituindo:
+  
+  x1 na eq 3:
+  
+    x2 = 9 - 1/2 x5 - 3/2 (4 - 1 x3)
+    x2 = 9 - 1/2 x5 -  6 + 3/2 x3
+    x2 = 3 - 1/2 x5 + 3/2 x3
+    
+  x2 na eq 2:
+  
+    x4 = 12 - 2 (3 - 1/2 x5 + 3/2 x3)
+    x4 = 12 - 6 + 1 x5 - 3 x3
+    x4 = 6 + x5 - 3 x3
+  
+  Re-escrevendo agora:
+  
+    x1 = 4 - x3
+    x2 = 3 - 1/2 x5 + 3/2 x3
+    x4 = 6 + x5 - 3 x3
+
+  Pronto passo concluído.
+  Pensando matricialmente, nós operamos sobre a equação:
+  
+    B xb + N xn = b
+  
+  Para ela ficar na forma em que xb está isolado ou seja:
+  
+    B xb = b - N xn
+  
+    B⁻¹ B xb = B⁻¹ b - B⁻¹ N xn
+  
+    xb =  B⁻¹ b - B⁻¹ N xn
+  
+  Ops, isso quer dizer que nos calculos que fizemos acima nos sem perceber calculamos uma inversa de uma matriz O.O
+  
+  Se pensar bem, nós fizemos isso mesmo.
+  Ao isolar as 3 variáveis nós queriamos encontrar uma matriz identidade.
+  E ao substituir nós estavamos fazendo as operações que gerariam nossa identidade.
+  Logo ao operar isso sobre o lado direito da equação seria como multiplicar por B⁻¹.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Passo 1.1:
+  
+  Agora que já temos os valores isolados de cada variável básica vamos raciocinar sobre porque esse formato é legal?
+  
+    x1 = 4 - x3                 (restrição vertical   no plano cartesiano)
+    x4 = 6 + x5 - 3 x3          (restrição horizontal no plano cartesiano)
+    x2 = 3 - 1/2 x5 + 3/2 x3    (restrição diagonal   no plano cartesiano)
+  
+  Veja bem, x5 e x3 tem valor 0, pois são variáveis não básicas.
+  
+  Logo x1 = 4
+       x2 = 3
+       x4 = 6
+  
+  Com isso fica fácil saber o ponto em que estamos no plano cartesiano:
+  
+    x1 = 4, x2 = 3
+  
+  E o segundo ponto importante é que agora, nós conseguimos identificar os vertices que são adjacentes ao atual.
+  
+  Lembram-se do que fizemos nas aulas passadas de seguir com o olho as arestas mais próximas até encontrarmos
+  o próximo vertice para o qual poderiamos caminhar?
+  
+  Vou exemplificar:
+  
+  Quais o vertices adjacentes à (4,3) no problema acima?
+  
+  Para descobrir isso vou trocar x5 uma não básica, com uma das 3 básicas.
+  
+  Isso significa que x5 vai passar a ter valor não nulo e que uma das variáveis x1, x2 ou x4 terá agora valor nulo.
+  
+  Vamos supor essa troca com a variável x4.
+  
+  Se colocar x4 = 0, a restrição da variável x4:
+  
+    (1) x4 = 6 + x5 - 3 x3
+  
+  Vai ficar:
+  
+    (2) x5 = -6 + x4 + 3 x3
+  
+  Agora vejam o problema, se x4 e x3 são iguais à 0.
+  x5 fica menor que 0. Logo essa troca é inviável.
+  
+  Isso também vale para qualquer restrição escrita na forma (1)
+  onde o coeficiente da variável não-básica for positivo.
+  
+  Porém isso só impossibilita a troca de x5 com x4, ainda resta uma restrição
+  cuja variável x5 não está positiva:
+  
+    x2 = 3 - 1/2 x5 + 3/2 x3
+  
+  Essa troca não deixará nenhuma variável com valor negativo.
+  
+    x5 = 3/2 - 1/2 x2  + 3/4 x3
+  
+  E x5 terá o valor de 3 meios.
+  Ou seja encontramos um vertice adjacente que também é válido.
+  Não expliquei ainda se esse vertice é mais próximo ou menos próximo
+  do nosso objetivo "max 3x1 + 5x2", mas já aprendemos como caminhar pelo método simplex.
+  
+  // Notem que falta eu substituir na restrição: x4 = 6 + x5 - 3 x3
+  // o valor de x5 pelo novo valor.
+  
+  Percebam que nos geramos um tanto de possibilidades de troca não é verdade?
+  Podemos trocar qualquer uma das não-básicas com qualquer uma das básicas.
+  Como eu posso ter tanta certeza de que eu consegui justamente um vertice adjacente?
+  
+  O fato de eu ter mechido nos valores de folga de uma determinada restrição, me garante isso.
+  
+  E como eu sei que esse vertice está dentro do campo de soluções?
+  
+  Ele não está infringindo nenhuma das restrições correto? Isso basta.
+  Quando fazemos uma troca e ela infringe uma das restrições significa que encontramos
+  um vertice que não satisfaz todas as restrições apesar de que satisfaz ao menos duas delas.
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Certo agora como avaliar qual troca fazer para otimizar nosso objetivo?
+  
+  Não é nada dificil, vamos escrever todo o nosso problema de novo:
+  
+    max 3 x1 + 5 x2
+  
+    x1 = 4 - x3                 (restrição vertical   no plano cartesiano)
+    x4 = 6 + x5 - 3 x3          (restrição horizontal no plano cartesiano)
+    x2 = 3 - 1/2 x5 + 3/2 x3    (restrição diagonal   no plano cartesiano)
+  
+    x1,x2,x4 >= 0
+    x3,x5     = 0
+  
+  Agora nós temos de fazer uma coisa adicional para o problema ficar
+  totalmente no modo usado pelo simplex.
+  
+  Precisamos substituir os valores de x1 e de x2 no objetivo:
+  
+    max 3 (4 - x3) + 5 (3 - 1/2 x5 + 3/2 x3)
+    
+    max 12 - x3 + 15 - 1/2 x5 + 3/2 x3
+    
+    max 27 - 1/2 x5 + 1/2 x3
+  
+  Ou seja nosso problema fica:
+  
+    max 27 - 1/2 x5 + 1/2 x3
+    
+    x1 = 4 - x3                 (restrição vertical   no plano cartesiano)
+    x4 = 6 + x5 - 3 x3          (restrição horizontal no plano cartesiano)
+    x2 = 3 - 1/2 x5 + 3/2 x3    (restrição diagonal   no plano cartesiano)
+  
+    x1,x2,x4 >= 0
+    x3,x5     = 0
+  
+  // Notem: já que x3 e x5 = 0, 27 é o valor do objetivo no vetice atual.
+  
+  Agora notem lembram-se do nosso vetor gradiente que indicava qual a nossa direção?
+  E lembram-se de que quando eu escolhi x5 para virar básica o valor de x5
+  cresceu de 0 para um valor não nulo?
+  
+  Isso significa que para avaliar o que acontecerá basta olhar para os coeficientes
+  do objetivo ou seja para o nosso vetor gradiente.
+  
+  No caso o gradiente de x5 é -1/2. Logo aumentar x5 irá diminuir o objetivo.
+  Não é o que queremos já que buscamos o "max" e não o "min".
+  
+  Logo aquela troca que sugeri anteriormente não foi uma boa escolha.
+  
+  Vamos então tentar trocar x3 com uma das variáveis básicas?
+  
+  Na última linha:
+  
+    x2 = 3 - 1/2 x5 + 3/2 x3
+  
+  A troca é inviável pois o coeficiente de x3 é positivo.
+  
+  restam então duas possibilidades de troca:
+  
+    x1 = 4 - x3
+    x4 = 6 + x5 - 3 x3
+  
+  Com isso chegamos ao (pen-)último ponto importante do simplex.
+  
+  Atualmente x3 tem o valor 0.
+  Se eu troca-lo com x1:
+  
+    x3 = 4 - x1
+  
+  Ele assumirá o valor 4.
+  Se eu troca-lo com x4:
+  
+    x3 = 6/3 + 1/3 x5 - 1/3 x4
+    x3 =  2  + 1/3 x5 - 1/3 x4
+  
+  Ele assumirá o valor 2.
+  
+  Necessariamente teremos de escolher o valor menor.
+  Porque se escolhermos o valor 4.
+  O próximo passo é substituir o valor x3 = 4 - x1 em 
+  
+    x4 = 6 + x5 - 3 x3
+  e
+    x2 = 3 - 1/2 x5 + 3/2 x3
+  
+  Em x2 = ... não haverá problema pois x2 vai ser igual 3 + o valor de x3 que é 4.
+  Então ainda é positivo.
+  
+  Agora em x4 haverá problema vejam:
+  
+    x4 =  6 + x5 - 3 (4 - x1)
+    x4 =  6 + x5 - 12 + 3 x1
+    x4 = -6 + x5 + 3 x1
+  
+  E ops, agora x4 ficou com o valor negativo.
+  O máximo que x3 podia aumentar sem tornar x4 negativo era 2.
+  E é por isso que devemos sempre escolher a transição que vai aumentar menos
+  o valor da variável não básica.
+  
+  Esse teste é chamado de teste da razão.
+  
+  Vamos por fim, fazer a última troca. Que já sabemos ser a única das possíveis
+  que não infringe nenhuma restrição e otimiza o objetivo "max 3 x1 + 5 x2":
+  
+    x4 = 6 + x5 - 3 x3
+  
+  vira:
+  
+    x3 = 2 + 1/3 x5 - 1/3 x4
+  
+  Substituindo o valor nas demais restrições e no objetivo teremos:
+  
+    max 28 - 1/4 x5 - 1/6 x4
+    
+    x1 = 2 - 1/2 x5 + 1/3 x4    (restrição vertical   no plano cartesiano)
+    x3 = 2 + 1/2 x5 - 1/3 x4    (restrição horizontal no plano cartesiano)
+    x2 = 6 + 1/2 x5 - 1/2 x3    (restrição diagonal   no plano cartesiano)
+  
+    x1,x2,x3 >= 0
+    x4,x5     = 0
+  
+  E pronto! Temos a solução do nosso problema!
+  
+  Como eu sei que isso é a solução?
+  
+  Eis a última coisa importante sobre o simplex:
+  
+    O atestado de otimalidade é conseguido quando todas as variáveis do objetivo
+    são negativas, no caso da maximização, ou negativas, no caso da minimização.
+  
+  O motivo disso é que se eu avaliar meu vetor gradiente: (-1/4, -1/6)
+  
+  Fica fácil de ver que não há nenhuma troca que iria otimizar mais meu objetivo.
+  Ambas as possibilidades: x5 e x4 se deixarem de ter o valor 0 iriam contribuir negativamente
+  para a nossa solução.
+  
+  Portanto o problema já está totalmente resolvido.
+  
+  // Durante uma prova, lembre-se de não terminar o algoritmo enquanto não obtiver o atestado de otimalidade.
+  // Não basta voce ter certeza de que encontrou a solução ótima, sem o atestado voce pode perder pontos.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+  Matricialmente falando a cada troca de variáveis que fazemos
+  nós precisamos de calcular aquela inversa de B⁻¹ que falei anteriormente.
+  
+  Assim nossa matriz de restrições fica:
+  
+    xb = B⁻¹ b - B⁻¹ N xn
+  
+  // Já falei disso antes
+  
+  E substituindo xb em nosso objetivo temos:
+  
+    max cb T xb                 + cn T xn
+
+    max cb T (B⁻¹ b - B⁻¹ N xn) + cn T xn
+
+    max cb T B⁻¹ b + cb T B⁻¹ N xn + cn T xn
+  
+  Por fim:
+  
+    max (cb T B⁻¹ b) + (cn T - cb T B⁻¹ N) xn
+  
+  Onde o primeiro parentesis é o custo otimizado do nosso problema.
+  // Chamado também de custo reduzido.
+  // (to em dúvida na linha acima)
+  // (se eu não corrigir isso antes de publicar, alguém me avise para eu corrigir)
+  
+  E o segundo parentesis é o nosso vetor gradiente, que multiplicado por
+  xn nos dá nossa direção para otimizarmos.
+  
+  Nenhuma grande novidade =], re-escrevendo tudo temos:
+  
+    max (cb T B⁻¹ b) + (cn T - cb T B⁻¹ N) xn
+  
+    xb = B⁻¹ b - B⁻¹ N xn
+  
+    xb >= 0, Xn = 0
+  
+  E isso é uma iteração do método simplex escrito em forma matricial =].
+  
+  Vamos acabar usando analogias desse tipo no futuro, então é uma boa entender isso.
+
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Resumindo os passos acima:
+  
+  Método Simplex:
+  
+  Preparo inicial:
+  
+    Primeiro escreva o problema no formato padrão, onde não existem apenas restrições de igualdade, e de não negatividade.
+    
+    Segundo, escolha um conjunto de variáveis básicas e isole-os do jeito que fizemos acima,
+    substituindo todas as aparições delas pelo valor delas em função das não-básicas.
+    
+  Dessa forma fica fácil enchergar o problema.
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  Agora vamos fazer as iterações do método, ou seja as trocas:
+  
+  1) No objetivo que deve estar no formato: "constante + c1 x1 + c2 x2 + ... + cn xn"
+  
+     Encontre variáveis cujo incremento beneficiará seu objetivo.
+   
+     Ou seja, se seu problema é de maximização procure pelos coeficientes positivos.
+              se seu problema é de minimização procure pelos coeficientes negativos.
+     
+     // Pode haver mais de uma opção, mas vamos falar disso em outra aula.
+  
+  2) Após escolher qual variavel não-básica trocar, olhe nas restrições
+     quais restrições aceitam a troca sem criar uma variável negativa.
+     (se voce escolheu a variável não básica x2 procure descarte
+      as restrições onde o coeficiente de x2 for negativo ou 0
+      pois nestas voce ou não consegue fazer a troca ou a troca
+      tornaria x2 negativo)
+  
+  3) Das restrições que sobraram verifique qual seria o valor final da variável trocada.
+     E escolha a troca que aumentar menos o valor da variável.
+     Lembrando que ela vale 0 antes da troca.
+  
+  4) Re-escreva a equação em questão. Substitua os valores dela nas demais equações e fim da iteração =].
+  
+  5) Se todos os coeficientes do objetivo forem negativos/positivos (no caso da maximização e da minimização respectivamente)
+     O método está encerrado e temos um atestado de otimalidade pronto =].
+
+  // xxx
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    
+  Iteração típica, dada uma escolha de B, N
+  
+  1) Identifique  uma variável não básica cujo custo reduzido
+  
+    ~cj = (cj - cb T B⁻¹ Aj)
+  
+  seja maior que zero, ??? não exista variável não básica com custo reduzido.
+  Provamos otimalidade da solução básica em mãos.
+  
+  caso cj_ > 0 para j não  ...
+  ... As demais variáveis não básicas permanecem não básicas (em zero)
+  
+  2) Mediante o crescimento de x qual a variável básica que anula primeiro (teste da razão) // nota pessoal: (se concluir aqui é ilimitado)
+  
+    xb = B⁻¹b - B⁻¹ Aj xj
+  
+    B⁻¹ Aj xj <= B⁻¹b
+  
+    xj >= (B⁻¹b)k/ ((B⁻¹Aj)k)
+  
+    Para todo k: ( B⁻¹ Aj)k >= 0
+  
+  k* o indiece da linha mais a...c
+  
+  do crescimento de xj, isto é,
+  k* := ang win { (B⁻¹
+
+  variável básica que sai da base é a variável básica associada a linha k*
+      
+  Se não existir k: (B⁻¹ Aj) x>0 pare pois o problema é ilimitado.
+  
+  3) implemente a troca de base se houver. // Nota pessoal: se concluir aqui é solução ótima.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Agora vamos fazer um exemplo:
+  
+    max 5x1 + 4x2 + 3x3
+  
+    2x1 + 3x2 +  x3 = 5  -x4
+    4x1 +  x2 + 2x3 = 11 -x5
+    3x1 + 4x2 + 2x3 = 8  -x6
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+  max 5x1 + 4x2 + 3x3
+  
+  x4 = 5 -2x1 -3x2 -x3
+  x5 = 11 - 4x1 -x2 -2x3
+  x6 = 8 - 3x1 - 4x2 - 2x3
+  
+    x1 = x2 = x3 = 0
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+              |x1|
+              |x2|
+  max (5 4 3) |x3|
+  
+  ...
+  
+  x1 = x2 = x3 = 0
+  
+  1° iteração:
+    1) entrar base x1 (x1 cresce)
+  
+    2) k=1 (x4) (B⁻¹ A1)1 = 2
+       
+  
+  // nota pessoal: k* é o indice da linha mais restritiva (a primeira restrição que é infringida ao se caminhar por uma determinada linha do plano)
+   
+    3) (final) implementar a troca de base. 
+       nova base: {x1, x5, x6} v. básicas.
+      
+       B = | 2 0 0 |
+           | 4 1 0 |
+           | 3 0 1 |
+  
+       N = | 1 3 1 | 
+           | 0 1 2 |
+           | 0 4 2 |
+  
+       cb = (5 0 0)
+       cn = (0 4 3)
+  
+  Agora re-escreve-se a variável que saiu (no caso x1) em termo das não básicas.
+  
+  re-escrevendo temos:
+  
+    x1 = 5/2 - 1/2 x4 - 3/2 x2 - 1/2 x3
+    x2 =  1  -  2  x4 -  5  x2 -  0  x3
+    x6 = 1/2 + 3/2 x4 + 1/2 x2 - 1/2 x3
+  
+  // E essa é nossa nova matriz.
+  
+  Nosso novo max:
+  
+    max 25/2 - 5/2 x4 - 7/2 x2 + 1/2 x3
+  
+      x1 = 5/2 - 1/2 x4 - 3/2 x2 - 1/2 x3
+      x5 =  1  +  2  x4 +  5  x2 +  0  x3
+      x6 = 1/2 + 3/2 x4 + 1/2 x2 - 1/2 x3
+  
+  // Nesse ponto podemos estar no ótimo, mas não temos certeza se estamos.
+  // Precisamos de mais um passo para conseguirmos o atestado de otimalidade.
+  // Condição para atestado: todos os coeficientes do objetivo negativos.
+  // Enquanto não obtiver isso vai caminhando, se não der para caminhar, finja que caminhou só para trocar as variáveis.
+  // Com isso deve ser possível re-escrever o objetivo de forma que todos os coeficientes dele sejam não positivos.
+  
+  // No pior dos casos voce entra em loop infinito, e nunca consegue um objetivo de coeficientes não positivos.
+  // É provado que isso só ocorrerá se no teste da razão, houverem dois caminhos possíveis e voce escolher o caminho de menor indice.
+  // Tenho que entender isso melhor mas é mais ou menos isso: Temos a linha 1 e 3 e elas são igualmente desejáveis pelo teste da razão.
+  // Se eu escolher a 3 pode acontecer loop. Se eu escolher 1 garanto que não havera loop.
+  
+  última iteração (espero):
+  
+    entra na base x3 e saí x6:
+   
+    max  13 - x4 - 4 x2 - x6
+    
+    x1 = 2 - 2 x4 - 2 x2 + x6
+    x5 = 1 + 2 x4 + 5 x2
+    x3 = 1 + 3 x4 +   x2 - 2 x6
+  
+    Agora finalmente, note que todos os coeficientes da função objetivo no dicionário acima são negativos!
+    E isso é o atestado de otimálidade, significa que para qualquer lado que caminhemos só iremos piorar o caso ótimo.
+  
+    1) admite solução ótima multipla?
+    Não. há que tem cj_ = 0 na base ótima (cond necessária)
+  
+    max 10 - 2 x1 + 0 x3
+    
+    x4 = 5 - 1 x1
+    x2 = 0 + 0 x1 - x3
+  
+    // Dúvida nesse ponto: O que é um vertice dejenerado?
+    // O prof. disse que se ele não for degenerado a condição acima é necessária e suficente e não apenas necessária.
+    
+    // Frase que ouvi meio solta: Na ausencia de degeneração ele não cicla. 
+    // Degenração é um numero excessivo de restrições justas em um mesmo ponto.
+  // ou seja, um mesmo ponto ótimo pode ser expresso pela intercessões de mais de duas restrições.
+  
+  
+    
+  
+  

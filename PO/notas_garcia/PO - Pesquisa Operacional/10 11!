@@ -1,0 +1,212 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Decomposição D.Wolfe:
+  (conhecido em computação também como programa de geração de colunas)
+  
+    min cTA
+    Ex = e
+    Ax = b
+    x >= 0
+  
+  Na aula anterior falamos que qualquer ponto x do dominio do problema pode ser escrito como
+  combinação convexa dos j pontos extremos somados com combinações das direções extremas.
+  
+  Ou seja:
+  
+  x = sum (j€R) lambda^j x^j + sum(i€D) teta^i d^i
+  lambda e teta >= 0
+  
+  sum(j€R) l^j = 1
+  j € R
+  l^j >= 0
+  0^j >= 0
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Problema mestre:
+  
+  // Usarei l para denotar lambda e 0 para teta.
+  
+    min sum(j€R) cT(l^j x^j) + sum(j€D) cT(0^i d^i)
+  
+    sum(j€R) E(l x^j) + sum(j€D) E(0^j d^j) = e
+    
+    sum(j€R) l^j = 1
+    (combinação convexa)
+  
+  Podemos re-escrever:
+  
+    min sum(j€R) (cT x^j) l^j + sum(j€D) (cT d^i) 0^i 
+  
+    (ß) sum(j€R) (E x^j)l^j + sum(j€D) (E d^j)0^j = e
+    
+    (r) sum(j€R) l^j = 1
+    (combinação convexa)
+  
+  O problema é que da forma que escrevemos agora temos um conjunto muito grande de variáveis.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Agora suponhamos que possamos encontrar um subconjunto de R e de D cujo solução relacionada seja solução também do problema envolvendo R e de D.
+  
+    RR contido em R
+    DD contido em D
+  
+  Com as variáveis l^j: j € RR, 0^j: j € DD
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Problema mestre restrito de PL (RPMPL)
+  
+    min sum(j€RR) (cT x^j) l^j + sum(j€DD) (cT d^i) 0^i 
+  
+    sum(j€RR) (E x^j)l^j + sum(j€DD) (E d^j)0^j = e
+    
+    sum(j€RR) l^j = 1
+    (combinação convexa)
+  
+  Resolvendo o RPMPL obteremos:
+  
+    ll^j: j € RR, 00^j: j € DD
+  
+  Precisamos agora verificar se essa solução além de resolver o RPMPL
+  também resolve o PMPL (o prob original).
+  
+  Ou seja, existe algum ponto que do dominio de R e de D que faltou ser incluido em RR e DD?
+  
+  Podemos formular essa pergunta assim:
+  
+  Existe j cujo custo reduzido é menor que 0?
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  // perdi a conexão entre aqui e o ponto anterior
+  Vamos escrever o dual desse problema:
+  
+  max ß T e + r
+  
+  ß T (E x^j) + r <= cTx^j: j € R
+  
+  ß T (E d^j) <= cT d^j: j € D
+  
+  Assim podemos descobrir se há um j cujo custo reduzido é menor que de 0,
+  verificando se alguma das restrições do dual é violada.
+  
+  Se houver violação:
+    Adicione essa variável no problema original.
+  
+  Se não houve:
+    Precisamos de um atestado de otimalidade.
+  
+  cTx^j - ß T ( Ex^j ) - x >= 0
+  
+  min cT x^j - ß T E x^j
+  
+  A solução desse problema pelo simplex me da uma soluçào
+  Vamos chama-la de x*.
+  
+  x* é um rio extremo de P, logo temos alguém para adicionar no nosso problema RPMPL
+  
+  Repetimos esse processo até o problema atestar que não existe coluna com custo reduzido negativo.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Vamos fazer um exemplo:
+  
+  min -4x1 -  x2 - 6x3
+  3x1 + 2x2 + 4x3 = 17
+  
+  1 <= xi<=2 : i = 1,2,3
+  
+  P = { x € R³+ : 1 <= xi <= 2, i=1,2,3 } D = ø
+  
+  vértices serão utilizados para escrever o  RPMPL
+  
+  l¹ x¹ = | 2 | c¹ = cTx¹ = ( - 4 - 1 - 6 ) (2 2 2)T = -22
+          | 2 | 
+          | 2 | Ex¹ = [3 2 4] [2 2 2]T = 18
+  
+  l² x² = | 1 | c² = cTx² = ( - 4 - 1 - 6 ) (1 1 2)T = -17
+          | 1 |
+          | 2 | Ex² = [3 2 4] [1 1 2]T = 13
+  
+  1° RPMPL:
+  
+  min - 22 l¹ - 17 l²
+  
+  | 18 13 |⁻¹    |  0,2 -2,6 |
+  |  1  1 |   =  | -0,2  3,6 |
+  
+  Resolvendo o sistema:
+  
+    18 l¹ + 13 l ² = 17
+    l¹ + l² = 1
+  
+  l¹ = 0,8
+  l² = 0,2
+  
+  (ß, r) = CB B⁻¹ = [-22 - 17] |  0,2 -2,6 | = [ -1 -4 ]
+                               | -0,2  3,6 |
+  
+  Resolvendo o problema de precificação:
+  
+  min ( [-4 -1 -6] - (-1) [ 3 2 4 ] ) [x1 x2 x3]T
+  
+  min -1x1 + 1x2 - 2x3
+  1<= x1 <= 2
+  1<= x2 <= 2
+  1<= x3 <= 2
+  
+  x1* = 2
+  x2* = 1
+  x3* = 2
+  
+  -5 = -1(2) + 1 -2(2)
+  
+  nova coluna l³, associada à x3 = [2 1 2]T
+  
+  c³ = cTx³ = (-4 -1 -6) (2 1 2)T = -21
+  
+  Ex³ = [3 2 4] [2 1 2]T = 16
+  
+  min -21 - l³
+  
+  l¹ = 0,8 - 0,6 l³
+  l² = 0,2 - 0,4 l³
+  
+  l¹ = 1/2 + 1,5 l²
+  l³ = 11/2 -2,5 l²
+  
+  min -21,5 + 2,5 l²
+  
+  2° prob. pricing:
+  
+  B = | 18 16 |  B⁻¹ |  1/2 -8 |
+      |  1  1 |      | -1/2  9 |
+  
+  (ß,r) = [-22 -21] B⁻¹ = [ -0,5 -13 ]
+  
+  min ( [-4 -1 -6] + (1/2) [3 2 4] ) (x1 x2 x3)
+  x € P
+  min -5/2x1 + 0x2 - 4x3
+  
+  1<= x1 <=2
+  1<= x2 <=2
+  1<= x3 <=2
+  
+  (2 1 2)T ou (2 2 2)T
+  
+  -5/2(2) + 0(1) - 4(2) = -13 + 13 = 0
+  
+  Assim conseguimos nosso atestado de otimalidade e fim do problema.
+
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+  // Fim da aula!
+  
+  

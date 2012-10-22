@@ -1,0 +1,95 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Dualidade em prog. Linear.
+  
+  Temos um problema em variáveis x1,x2,x3,x4...
+  
+  min y1 + 55 y2 + 3 y3
+  
+    y1 + 5 y2 -   y3 >= 4
+ -  y1 +   y2 + 2 y3 >= 1
+ -  y1 + 3 y2 + 3 y3 >= 5
+  3 y1 + 8 y2 - 5 y3 >= 3
+  
+  Achando o dual:
+  
+  MUltiplicamos todas as linhas por um fator xi sendo i o numero da linha.
+  E somamos elas:
+  
+  (    y1 + 5 y2 -   y3 ) x1 +
+  (-   y1 +   y2 + 2 y3 ) x2 +
+  (-   y1 + 3 y2 + 3 y3 ) x3 +
+  (  3 y1 + 8 y2 - 5 y3 ) x4
+  
+  y1 + 55 y2 + 3y3 >= negocio acima que é >= 4x1 + x2 + 5x3 + 3x4
+  
+  parece que o objetivo da nova é baseado nos coeficientes de y1. (wat?)
+  
+  Agora na hora de fazer as novas restrições fatoramos e invertmos e obtivemos 4 equações:
+  // (fatorar nesse caso é só girar a matriz)
+  
+    eq1 <= coef y1 no objetivo
+    eq2 <= coef y2 no objetivo
+    eq3 <= coef y3 no objetivo
+  
+  Invertendo o dual é:
+  
+  max 4x1 + x2 + 5x3 + 3x4
+    x1 -   x2 -   x3 + 3 x4 <= 1
+  5 x1 +   x2 + 3 x3 + 8 x4 <= 55
+ -  x1 + 2 x2 + 3 x3 - 5 x4 <= 5
+  
+  As variáveis duais mostram o preço minímo que voce ganha por cada coisa.
+  Tipo se eu qeuro minimizar custos, o dual mostra o máximo de que eu posso gastar.
+  
+  Maximo para que o que eu ganho vendendo produtos.
+  seja o minimo que ganho vendendo fatores.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  min cTx
+  Ax = b
+  x >= 0
+  
+  Seja esse nosso problema primal (o inverso do dual), note que dessa vez colocamos ele na forma padrão.
+  
+  Multiplicando ambos os lados das restrições por y transposto temos:
+  
+    yT Ax  = yT b
+  
+  Qual o dual?
+  
+  max bTy
+  yT A <= c // Note a desigualdade que não existe no outro. ORIGEM: linha 3 do original.
+  y >= 0? // Não, ele pode ser qualquer coisa.              ORIGEM: linha 2 do problema original.
+  
+  1) Uma solução viável para o dual de P fornece um limite inferior válido para o objetivo de qualquer sol. primal viável.
+  
+  yTb <= cTx
+  
+  Ou seja objetivo de um é o limite do outro.
+  
+  Essa propriedade é chamada de dualidade fraca.
+  
+  Teorema:
+    Se existe D dual de P então vale a dualidade fraca.
+  
+  2) Será que existe um vetor ~y viável para o dual tal que ~yTb = cT~x? // ~ significa x "barra"
+  
+  Se sim => ~x,~y formam um primal dual ótimo.
+  
+  Mais sobre dualidade fraca: Se um deles for ilimitado o outro é inviável.
+                              Se um deles for inviável o outro pode ser inviável ou ilimitado.
+  
+  // Fim da aula!
+  
+  
+  
+  
+  
+  

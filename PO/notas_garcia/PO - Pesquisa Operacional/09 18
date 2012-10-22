@@ -1,0 +1,243 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof.                   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Na aula de hoje vamos começar a explicar o Método Simplex =].
+  
+  Para isso vamos partir do mesmo problema da última aula, e resolver ele usando o Simplex =].
+  
+    ^ x2
+    |
+    |------\
+    |       \
+    |        \
+    |        |
+    |        |
+    |        |
+    |        |
+    |        |
+    |--------------------> x1
+  
+  O problema era:
+  
+    max 3 x1 + 5 x2
+    
+    1 x1 + 0 x2 <= 4
+    0 x1 + 2 x2 <= 12
+    3 x1 + 2 x2 <= 18
+  
+    x1,x2 >= 0
+  
+  Já vimos que precisamos coloca-lo na forma padrão para usar o Simplex então:
+  
+    max 3 x1 + 5 x2
+    
+    1 x1 + 0 x2 + x3 = 4
+    0 x1 + 2 x2 + x4 = 12
+    3 x1 + 2 x2 + x5 = 18
+  
+    x1,x2,x3,x4,x5 >= 0
+  
+  Agora vamos pensar o quanto essas novas variáveis afetam o nosso problema.
+  
+  Nosso problema era para ser pensado em duas dimensões, porém temos agora 5 variáveis, que problemão Ô.Ô
+  
+  Para resolver um problema de 5 variáveis, nós sabemos bem que precisamos de 5 equações certo?
+  
+  Graças a forma normal nós ganhamos 3 equações (antes eram inequações):
+  
+    1 x1 + 0 x2 + x3 = 4
+    0 x1 + 2 x2 + x4 = 12
+    3 x1 + 2 x2 + x5 = 18
+  
+  Porém faltam duas. Por sorte tem um macete simples.
+  
+  As variáveis x3,x4 e x5 que são nossas variáveis de folga e portanto podemos colocar sobre elas qualquer valor que quisermos =].
+  
+  Escolhendo duas delas completamos 5 equações:
+  
+    1 x1 + 0 x2 + x3 = 4
+    0 x1 + 2 x2 + x4 = 12
+    3 x1 + 2 x2 + x5 = 18
+  
+    x3  = 0
+    x5  = 0
+  
+  E essas 5 equações geram uma solução única, que está na intercessão das arestas:
+  
+  Vertical:
+    1 x1 + 0 x2 + 0  = 4  (pois x3 = 0)
+  
+  Diagonal:
+    3 x1 + 2 x2 + 0  = 18 (pois x5 também = 0)
+  
+  E notem que nossa aresta Horizontal:
+  
+    0 x1 + 2 x2 + x4 = 12 
+  
+  Aceita qualquer valor dentro de: 2 x2 <= 12
+  Pois o x4 lhe dá essa flexibilidade.
+  
+  Dessa forma, todas as soluções que geraremos no método simplex são intercessões de arestas,
+  ou em outras palavras os vertices que vimos na aula anterior =].
+  
+  E para encontrar soluções diferentes basta zerar variáveis diferentes, interessante não?
+  
+  Notem também que o vertice descrito acima é o vertice (4,3), que sabemos não ser o vertice ótimo =].
+  
+CONCEITO:
+  Variáveis não-básicas são aquelas variáveis que são zeradas pelo processo descrito acima,
+  para delimitar um unico ponto no espaço.
+  
+  No caso: N = {x3 e x5}
+
+CONCEITO:
+  Variáveis básicas são aquelas variáveis que nós não zeramos no processo acima.
+  
+  No caso: B = {x1, x2 e x4}
+  
+  // NOTA: x1 e x2 não são necessáriamente variáveis básicas ein!
+  //       Veja: x1=0 e x2=0 definem o ponto (0,0) que é um vertice do problema como qualquer outro.
+  
+CONCEITO:
+  Solução básica é uma solução gerada por uma determinada escolha de variáveis básicas (B) e não-básicas (N)
+  
+  Toda solução básica é um vertice (formado por intercessões de duas ou mais restrições).
+  
+  Toda solução básica possuí uma única configuração de B e de N que à gera.
+  
+  Nem toda solução básica é ótima.
+  
+  E nem toda solução básica sequer é viável! (a intercessão de duas restrições pode formar um vertice mas infringir uma terceira restrição)
+  
+  Se experimentarmos no exemplo acima:
+  
+    N = {x3, x4}
+    B = {x1, x2, x5}
+  
+  Encontraremos o vertice que é intecessão da reta horizontal e da reta vertical.
+  
+  Refazendo o desenho:
+  
+    ^ x2
+    |
+    |-----\  P (solução com N={x3,x4})
+    |      \  
+    |       \ 
+    |        \
+    |        |
+    |        |
+    |        |
+    |        |
+    |--------------------> x1 
+  
+  E fica claro que o ponto P (4,12) não pertence ao dominio de soluções do problema.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Agora lembram-se que na aula passada nós aprendemos a caminhar pelos vertices
+  seguindo sempre um tal de vetor gradiente?
+  
+  Vamos aprender a fazer isso no simplex?
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  Nosso problema é:
+  
+    max 3 x1 + 5 x2
+    
+    1 x1 + 0 x2 + x3 = 4   linha vertical
+    0 x1 + 2 x2 + x4 = 12  linha horizontal
+    3 x1 + 2 x2 + x5 = 18  linha diagonal
+  
+    x1,x2,x3,x4,x5 >= 0 
+  
+  E façamos a mesma escolha de B e N que fizemos anteriormente:
+  
+    x3  = 0
+    x5  = 0
+  
+  Sabendo que para cada escolha de B e N temos uma nova solução,
+  fazendo diferentes escolhas podemos caminhar por todos os vertices.
+  
+  Agora nos queremos caminhar pelos vertices e não saltar por eles.
+  
+  Vamos então escolher o sentido para caminharmos para que cheguemos no ponto (2,6) que era o ponto ótimo.
+  
+  Sabemos que atualmente estamos no ponto formado entre nossa diagonal e e nossa linha vertical.
+  Queremos caminhar para o ponto entre nossa diagonal e nossa linha horizontal =].
+  
+  Para fazermos isso temos de transformar a equação da linha horizontal em uma linha de igualdade.
+                            E transformar a equação da linha vertical   em uma linha de desigualdade.
+  
+  Ou seja temos de fazer x4 uma restrição firme   , ou seja x4  = 0 -> uma variável não-básica.
+        e temos de fazer x4 uma restrição flexível, ou seja x3 != 0 -> uma variável básica.
+  // Essa forma de pensar é um atalho, sem o uso do gradiente.
+  // Vou deixar para a prox. aula o uso dele, porque achei que ficaria confuso explicar tudo junto agora.
+  
+  Assim nossa nova configuração é:
+  
+    B = {x1, x2, x3}
+    N = {x4, x5}
+  
+  Observando nosso desenho, e sabendo que nosso novo vertice é formado na intercessão
+  da linha horizontal com a linha diagonal, vemos claramente que o novo P é o ponto (2,6):
+  
+    ^ x2
+    |
+    |-----P (solução com B={x1, x2, x3} N={x4, x5})
+    |      \  
+    |       \ 
+    |        \
+    |        |
+    |        |
+    |        |
+    |        |
+    |--------------------> x1  
+  
+  Solução essa que obviamente está dentro do conjunto de soluções, e já sabemos pela aula passada que é a solução ótima.
+  
+  Super interessante não?
+  Assim sendo já sabemos como caminhar pelo grafo, e as várias interpretações que podemos dar as linhas,
+  vertices e variáveis básicas e não-básicas =].
+  
+  Uma boa introdução ao método.
+  
+  Na próxima aula veremos o método de forma crua, o simples algoritmo.
+  Nele veremos como é feito o uso do gradiente do objetivo. (é bem simples na verdade)
+  
+  E veremos uma última coisa importante.
+  Lembram-se que nem toda solução básica é uma solução básica viável?
+  
+  O método simplex ele precisa partir de uma sol. básica viável.
+  Mas nem sempre nosso chute inicial vai nos permitir isso.
+  Há um método para encontra-la e vamos falar disso na próx aula =].
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  // Antes de acabar a aula alguns nomes:
+  
+CONCEITO:
+  Dicionário é o nome dado ao conjunto de informações que temos sobre o problema no caso acima:
+  
+    max 3 x1 + 5 x2
+    
+    1 x1 + 0 x2 + x3 = 4   linha vertical
+    0 x1 + 2 x2 + x4 = 12  linha horizontal
+    3 x1 + 2 x2 + x5 = 18  linha diagonal
+  
+    x1,x2,x3,x4,x5 >= 0 
+  
+CONCEITO:
+  Matriz tecnológica é um outro nome dado ao conjunto de restrições justas do problema:
+    
+    1 x1 + 0 x2 + x3 = 4   linha vertical
+    0 x1 + 2 x2 + x4 = 12  linha horizontal
+    3 x1 + 2 x2 + x5 = 18  linha diagonal
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+  // Fim da aula!

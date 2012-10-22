@@ -1,0 +1,170 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Data da prova 1 foi adiada:
+  
+    Prova 1 PO dia 23/10/12
+    A materia vai até análise de sensibilidade.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Última coisa à falar sobre Análise de Sensibilidade.
+  
+  Vamos falar agora do método Dual-Simplex
+  
+  Vamos colocar um exemplo para ilustrar o Dual-Simplex:
+  
+  x1 = -4 + 3x2 - 11x4 +  x5
+  x3 =  3 -  x2 +  3x4 - 2x5
+  
+  max t = 12 - 4x2 -  x4 -  x5
+  
+  Base viável para o dual, porque os coeficientes são negativos.
+  
+  Porém é inviável para o primal porque o -4 infringe a restrição 1
+  
+  Como torna-la viável?
+  
+  Vamos tentar forçar o pivoteamento tirando x1 da base e introduzindo uma não básica cujo crescimento faça crescer x1.
+  
+  Para isso temos duas alternativas:
+    Ou x2 entra na base,
+    Ou x5 entra na base.
+  
+  Porém no método dual simplex também queremos garantir a viabilidade do dual.
+  
+  Ou seja nossa modificação não pode gerar coeficientes positivos no objetivo!
+  
+  Dessa forma temos de estudar os efeitos de colocar x2 ou x5 na base para ver se um deles preservará a viabilidade no dual.
+  
+  Suponha que trocaremos x2:
+  
+    x2 = 4/3 + 1/3 x1 + 11/3 x4 - 1/3 x5
+  
+    max z = 20/3 - 4/3 x1 - 47/3 x4 + 1/3 x5
+  
+  Agora note que o coeficiente de x5 está positivo infringindo a restrição de otimalidade.
+  Do ponto de vista do dual isso implica em não viabilidade. Ou seja foi infringido o que queriamos evitar.
+  
+  Vamos supor então a troca de x5:
+  
+    x5 = 4 + x1 - 3x2 + 11x4
+  
+    max z = 8 - x2 - 15x4 - x1
+  
+  Essa operação é portanto dual-viável.
+  
+  Vamos então definir esse nosso teste da razão inverso:
+
+CONCEITO:
+  Teste da razão do dual-simplex.
+  
+  Seja j o indice da variável básica que está infringindo a regra e deve portanto sair da base. (logo xj <= 0)
+  
+  Queremos encontrar o indice i da variável não básica que entrará na base.
+  
+  xi deve aproximar a restrição de xj da viábilidade a medida que crescer.
+  de forma que sua troca nos ajude a resolver o problema.
+  
+  Como estamos falando do método dual simplex.
+  Caso exista mais de uma opção devemos colocar na base o xi que ao ser trocado não afetará a viabilidade da base.
+  
+  Lembrando que a condição de viabilidade do dual é a condição de otimalidade do primal, ou seja os coeficientes negativos no objetivo.
+  
+  NOTA:  O que acontece se nenhuma das opções xi garantir a viabilidade do dual?
+         Significa que a troca não pode ser feita para viabilizar o primal, logo o primal é inviável. E o dual é vial ilimitado.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Decomposição de DontigVolfe.
+  
+CONCEITO:
+  Direção:
+  
+    Ou seja uma direção nesse contexto é uma direção tal
+    se eu arrastar um ponto qualquer viável do poliedro nessa direção em sentido crescente ele sempre permanescerá no poliedro.
+    ou seja isso só vale para poliedros ilimitados.
+  
+  
+  Politopo = poliedro não ilimitado.
+  poliedro pode ser ou não ilimitado.
+  
+CONCEITO:
+  Direção extrema:
+  
+  É uma direção como descrita acima.
+  Porém tem uma característica a mais:
+    É uma direção tal que para qualquer lambda > 0 n-1 (mesmas) restrições li são justas em ( ~x + xd)
+  (~x é um ponto do negócio)
+  
+  Falando em portugues:
+    são as direções definidas paralelas à uma das faces do poliedro.
+  
+  (para que complicar tanto)
+      
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Teorema: Seja P um poliedro na forma padrão.
+  
+  e seja x um ponto qualquer em P.
+  R denota o conjunto dos indices de pontos extremos de P (xj : j € R é ponto extremo de P)
+  
+  D denota os indices das direções extremas de P (dj : j € D é direção extrema de P)
+  
+  // D pode ser vázio, basta o poliedro ser um politopo.
+  //
+  // R só será vazio em um único caso, é quando ele é formado por duas retas paralelas, e nada mais.
+  // Estamos desconsiderando essa possibilidade.
+  
+  Então qualquer x em P pode ser escrito como:
+  
+    x = sum (j€R) lambdaj * xj + sum(j€d) tetaj.dj
+    sum(j€R lambdaj = 1
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Pode-se definir um politopo com base nas combinações linares convexas de seus pontos extremos.
+  
+  Em um poliedro ilimitado isso pode se tornar um problema.
+  Para isso utiliza-se as direções extremas.
+  
+  Combinando as direções extremas de um poliedro ilimitado pode-se gerar qualquer outra direção do poliedro.
+  E arrastando-se os pontos extremos com base nestas direções pode-se gerar todo o espaço do poliedro ilimitado.
+
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  max cTx
+  
+  Ex = e
+  Ax = b
+  
+  x >= 0
+  
+  O que foi feito foi dividir as restrições entre dois grupos.
+  
+  Temos o grupo Ex, e o grupo Ax
+  
+  O grupo Ax é o grupo de restrições básicas.
+  
+  Ex é o grupo de restrições adicionais.
+  
+  O professor disse que depois vai ficar claro do porque essa divisão é interessante.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  // Fim da aula!
+  
+  
+ 
+  
+  
+  
+  
+  
+  
+  
+  
