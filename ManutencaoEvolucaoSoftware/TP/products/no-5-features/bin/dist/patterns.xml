@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Default patterns supplied with FreeMind 
+	 Don't change this file per hand as a pattern manager 
+	 is now included in FreeMind.
+-->
+<patterns>
+	<pattern name="Default">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+		<pattern_node_font_name/>
+		<pattern_node_font_bold/>
+		<pattern_node_font_italic/>
+		<pattern_node_font_size/>
+		<!-- 
+		//#if defined(ICONS)
+		//@#$LPS-ICONS:GranularityType:XML
+		 -->
+		<pattern_icon/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_edge_color/>
+		<pattern_edge_style/>
+		<pattern_edge_width/>
+	</pattern>
+	<pattern name="Normal">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->		 
+		<pattern_node_color value="#000000"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+	</pattern>
+	<!-- task -->
+	<pattern name="OK">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#338800"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+	</pattern>
+	<pattern name="Needs action">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#990000"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+	</pattern>
+	<pattern name="Hot">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#ff0000"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+	</pattern>
+	<!-- document -->
+	<pattern name="Detail">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#999999"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+		<pattern_node_font_name/>
+		<pattern_node_font_bold/>
+		<pattern_node_font_italic/>
+		<pattern_node_font_size value="10"/>
+		
+	</pattern>
+	<pattern name="Folder">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#006699"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+	</pattern>
+	<pattern name="Topic">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#669900"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+	</pattern>
+	<pattern name="Larger Topic">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#006633"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+	</pattern>
+	<pattern name="Waiting Topic">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#B3B95C"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+	</pattern>
+	<pattern name="Object / Keyword">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#996600"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+	</pattern>
+	<pattern name="Object of Code">
+		<!-- that is function name, database table name, class name etc.-->
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#CC6600"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+	</pattern>
+	<pattern name="Question">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#999900"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+	</pattern>
+	<pattern name="Open Question">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#CC3300"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+	</pattern>
+	<pattern name="Bad">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->		 
+		<pattern_node_color value="#990099"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+	</pattern>
+	<pattern name="Blue">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#0033FF"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+	</pattern>
+	<pattern name="Pink">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#FF6666"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+	</pattern>
+	<pattern name="Cyan">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#009999"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+	</pattern>
+	
+	<!-- Recursive Mind map styles 
+		 If you want to try them, apply AutomaticMindMapRoot 
+		 to the root of a mindmap. Take care, the whole map changes it colors -->
+
+	<pattern name="AutomaticMindMapRoot">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#000000"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+		<pattern_edge_color value="#000000"/>
+		<pattern_edge_style/>
+		<pattern_edge_width value="8"/>
+		<pattern_child value="MindMap1"/>
+	</pattern>
+	
+	<pattern name="MindMap1">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#0033FF"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+		<pattern_edge_color value="#0033FF"/>
+		<pattern_edge_style/>
+		<pattern_edge_width value="4"/>
+		<pattern_child value="MindMap2"/>
+	</pattern>
+	
+	<pattern name="MindMap2">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#00b439"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+		<pattern_edge_color value="#00b439"/>
+		<pattern_edge_style/>
+		<pattern_edge_width value="2"/>
+		<pattern_child value="MindMap3"/>
+	</pattern>
+	
+	<pattern name="MindMap3">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#990000"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+		<pattern_edge_color value="#990000"/>
+		<pattern_edge_style/>
+		<pattern_edge_width value="1"/>
+		<pattern_child value="MindMapDefault"/>
+	</pattern>
+	
+	<pattern name="MindMapDefault">
+		<!-- 
+		//#if defined(BACKGROUND_COLOR)
+		//@#$LPS-BACKGROUND_COLOR:GranularityType:XML
+		 -->
+		<pattern_node_background_color/>
+		<!-- 
+		//#endif
+		 -->
+		<!-- 
+		//#if defined(COLOR)
+		//@#$LPS-COLOR:GranularityType:XML
+		 -->
+		<pattern_node_color value="#111111"/>
+		<!-- 
+		//#endif
+		 -->
+		<pattern_node_style/>
+		<pattern_edge_color value="#111111"/>
+		<pattern_edge_style/>
+		<pattern_edge_width value="thin"/>
+		<pattern_child value="MindMapDefault"/>
+	</pattern>
+	
+</patterns>
