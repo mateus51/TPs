@@ -1,0 +1,9 @@
+glpsol.o: glpsol.c ../src/glpk.h \
+ /usr/lib/gcc/i486-linux-gnu/4.4.3/include/stdarg.h \
+ /usr/lib/gcc/i486-linux-gnu/4.4.3/include/stddef.h
+
+../src/glpk.h:
+
+/usr/lib/gcc/i486-linux-gnu/4.4.3/include/stdarg.h:
+
+/usr/lib/gcc/i486-linux-gnu/4.4.3/include/stddef.h:
