@@ -1,0 +1,140 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Hoje vamos falar de uma versão um pouco mais complexa de Programas de Programação Lineares
+  
+  Método Simplex para PPPL c/ variáveis canalizadas. (foi o que eu li)
+  
+  min cTx
+  Ax = b
+  l <= x <= u
+  // l, x e u são vetores
+  
+    l,u € R^n
+    // Notem que o limite inferior pode agora ser menor que 0.
+  
+  Agora nosso x não é maior que 0.
+  Ele tem agora um intervalo.
+  
+  Então veja, temos m restrições em Ax = b.
+
+  Precisamos de n-m novas restrições para somando termos uma solução para um problema de n variáveis.
+  
+  Em l <= x <= u diferentemente de x >= 0 temos 2n possíveis restrições e não n.
+  
+  A única mudança efetiva no problema na verdade,
+  é a interpretação que damos à uma solução básica.
+  
+  Ou seja uma vez que tivermos uma solução básica viável.
+  O nosso caminhamento deve levar em conta não apenas a não negatividade das variáveis mas também
+  as limitações superiores e inferiores do problema.
+  
+  Em outras palavras, não mudou quase nada, além do teste da razão.
+  
+  Assim quando eu quiser trocar a variável xi preciso considerar apenas as trocas em que xi não ultrapasse o limite ui associado.
+  
+  E mais, agora não podemos simplesmente assumir que todas as não básicas tem um mesmo valor = 0.
+  Uma não básica pode ter tanto o valor de li quanto o valor ui.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Vamos falar então das trocas de variáveis básicas e não-básicas.
+  
+  Antes sempre pensavamos que a variável não-básica xi que entraria na base iria ter seu valor aumentado.
+  E não poderia aumentar de mais ao ponto que outra variável fosse ficar negativa.
+  
+  Agora temos os dois casos, variáveis não-básicas igualadas ao seu limite inferior 'li'
+  se comportarão como antigamente, ao sairem das não-básicas seu valor irá ou aumentar ou permanscer o mesmo.
+  
+  Porém com variáveis não básicas igualadas à ui, estarão limitadas superiormente.
+  E portanto seu valor só podera ser reduzido ou mantido igual no momento em que ela se tornar básica.
+  Nesse caso o teste da razão deverá selecionar a restrição que menos reduzir o valor de xi.
+  
+  Última nota importante:
+  Agora restrições cujo coeficiente de xi for positivo não são mais automaticamente eliminadas das possibilidades.
+  Temos agora de ver caso a caso.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Seja o problema:
+  
+    max 27 - 1/2 x5 + 1/2 x3
+    
+    x1 = 4 - x3                 (restrição vertical   no plano cartesiano)
+    x4 = 6 + x5 - 3 x3          (restrição horizontal no plano cartesiano)
+    x2 = 3 - 1/2 x5 + 3/2 x3    (restrição diagonal   no plano cartesiano)
+  
+    l <= x1,x2,x3,x4,x5 <= u
+    x3 = l, x5 = l
+  
+  No caso vamos dizer que o intervalo de variação de todas as variáveis é igual, ele poderia ser especifico.
+  
+  Nossas não básicas são as que tem o valor fixo, x3 e x5, as básicas são as demais.
+  Caso l seja igual à 0, e u seja infinito, nosso problema é identico aos problemas que já sabemos resolver.
+  Inclusive é o mesmo problema que usamos em uma aula anterior.
+  
+  Uma outra configuração das não básicas seria:
+   
+    max 27 - 1/2 x5 + 1/2 x3
+    
+    x1 = 4 - x3                 (restrição vertical   no plano cartesiano)
+    x4 = 6 + x5 - 3 x3          (restrição horizontal no plano cartesiano)
+    x2 = 3 - 1/2 x5 + 3/2 x3    (restrição diagonal   no plano cartesiano)
+  
+    l <= x1,x2,x3,x4,x5 <= u
+    x3 = l
+    x5 = u
+  
+  Trocar x3 com x1 tem várias possibilidades:
+  
+    ... xxx ...
+
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Mudamos um pouco o assunto.
+  
+  Voltamos a falar do assunto da aula passada sobre a decomposição de D. Wolfe.
+  
+  O professor vai dar um exemplo de aplicação desse método.
+  
+  Tenho várias placas de metal de comprimento w.
+  
+  Eu revendo as placas após corta-las verticalmente.
+  
+  Eu tenho que produzir:
+  
+    i=1 -> b1 = 10 placas, l = 3   metros
+    i=2 -> b1 =  7 placas, l = 4,5 metros
+    i=3 -> b1 = 11 placas, l = 2   metros
+  
+  Seja w = 7.
+  
+  Então eu tenho 3 restrições e meu objetivo é minimizar,
+  o número de placas gastas.
+  
+  Note que uma mesma placa de 7 m pode ser cortada de várias formas:
+  
+    3m,3m
+    4.5m,2m
+  
+  E aí vai mas sempre desperdiçando um pouquinho.
+  
+  Bem ele mostrou como construir o problema e mostrou que há uma variável inteira.
+  Isso é um problema porque não sabemos mecher com isso ainda.
+  
+  Como contornar isso? vamos folgar um pouco nosso problema.
+  E assumir que essa variável inteira possa ser real.
+  
+  Bem eu continuaria, mas a aula já está no fim e a bateria do pc também.
+
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  // Fim da aula!
+  
+  
+  
+  

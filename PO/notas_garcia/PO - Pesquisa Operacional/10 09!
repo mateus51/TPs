@@ -18,12 +18,16 @@
   
   Vamos colocar um exemplo para ilustrar o Dual-Simplex:
   
-  x1 = -4 + 3x2 - 11x4 +  x5
-  x3 =  3 -  x2 +  3x4 - 2x5
+  x1 = -4 + 3 x2 - 11 x4 +   x5
+  x3 =  3 -   x2 +  3 x4 - 2 x5
   
-  max t = 12 - 4x2 -  x4 -  x5
+  max t = 12 - 4 x2 -  x4 -  x5
+  
+  x1,x2,x3,x4,x5 >= 0
   
   Base viável para o dual, porque os coeficientes são negativos.
+  (note que coeficientes negativos + solução viável => sol. otima => dual viável e ótimo)
+  (no caso temos apenas coef. negativos => base dual viável)
   
   Porém é inviável para o primal porque o -4 infringe a restrição 1
   
@@ -80,7 +84,7 @@ CONCEITO:
   
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
   
-  Decomposição de DontigVolfe.
+  Decomposição de Dantzig Wolfe.
   
 CONCEITO:
   Direção:
@@ -99,7 +103,7 @@ CONCEITO:
   É uma direção como descrita acima.
   Porém tem uma característica a mais:
     É uma direção tal que para qualquer lambda > 0 n-1 (mesmas) restrições li são justas em ( ~x + xd)
-  (~x é um ponto do negócio)
+    (~x é um ponto do poliedro)
   
   Falando em portugues:
     são as direções definidas paralelas à uma das faces do poliedro.
@@ -111,9 +115,9 @@ CONCEITO:
   Teorema: Seja P um poliedro na forma padrão.
   
   e seja x um ponto qualquer em P.
-  R denota o conjunto dos indices de pontos extremos de P (xj : j € R é ponto extremo de P)
+  R denota o conjunto dos indices de pontos extremos de P (xj com j € R é ponto extremo de P)
   
-  D denota os indices das direções extremas de P (dj : j € D é direção extrema de P)
+  D denota os indices das direções extremas de P (dj com j € D é direção extrema de P)
   
   // D pode ser vázio, basta o poliedro ser um politopo.
   //
@@ -122,14 +126,22 @@ CONCEITO:
   
   Então qualquer x em P pode ser escrito como:
   
-    x = sum (j€R) lambdaj * xj + sum(j€d) tetaj.dj
-    sum(j€R lambdaj = 1
+    x = sum (j€R) lambdaj * xj + sum(j€D) tetaj * dj
+    
+    sum(j€R) lambdaj = 1
+    
+    Ou seja,
+    o somatório da esquerda é a combinação convexa dos pontos extremos que geram qualquer
+    outros pontos contidos na área delimitada pelos pontos extremos.
+    
+    Para alcançar qualquer outro ponto do poliedro ilimitado, basta somarmos com uma ou mais
+    direções extremas com tetas adequados.
   
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
   Pode-se definir um politopo com base nas combinações linares convexas de seus pontos extremos.
   
-  Em um poliedro ilimitado isso pode se tornar um problema.
+  Em um poliedro ilimitado isso pode se tornar um problema, pois essa combinação convexa não é suficiente.
   Para isso utiliza-se as direções extremas.
   
   Combinando as direções extremas de um poliedro ilimitado pode-se gerar qualquer outra direção do poliedro.

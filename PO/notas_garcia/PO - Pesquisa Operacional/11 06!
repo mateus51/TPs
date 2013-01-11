@@ -1,0 +1,290 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  O professor começou um exercicio para exemplificar o caminho mínimo:
+  
+  Seja o grafo:
+  
+  Arcos: (2,1), (3,1), (4,1), (5,1), (2,3), (3,2), (3,4), (4,3), (4,5), (5,4), (2,7), (7,2), (7,3), (7,6) (6,4), (6,5), (8,7), (8,6), (8,5).
+  Pesos:   7      4      2      4      3      3      1      1      1      1      1      1      5      3     5      3      1      4      6
+  
+  O professor mostrou a iteração.
+  
+  Queremos o caminho mínimo de 8 à 1.
+  
+  para toda aresta (i,j): di-dj <= cij
+  
+  Iniciando:
+  d8 = 0;
+  di = inf, para todo i!=8
+  
+  Iteração   |     L      |   d1   d2   d3   d4   d5   d6   d7   d8 | i
+      0      |    {8}     |  inf  inf  inf  inf  inf  inf  inf   0  | 8
+      1      |            |                                         |  
+  
+  Uma distancia dj qualquer em uma iteração deve ser sempre:
+  
+  No dual:
+    dj <= di + cij
+  
+  No primal:
+    yi <= cij + yj
+  
+  Na primeira iteração vamos verificar os vertices associados à i = 8:
+  
+    (8,7), (8,6), (8,5)
+  
+  Vamos atualizar a distancia dos vertices 7, 6 e 5 com base nos pesos destas arestas.
+  E adiciona-los à L, imediatamente após remover o 8.
+
+  Iteração   |     L      |   d1   d2   d3   d4   d5   d6   d7   d8 | i
+      0      |    {8}     |  inf  inf  inf  inf  inf  inf  inf   0  | 8
+      1      |  {7,6,5}   |  inf  inf  inf  inf   6    4    1    0  | 7
+  
+  agora vamos avaliar as arestas:
+  
+    (7,2), (7,3), (7,6)
+  
+  Iteração   |     L      |   d1   d2   d3   d4   d5   d6   d7   d8 | i
+      0      |    {8}     |  inf  inf  inf  inf  inf  inf  inf   0  | 8
+      1      |  {7,6,5}   |  inf  inf  inf  inf   6    4    1    0  | 7
+      2      | {6,5,2,3}  |  inf   2    6   inf   6    4    1    0  | 6
+  
+  Agora as arestas:
+  
+    (6,4), (6,5)
+  
+  Iteração   |     L      |   d1   d2   d3   d4   d5   d6   d7   d8 | i
+      0      |    {8}     |  inf  inf  inf  inf  inf  inf  inf   0  | 8
+      1      |  {7,6,5}   |  inf  inf  inf  inf   6    4    1    0  | 7
+      2      | {6,5,2,3}  |  inf   2    6   inf   6    4    1    0  | 6
+      3      | {5,2,3,4}  |  inf   2    6    9    6    4    1    0  | 5
+  
+  Agora as arestas:
+  
+    (5,4), (5,1)
+      1      4
+  
+  Iteração   |     L      |   d1   d2   d3   d4   d5   d6   d7   d8 | i
+      0      |    {8}     |  inf  inf  inf  inf  inf  inf  inf   0  | 8
+      1      |  {7,6,5}   |  inf  inf  inf  inf   6    4    1    0  | 7
+      2      | {6,5,2,3}  |  inf   2    6   inf   6    4    1    0  | 6
+      3      | {5,2,3,4}  |  inf   2    6    9    6    4    1    0  | 5
+      4      | {1,2,3,4}  |   10   2    6    7    6    4    1    0  | 4
+  
+  Agora note que não é necessário colocar o vertice 1 na lista L, já que nenhuma solução ótima irá passar duas vezes pelo 1.
+  Logo:
+  
+  Iteração   |     L      |   d1   d2   d3   d4   d5   d6   d7   d8 | i
+      0      |    {8}     |  inf  inf  inf  inf  inf  inf  inf   0  | 8
+      1      |  {7,6,5}   |  inf  inf  inf  inf   6    4    1    0  | 7
+      2      | {6,5,2,3}  |  inf   2    6   inf   6    4    1    0  | 6
+      3      | {5,2,3,4}  |  inf   2    6    9    6    4    1    0  | 5
+      4      |  {2,3,4}   |   10   2    6    7    6    4    1    0  | 4
+  
+  // Nota: A diferença desse método pra dikstra é a busca em profundidade.
+  //       Ela abre a possibilidade de se encontrar um caminho para i e esse caminho não ser o ótimo ainda.
+  
+  Agora vamos ver as arestas:
+  
+    (2,7), (2,3), (2,1)
+  
+  Iteração   |     L      |   d1   d2   d3   d4   d5   d6   d7   d8 | i
+      0      |    {8}     |  inf  inf  inf  inf  inf  inf  inf   0  | 8
+      1      |  {7,6,5}   |  inf  inf  inf  inf   6    4    1    0  | 7
+      2      | {6,5,2,3}  |  inf   2    6   inf   6    4    1    0  | 6
+      3      | {5,2,3,4}  |  inf   2    6    9    6    4    1    0  | 5
+      4      |  {2,3,4}   |   10   2    6    7    6    4    1    0  | 2
+      5      |   {3,4}    |   9    2    5    7    6    4    1    0  | 3
+  
+  Agora as arestas:
+  
+    (3,1), (3,2), (3,4)
+  
+  Iteração   |     L      |   d1   d2   d3   d4   d5   d6   d7   d8 | i
+      0      |    {8}     |  inf  inf  inf  inf  inf  inf  inf   0  | 8
+      1      |  {7,6,5}   |  inf  inf  inf  inf   6    4    1    0  | 7
+      2      | {6,5,2,3}  |  inf   2    6   inf   6    4    1    0  | 6
+      3      | {5,2,3,4}  |  inf   2    6    9    6    4    1    0  | 5
+      4      |  {2,3,4}   |   10   2    6    7    6    4    1    0  | 2
+      5      |   {3,4}    |   9    2    5    7    6    4    1    0  | 3
+      6      |    {4}     |   9    2    5    6    6    4    1    0  | 4
+  
+  Vertices:
+  
+    (4,5), (4,3), (4,1)
+  
+  Iteração   |     L      |   d1   d2   d3   d4   d5   d6   d7   d8 | i
+      0      |    {8}     |  inf  inf  inf  inf  inf  inf  inf   0  | 8
+      1      |  {7,6,5}   |  inf  inf  inf  inf   6    4    1    0  | 7
+      2      | {6,5,2,3}  |  inf   2    6   inf   6    4    1    0  | 6
+      3      | {5,2,3,4}  |  inf   2    6    9    6    4    1    0  | 5
+      4      |  {2,3,4}   |   10   2    6    7    6    4    1    0  | 2
+      5      |   {3,4}    |   9    2    5    7    6    4    1    0  | 3
+      6      |    {4}     |   9    2    5    6    6    4    1    0  | 4
+      7      |    {}      |   8    2    5    6    6    4    1    0  |  
+  
+  Com a lista L vazia o algoritmo pára e nossa solução ótima é d1 = 8.
+  
+  Simples e interessante né?
+  
+  Esse método se difere do dikstra pela forma como se caminha pela lista L e
+  Pela possibilidade de se re-calcular um vertice mais de uma vez.
+  
+    y = distancia da origem ao destino.
+    d = distancia do vertice à origem.
+  
+  // Nota: o caminhamento é sempre escolhendo o vertice com o mínimo caminhamento.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Vamos agora aprender a lidar com problemas em grafos aciclicos direcionados.
+  
+  Seja o grafo:
+  
+  (1,2), (1,3), (1,4), (2,5), (3,5), (3,6), (4,5), (4,6), (5,7), (6,7)
+    7      8      5     12      8      9      7     13      9      6
+  
+  Programação Dinâmica:
+  
+  Vamos reutilizar valores que já são confiáveis.
+  
+  Algoritmos dinâmicos podem ser implementados recursivamente.
+  
+    ð+ partem de i.
+    ð- chegam em i.
+  
+  Caso base: d1 = 0.
+  
+  Caso genérico: min {dj + cij | (j,i) € ð-(i)} para todo i != origem.
+  
+  // Isso é o suficiente para descrever o algoritmo de distancia mínima para redes aciclicas.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  i = 2, ..., n
+  
+    d2 = min {d1 + c12} = 7
+    d3 = min {d1 + c13} = 8
+    d4 = min {d1 + c14} = 5
+    d5 = min {d2 + c25, d3 + c35, d4 + c45} = 12
+    d6 = min {d3 + c36, d4 + c46} = 17
+    d7 = min {d5 + c57, d6 + c67} = 21
+  
+  Vamos descobrir o caminho a partir das distancias, ou seja o problema dual:
+  
+  Os vertices que desejamos são tais que:
+  
+    (i,j): dj <= di + cij
+  
+  ou
+  
+    (dj-di-cij)=0
+  
+  Quais os vertices qeu desejamos?
+  
+  De trás para frente:
+  
+  o vertice (5,7) é o único dos vertices que chegam em 7 cujo custo somado à c57 é igual à 21.
+  
+  Depois adicionamos a aresta (4,5) que é o unico das arestas que chegam nos novos vertices (no caso apenas 5) que tem folga 0.
+  
+  por fim encontramos a aresta (1,4) que é a única com folga 0 que chega em 4.
+  
+  No caso encontramos um único caminho.
+  
+  Poderiamos encontrar dois caminhos de igual distancia.
+  Ou poderiamos encontrar um caminho cuja distancia até o vertice 7 seja 21, porém ele não comece no vertice 1.
+  Esse caminho não seria um caminho ótimo.
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Novo problema:
+  
+    (1,2), (1,3), (1,4), (2,3), (2,5), (3,5), (3,6), (4,3), (4,5), (4,6), (5,7), (6,5), (6,7)
+      7      8      5      2     12      8      9      1      7     13      9      4      6
+  
+  A rede é ainda não-ciclica.
+  
+  Como iremos utilizar programação dinâmica, vamos guardar os valores de distancia com base
+  no numero k de arcos entre o vertice i e o vertice de origem.
+  
+  Ou seja:
+  
+    d(i,k) = distnacia mínima da origem até o vertice i com até (não mais que) k arcos.
+  
+  Nota: k > n-1 sendo n o número de vertices não é necessário pois, isso implicaria em ciclo.
+  
+  Caso base:
+    d(origem, k) = 0.
+    d(i     , 0) = inf. para todo i!=origem.
+  
+  d(i,k) = min { d(i,k-1), d(j,k-1) + cji para todo (j,i) € ð-(i))
+  
+     k\i |  1  |  2  |  3  |  4  |  5  |  6  |  7  |
+      0  |  0  | inf | inf | inf | inf | inf | inf |
+      1  |     |     |     |     |     |     |     |
+  
+  O algoritimo precisa iterar de forma crescente em relação ao valor de k.
+  
+     k\i |  1  |  2  |  3  |  4  |  5  |  6  |  7  |
+      0  |  0  | inf | inf | inf | inf | inf | inf |
+      1  |     |  7  |  8  |  5  | inf | inf | inf |
+  
+  Prox. iteração:
+  
+     k\i |  1  |  2  |  3  |  4  |  5  |  6  |  7  |
+      0  |  0  | inf | inf | inf | inf | inf | inf |
+      1  |     |  7  |  8  |  5  | inf | inf | inf |
+      2  |     |  7  |  6  |  5  | inf | inf | inf |
+  
+  Prox:
+  Notem que no cálculo de d(5,2)
+  consideramos o arco (6,5) e nesse instancia d(6,2) = inf.
+  
+     k\i |  1  |  2  |  3  |  4  |  5  |  6  |  7  |
+      0  |  0  | inf | inf | inf | inf | inf | inf |
+      1  |     |  7  |  8  |  5  | inf | inf | inf |
+      2  |     |  7  |  6  |  5  | 12  | 17  | inf |
+  
+  Prox:
+  
+     k\i |  1  |  2  |  3  |  4  |  5  |  6  |  7  |
+      0  |  0  | inf | inf | inf | inf | inf | inf |
+      1  |     |  7  |  8  |  5  | inf | inf | inf |
+      2  |     |  7  |  6  |  5  | 12  | 17  | inf |
+      3  |     |  7  |  6  |  5  | 12  | 15  | 21  |
+    
+  Pen-ultima iteração:
+  
+     k\i |  1  |  2  |  3  |  4  |  5  |  6  |  7  |
+      0  |  0  | inf | inf | inf | inf | inf | inf |
+      1  |     |  7  |  8  |  5  | inf | inf | inf |
+      2  |     |  7  |  6  |  5  | 12  | 17  | inf |
+      3  |     |  7  |  6  |  5  | 12  | 15  | 21  |
+      4  |     |  7  |  6  |  5  | 12  | 15  | 21  |
+  
+  Se prolongassemos o algoritmo por mais uma iterações um ciclo aí sim teríamos nosso critério de parada.
+  Que é uma iteração sem atualizações em nenhum vertice.
+  
+  Bem vamos fazer a última iteração de uma vez:
+  
+     k\i |  1  |  2  |  3  |  4  |  5  |  6  |  7  |
+      0  |  0  | inf | inf | inf | inf | inf | inf |
+      1  |     |  7  |  8  |  5  | inf | inf | inf |
+      2  |     |  7  |  6  |  5  | 12  | 17  | inf |
+      3  |     |  7  |  6  |  5  | 12  | 15  | 21  |
+      4  |     |  7  |  6  |  5  | 12  | 15  | 21  |
+  
+  Por fim temos nossa última iteração.
+  E o algoritmo se encerra com duas soluções ótimas.
+  Se voce observar as iterações temos dois caminhos que chegam ao 7 em peso 21.
+  
+  // Nota: a vantagem desse algoritmo para o dikstra é que voce tem como solução o número de arcos.
+  //       assim voce pode escolher por exemplo o melhor caminho com n arcos, e etc, pode ser útil em um caso especifico.
+  
+  

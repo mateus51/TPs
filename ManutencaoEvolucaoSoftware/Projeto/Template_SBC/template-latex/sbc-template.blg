@@ -1,0 +1,62 @@
+This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
+The top-level auxiliary file: sbc-template.aux
+The style file: sbc.bst
+Database file #1: sbc-template.bib
+Name 1 in "R. Kollmann, P. Selonen, and E. Stroulia" has a comma at the end for entry kollmann:02
+while executing---line 2041 of file sbc.bst
+Name 1 in "R. Kollmann, P. Selonen, and E. Stroulia" has a comma at the end for entry kollmann:02
+while executing---line 2041 of file sbc.bst
+Name 1 in "Rajesh Vasa, Markus Lumpe, and Allan Jones" has a comma at the end for entry helix:2010
+while executing---line 2041 of file sbc.bst
+Name 1 in "Rajesh Vasa, Markus Lumpe, and Allan Jones" has a comma at the end for entry helix:2010
+while executing---line 2041 of file sbc.bst
+Name 1 in "R. Kollmann, P. Selonen, and E. Stroulia" has a comma at the end for entry kollmann:02
+while executing---line 2191 of file sbc.bst
+Warning--empty publisher in kollmann:02
+Name 1 in "Rajesh Vasa, Markus Lumpe, and Allan Jones" has a comma at the end for entry helix:2010
+while executing---line 2191 of file sbc.bst
+Warning--empty booktitle in helix:2010
+Warning--empty publisher in helix:2010
+Warning--empty publisher in qualitascorpus:2010
+You've used 4 entries,
+            1935 wiz_defined-function locations,
+            492 strings with 4515 characters,
+and the built_in function-call counts, 2120 in all, are:
+= -- 202
+> -- 87
+< -- 5
++ -- 34
+- -- 30
+* -- 164
+:= -- 332
+add.period$ -- 12
+call.type$ -- 4
+change.case$ -- 35
+chr.to.int$ -- 4
+cite$ -- 8
+duplicate$ -- 96
+empty$ -- 160
+format.name$ -- 38
+if$ -- 451
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 4
+newline$ -- 22
+num.names$ -- 12
+pop$ -- 50
+preamble$ -- 1
+purify$ -- 35
+quote$ -- 0
+skip$ -- 72
+stack$ -- 0
+substring$ -- 135
+swap$ -- 28
+text.length$ -- 3
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 24
+warning$ -- 4
+while$ -- 15
+width$ -- 0
+write$ -- 52
+(There were 6 error messages)

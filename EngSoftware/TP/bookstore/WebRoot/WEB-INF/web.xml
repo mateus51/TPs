@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4" 
+	xmlns="http://java.sun.com/xml/ns/j2ee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+	http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	
+	<!-- Listener que inicializa a aplicação -->
+    <listener>
+        <listener-class>br.com.linkcom.neo.core.web.init.ContextLoaderListener</listener-class>
+    </listener>
+    
+   	<!-- Filtro para criar o contexto do NEO -->
+   	<filter>
+		<filter-name>neoFilter</filter-name>
+		<filter-class>br.com.linkcom.neo.core.web.NeoFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>neoFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- Servlet necessário para Ajax -->	
+	<servlet>
+		<servlet-name>ajaxServlet</servlet-name>
+		<servlet-class>br.com.linkcom.neo.view.AjaxServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ajaxServlet</servlet-name>
+		<url-pattern>/ajax/*</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Servlet necessário do NEO, provê JS e CSS -->
+    <servlet>
+        <servlet-name>resourceServlet</servlet-name>
+        <servlet-class>br.com.linkcom.neo.view.ResourceServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>resourceServlet</servlet-name>
+        <url-pattern>/resource/*</url-pattern>
+    </servlet-mapping> 	
+    
+    
+    <!-- Módulo da aplicação -->
+    <servlet>
+        <servlet-name>teste</servlet-name>
+        <servlet-class>br.com.linkcom.neo.controller.DispatcherServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>teste</servlet-name>
+        <url-pattern>/teste/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>busca</servlet-name>
+        <servlet-class>br.com.linkcom.neo.controller.DispatcherServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>busca</servlet-name>
+        <url-pattern>/busca/*</url-pattern>
+    </servlet-mapping>
+
+	<servlet>
+        <servlet-name>cadastro</servlet-name>
+        <servlet-class>br.com.linkcom.neo.controller.DispatcherServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>cadastro</servlet-name>
+        <url-pattern>/cadastro/*</url-pattern>
+    </servlet-mapping>
+    	
+</web-app>

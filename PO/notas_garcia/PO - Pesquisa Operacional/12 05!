@@ -1,0 +1,115 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Branch-and-Bound
+  
+  problema de PL:
+  max CTx ... etc <= b, xi inteiros positivos.
+
+ - - - - -
+  
+  Com heurística encontro soluções viáveis. LB=-infinito
+  Com geração de limites duais encontro.  LB=-infinito
+
+ - - - - -
+  
+  Procuro uma solução para uma relaxação.
+  
+  Pego a solução. se for viável, para o prob. original.
+  
+  // UB = upper bound
+  // LB = lower bound
+  
+  LB(finito ou -infinito)
+  
+  Resolve-se a relaxação de B0.
+  Essa relaxação como é um problema de máximização ele nos oferecerá um Upper Bound
+  
+  Agora verifique:
+  LB=UB?
+  
+  Se os dois forem iguais à -infinito o problema é inviável.
+  Se os dois forem iguais sólução ótima.
+  
+  Se LB<UB
+  de ramificação criando sub-problemas.
+  
+  Insira os problemas em uma lista e vai pegando itens da lista e repetindo o processo.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Pontos que restaram para discutir:
+  
+   - Tipos de relaxação escolhido para gerar os limites superiores (prob. dual).
+   - A aplicação de heurísticas para a obtenção de soluções viáveis do primal.
+   - Regras de ramificação.
+   - Critério de escolha de nós a serem investigados. (quanto mais rápido voce investigar aquele com LB=UB, mais rápido voce soluciona seu problema)
+  
+  Relaxações:
+  
+    - Lagrangiana.
+    - Combinatórias.
+    - Um método combinado dos dois acima. (no caso do caixeiro simétrico usamos isso)
+    - Relaxações Lineares.
+  
+  Notas:
+    Relaxação linear por geração de colunas é chamado de Branch and Price
+    Relaxação linear com planos de corte, é chamado de Branch and Cut.
+    Relaxação linear com geração de colunas e planos de corte é chamado de Branch and Cut and Price =P
+    Existem várias outras combinações possíveis.
+  
+  Regras de Ramificação:
+  
+    P0 = p1 U p2
+    preferencialmente p1 intercessão p2 = ø
+    
+    Exemplo: p1 tem uma variável fixada em 0, p2 a mesma variável fixada em 1.
+    
+  Escolha de nós à serem investigados.
+  
+    Busca em profundidade (Depth First)
+    
+    há outro método: Best-First
+  
+  Veja, uma sub-arvore do problema tem seu limite superior (em caso de máximização) igual a solução de sua raiz.
+  Já que todos os filhos dessa raiz terão valores menores, pois estarão menos relaxados e mais próximos do ótimo.
+  
+  Por isso uma busca em largura (BestFirst) pode reduzir mais rapidamente o seu limite superior.
+  Mas pode ser mais demorado para encontrar a sol. ótima.
+  
+  O Best-First parte do principio que UB maiores indicam que a solução deve estar mais próxima do ótimo real.
+  Um cara com UB menor, pode levar à uma solução não ótima do prob. original.
+  
+  Assim investiga-se primeiro os ramos com UB maior.
+  Assim o UB geral vai sendo reduzido pois não restará nenhuma folha com UB da sub-arvore muito grande.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  O professor está dando um exemplo de um caso em que temos uma relaxação continua de um prob. inteiro.
+  
+  Dado uma solução ñ inteira do prob. inteiro.
+  Deve haver uma restrição que separe essa solução (lembrando que ela fica na borda por ser sol. básica)
+  de todas as outras soluções inteiras.
+  
+  (envoltoria convexa é um conjunto de restrições que cortam exatamente todas as soluções inteiras do prob. original)
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  // Fim da aula!
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

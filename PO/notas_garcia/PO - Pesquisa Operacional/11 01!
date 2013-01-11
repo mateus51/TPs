@@ -1,0 +1,181 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Hoje vamos continuar a falar de Fluxo em Redes.
+  
+  Vamos falar do problema do caminho mínimo em uma rede.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+REVISÃO:
+  Qual a diferença do problema do Transbordo para o problema do Transporte?
+  
+  Transbordo tem vertices intermediarios (que recebem e ofertam 0)
+  Transporte tem um método bonitinho de solução (a tabela)
+  
+  É possível resolver o problema do transbordo por meio de um algoritmo para o prob. do transporte?
+  
+  Sim, basta dizer que a demanda dos vertices intermediarios são na verdade pesos das arestas que passam por eles.
+  
+  Assim teriamos os ofertantes, os demandantes e os intermediarios seriam convertidos em arcos.
+  
+  Assim voce pode resolver o problema do Transbordo através do problema do Transporte.
+  
+  Só resta uma dúvida, precisamos encontrar o caminho minímo entre um ofertante e um demandante para saber
+  que a nossa solução é ótima.
+  Afinal fazer arestas com custo maior do que o mínimo obviamente não é ótimo.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Problema do Caminho mínimo
+  
+  Nos já conhecemos o Dikstra. Ele é um método que encontra todos os caminhos mínimos.
+  
+  Qual a primeira requisição do Dikstra para funcionar?
+  Pesos dos arcos não negativos.
+  
+  Vamos definir uma variável di = distancia da origem 's' até o vertice i.
+  
+  E (delta+) ð+(i) é o conjunto de arcos da rede que partem de (i).
+  
+  Inicialização do método:
+  
+  ds=0, di=inf i€V | {s} L <- {s}
+  
+  enquanto (L!=ø)
+  
+    k € argmin(dj:j€L)
+  
+  Para todo nóo adjacente a k
+  
+  eu caminho recursivamente se dv (v de vizinho) for maior que do dk+ckv (custo de k para v)
+  substituo dv por dk + ckv
+  
+  Então é muito simples eu caminho por todos os vertices recursivamente e em largura sem nunca caminhar duas vezes sobre o mesmo.
+  
+  PARTE IMPORTANTE: dk é determinado definitivamente quando abandonamos dk.
+  Em outras palavras depois que examinamos todos os vizinhos de dk, se não encontramos um nó que nos leve a origem s, em um acminho menor.
+  isso implica que o caminho que fizemos para chegar em k é o melhor caminho possível.
+  Em outras palavras um caminho ótimo é composto por sub-caminhos ótimos.
+  
+  Isso é uma sub-estrutura ótima.
+  ==> Podemos fazer um algoritmo guloso.
+  
+  A propriedade principal portanto é: dj <= dk + ckj
+  
+  Agora vamos supor que podemos ter distancias negativas.
+  Qual o problema disso? A principio nenhum.
+  Porém se houver um ciclo onde a distancia seja < 0, o nosso algoritmo de distancia mínima pifa, porque ele vai ficar andando nesse caminho
+  infinitamente e ficando cada vez com um caminho melhor e isso em termos de caminho e distancia não faz sentido nenhum.
+  Em PPL isso é um problema ilimitado.
+  
+  Existe também outro conjunto de algoritmos que se chamam: "Algoritmos de Atualização de Distancia"
+  A vantagem desses algoritmos é que eles conseguem descobrir esses ciclos. Se voce visitar um mesmo nó n+1 vezes significa que há um ciclo negativo.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Vamos imaginar o problema, menor distancia entre os vertices s e t em um grafo direcionado.
+  
+  Tem como modelar esse problema como um problema do transbordo?
+  
+  Basta dizer que s oferta 1, e t demanda 1.
+  
+  Formalmente:
+  
+  min sum((i,j) € A) cij xij
+                                                      { 1 se i  = s
+  sum ((i,j) € ð+(i)) xij - sum ((j,i) € ð-(i)) xji = { 0 se i != s
+                                                      {-1 se i  = t
+  
+  Vamos modelar isso?:
+  
+  max ys - yt
+  
+  yi - yj <= cij   para todo (i,j) € A
+  
+  y irrestrito.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Agora que sabemos modelar isso com o simplex. 
+  Temos como descobrir ciclos.
+  
+  Para descobrir isso basta verificar que seu dual é inviável.
+  Motivo: Se o dual é inviável, sue problema é ilimitado.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Vamos fazer o método reverso:
+  
+  partindo de t queremos chegar em s.
+  
+  Inicializando o método:
+  
+    yt = 0 (yi é diferente de di porque di é a distancia da origem s ate o i e yi é a distancia de s a t passando por i)
+    yi = inf para todo i != t.
+  
+  Enquanto existir um arco que satisfaça a propriedade:
+  
+    yi - yj > cij
+  
+  Atualizamos o custo yi para cij + yj
+  
+  // Aposto que isso é o pivoteamento.
+  
+  Critério de parada:
+  
+    yi - yj <= cij para todo (i,j) € A
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Suponha que tenhamos um arco.
+  
+  E queremos saber se existe um caminho mínimo qualquer que inclua esse arco.
+  
+  E eu já tenho o conjunto básico mínimo do problema.
+  
+  Para saber disso basta verificar se Xij da variável dual associada for igual à 0.
+  Formalmente:
+  
+    (cij + yj - yi) xij = 0
+  
+  Se for diferente não está.
+  Se for igual pode estar ou não.
+  
+  Ela estará se o coeficiente for 0.
+  Ela não estará se o motivo de ser = 0 é porque xij = 0.
+  
+  Quando os coeficientes são 0 significa que os custos reduzidos são 0, e portanto voce pode coloca-los na solução.
+  
+  Como descobrir quais coeficientes se habilitam para essa última parte?
+  
+  Pra começar rode o algoritmo até a sol. ótima e depois retire do grafo todas as arestas onde xij do dual não são = 0.
+  
+  A partir do grafo que sobrar encontre todos os caminhos sem ciclos que leve de s até t.
+  
+  Ao fim disso todos os caminho que voce passou são ótimos, porque voce só deixou sobrar arestas possívelmente ótimas.
+  E as arestas pelas quais voce não passou tem distancias boas, mas não levam de s até t, logo não resolvem meu problema.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  O professor começou um exercicio para exemplificar:
+  
+  Seja o grafo:
+  
+  Arcos: (2,1), (3,1), (4,1), (5,1), (2,3), (3,2), (3,4), (4,3), (4,5), (5,4), (2,7), (7,2), (7,3), (6,4), (6,5), (8,7), (8,6), (8,5).
+  Pesos:   7      4      2      4      3      3      1      1      1      1      1      1      5      5      3      1      4      6
+  
+  O professor mostrou a iteração.
+
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  // Fim da aula!
+  
+  
+  
+  
+  

@@ -1,0 +1,147 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+  
+  // PDF de referencia:
+  // http://www.feg.unesp.br/~fmarins/po/slides/2o.s/Teoria%20da%20Dualidade.pdf
+
+  Hoje vamos falar de Dualidade
+  
+  Dualidade significa duas formas de ver e solucionar um mesmo problema.
+  Ou pensando de outra forma dois problemas fortemente associados.
+  O primeiro chamado de Primal e o segundo chamaremos de Dual.
+  
+  Vamos começar com um exemplo, para então explicarmos as conexões:
+  
+             Primal             |            Dual
+                                |
+    min 1 y1 + 55 y2 + 3 y3     |  max 4 x1 + 1 x2 + 5 x3 + 3 x4
+                                |  
+       y1 + 5 y2 -   y3 >= 4    |     x1 -   x2 -   x3 + 3 x4 <= 1
+    -  y1 +   y2 + 2 y3 >= 1    |   5 x1 +   x2 + 3 x3 + 8 x4 <= 55
+    -  y1 + 3 y2 + 3 y3 >= 5    |  -1 x1 + 2 x2 + 3 x3 - 5 x4 <= 3
+     3 y1 + 8 y2 - 5 y3 >= 3    |
+  
+  Notem as semelhanças entre os dois problemas:
+  
+  1° a - Os coeficientes das restrições do dual, são formados pelos coeficientes de y1
+         nas 4 restrições do primal. Isso vale para as 3 restrições do Dual.
+         logo o dual terá sempre um número de restrições igual ao número de variáveis do primal.
+     b - A inversa de (1° a) é verdadeira, existe uma restrição primal para cada variável dual.
+    
+  2° a - As constantes (lado direito da eq.) das restrições do Dual são os coeficientes
+         das variáveis y1, y2 e y3 do primal no objetivo.
+     b - A inversa também vale.
+  
+  3°   - Se o primal é "min" o dual é "max" e vice-versa.
+  
+  Teorema Dual:
+  
+    Se existe um primal de minimização e um dual (de maximização) associado. E ambos com soluções viáveis.
+    Necessáriamente a solução do primal é maior ou igual à solução do dual.
+    E vice versa se o primal for de maximização.
+    
+    Para provar isso é fácil.
+    Multiplique todas as restrições do primal por x1, x2 e x3 respectivamente.
+    Some as 3 o que teremos?
+    
+    Do lado esquerdo (como é uma matriz) teremos todas as combinações de xiyj * coeficiente.
+    
+    Do lado direito teremos:
+    
+      4 x1 + 1 x2 + 5 x3 + 3 x4
+    
+    Note: Isso é o objetivo do dual.
+    
+    Façamos o mesmo com as restrições do dual:
+    
+    Multiplicando y1, y2 e y3 respectivamente pelas 3 restrições.
+    
+    Do lado esquerdo teremos xiyj * coeficiente.
+    
+    Do lado direito teremos o objetivo do primal ou seja:
+    
+      1 y1 + 55 y2 + 3 y3
+    
+    Agora notem, do lado esquerdo da equação temos exatamente o mesmo somatório e com os mesmos coeficientes.
+    (faça um teste rápido se precisar entender isso melhor)
+    
+    Logo vamos chamar isso de C
+    
+    A primeira equação que calculamos fica:
+    
+      C >= 4 x1 + 1 x2 + 5 x3 + 3 x4
+    
+      C <= 1 y1 + 55 y2 + 3 y3
+    
+    Com isso podemos escrever:
+    
+      4 x1 + 1 x2 + 5 x3 + 3 x4 <= 1 y1 + 55 y2 + 3 y3
+    
+    Provando o Teorema:
+    O objetivo do primal de minimização é sempre menor ou igual ao objetivo de seu dual associado.
+  
+    O mesmo vale para o inverso quando o problema primal é de maximização.
+  
+    Resumo:
+    
+    O teorema diz que uma solução válida do primal de minimização pode ser usado como limite inferior do dual de maximização.
+    E vice-versa, uma solução qualquer de um primal de maximização é o limite superior do dual de minimização associado.
+    E mais: A solução ótima do primal tem exatamente o mesmo valor da ótima do dual, mas não vou provar isso.
+   
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  // xxx
+  
+  As variáveis duais mostram o preço minímo que voce ganha por cada coisa.
+  Tipo se eu quero minimizar custos, o dual mostra o máximo de que eu posso gastar.
+  
+  Máximo para que o que eu ganho vendendo produtos.
+  seja o minimo que ganho vendendo fatores.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  min cTx
+  Ax = b
+  x >= 0
+  
+  Seja esse nosso problema primal (o inverso do dual), note que dessa vez colocamos ele na forma padrão.
+  
+  Multiplicando ambos os lados das restrições por y transposto temos:
+  
+    yT Ax  = yT b
+  
+  Qual o dual?
+  
+  max bTy
+  yT A <= c // Note a desigualdade que não existe no outro. ORIGEM: linha 3 do original.
+  y >= 0? // Não, ele pode ser qualquer coisa.              ORIGEM: linha 2 do problema original.
+  
+  1) Uma solução viável para o dual de P fornece um limite inferior válido para o objetivo de qualquer sol. primal viável.
+  
+  yTb <= cTx
+  
+  Ou seja objetivo de um é o limite do outro.
+  
+  Essa propriedade é chamada de dualidade fraca.
+  
+  Teorema:
+    Se existe D dual de P então vale a dualidade fraca.
+  
+  2) Será que existe um vetor ȳ viável para o dual tal que ȳTb = cT¯x? // ¯ significa x "barra"
+  
+  Se sim => ¯x,ȳ formam um par primal/dual ótimo.
+  
+  Mais sobre dualidade fraca: Se um deles for ilimitado o outro é inviável.
+                              Se um deles for inviável o outro pode ser inviável ou ilimitado.
+  
+  // Fim da aula!
+  
+  
+  
+  
+  
+  

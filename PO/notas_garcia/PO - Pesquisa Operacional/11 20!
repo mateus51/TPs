@@ -1,0 +1,235 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Sobre a documentação do tp:
+  
+  O que salvar de cada instancia do TP:
+  
+    Instancias | Solução ótima | NCols | tempo(s) | tempo de precificação em percentual do total.
+  
+  Rode várias instancias e gere uma tabela.
+  
+  Isso basta como documentação.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Vamos voltar a falar do
+  
+  Fluxo Máximo de Ford e Fulkerson
+  
+  a) Dado um vetor de fluxo X, determine a rede residual associada à X
+     e procure um caminho (direcionado) entre a origem s e o destino de fluxo t.
+  
+  Possibilidades:
+  
+  1 ) Não existe caminho na rede residual que resolve o problema do fluxo máximo.
+      Pare, o problema está resolvido.
+  
+  2 ) Existe um caminho então:
+      Determine a capacidade mínima do caminho (MIN das capacidades residuais deste caminho),
+      chamemos ela de ð
+      
+      Agora aumente o fluxo ao longo do caminho em ð unidades de fluxo.
+      Obtendo um novo X que é o vetor de fluxo.
+      
+      Repita tudo.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Vamos focar nossa aula especificamente na etapa A.
+  Na parte onde procuramos um caminho entre s e t.
+  
+  Existem diversas formas de pesquisar por estes caminhos e cada forma acaba implicando em um algortimo com características diferentes.
+  
+  Vamos estudar um sistema (que o prof. falou o nome) que é um dos mais eficientes.
+  
+REVISÃO:
+  O professor desenhou no quadro o que significa as capacidades residuais com base em um vetor de fluxo.
+  
+  Dado o grafo: 
+  
+  (s,1), (c,2), (2,1), (1,t), (2,t)
+    C      C      1      C      C
+  
+  O professor mostrou um caso em que nós acabamos explorando um número de caminhos muito maior do que o necessário.
+  
+  Estudaremos o algoritmo de Dinic que resolve bem esse problema.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Algoritmo de Dinic:
+  
+  - É um algoritmo de caminnhos de aumento.
+  - Opera também sobre um vetor de fluxo, construindo a rede residual.
+  - Difere de FF pelo modo como os caminhos de aumento são construidos.
+    Gera caminhos de aumento de fluxo que empreguem número mínimo de arcos na rede residual.
+  
+  Em outras palavras esse algoritmo faz uma busca em largura.
+  E detecta vários caminhos com o número de arcos igual à iteração por vez.
+  
+  Assim teremos vários caminhos de aumento.
+  
+  Usaremos "labels" associados aos vertices:
+    - k(t) = 0
+    - k(i): Representa o número mínimo de arcos em algum caminho de i a t.
+  
+  Assim a cada iteração o que acontece é o seguinte:
+    Voce faz uma busca em profundidade (sério?) até encontrar os menores caminhos possíveis.
+  
+  Usa eles para atualizar seu vetor X e sua rede residual.
+  
+  Repete o algoritimo agora a distancia mínima em número de arcos deverá ser menor que a anterior.
+  
+  Repetindo esse processo chegara um ponto onde a distnacia é infinita indicando o critério de parada do algoritmo.
+  
+  - - - - -
+  
+  Determinar os labels K(i) : i € V
+  determinamos os arcos que podem participar de caminhos de aumento:
+  
+  | K(i) | K(j) |        |  K=0  |
+  |      |      |        |       |
+  |      |      |        |       |
+  |      |      |        |       |
+  
+  Consideramos dois tipos de arco:
+  
+  // Os fluxos "reais" por assim dizer
+  (i,j): k(i) = k(j) + 1    xij < cij
+  
+  // Os fluxos mais "residuais" por assim dizer, gerados ao reduzir o fluxo por um caminho.
+  (i,j): k(i) + 1 = k(j)  xij > 0
+  
+  // Nota FF não funciona com valores não-reais. (pode não convergir, mas até que funciona)
+  // Esse funciona.
+  // Esse também é mais eficiente.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Exemplo:
+  
+  Seja o grafo:
+  
+  oa5, ob7, oc4,
+  ab1, ad3,
+  bd4, be5,
+  cb2, ce4,
+  dt9,
+  ed1, et6
+  
+  Inicialmente temos o vetor de fluxo 0.
+  
+  Rede residual inicial:
+  
+  ... é identico ao grafo original:
+  
+  oa5  , ob7  , oc4,
+  ab1  , ad3  ,
+  bd4  , be5  ,
+  cb2  , ce4  ,
+  dt9  ,
+  ed1  , et6
+  
+  (para indicar caminhos de volta vou usar uma barra ex: oa4/1)
+  
+  | K(i) | K(j) |  k=3   |  K=2  |  k=1   |  K=0  |
+  |      |      |   o    | a b c |  d e   |   t   |
+  
+  Vamos desenhar os arcos minimais:
+  
+  |      |      |        |       |        |       |
+  |      |      |  oa5   |  ad3  |  dt9   |       |
+  |      |      |  ob7   |  bd4  |  et6   |       |
+  |      |      |  oc4   |  be5  |        |       |
+  |      |      |        |  ce4  |        |       |
+  |      |      |        |       |        |       |
+  |      |      |        |       |        |       |
+  
+  Vamos pegar um caminho destes:
+  
+  oadt ð=3
+  
+    Atualiza a rede mínima
+  
+  obdt ð=4
+  
+    Atualiza rede mínima
+  
+  ocet ð=4
+  
+    Atualiza rede mínima
+  
+  obet ð=2
+  
+    Atualiza rede mínima
+  
+  Fim de uma iteração do método.
+  
+  Agora atualizo meu vetor de fluxo.
+  E atualizo minha rede residual:
+  
+  oa2/3 ob1/6 oc0/4
+  ab1   ad0/3  
+  bd0/4 be3/2  
+  cb2   ce0/4  
+  dt2/7  
+  ed1   et0/6
+  
+  Nova busca em largura:
+  
+  | k=4  |  k=3   |  K=2  |  k=1   |  K=0  |
+  |  o   |   b    |   e   |   d    |   t   |
+  
+  Agora os arcos mínimos:
+  
+  |  ob  |   be   |   ed  |   dt   |       |
+  
+  Caminho:
+  
+  obedt ð=1
+  
+    Atualiza rede mínima.
+  
+  Fim da segunda iteração.
+  Atualiza vetor de fluxo e rede residual:
+  
+  oa2/3 ob0/7 oc0/4
+  ab1   ad0/3  
+  bd0/4 be2/3  
+  cb2   ce0/4  
+  dt1/8  
+  ed0/1 et0/6
+  
+  Vamos buscar os arcos mínimos:
+  
+  |  k=1  |  k=0  |
+  |   d   |   t   |
+  
+  E só.
+  
+  Agora vamos fazer uma brincadeira.
+  Vamos pegar todos os arcos do nosso vetor de fluxo que chegam em d ou t.
+  
+  et0/6
+  ed0/1
+  ad0/3
+  bd0/4
+  
+  Vamos somar seus fluxos: 6+1+3+4 = 14
+  
+  Esse é o fluxo máximo.
+  
+  E o conjunto d t é o nosso conjunto de corte mínimo.
+  
+  Esse é um resultado muito importante.
+  Pois conhecendo o corte mínimo fica fácil calcular um limite máximo de fluxo aceitável para a rede.
+  
+  E outra coisa interessante é que esta conclusão é gerada pelo problema dual.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  // Fim da aula!

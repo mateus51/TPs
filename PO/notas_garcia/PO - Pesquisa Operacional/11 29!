@@ -1,0 +1,179 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Entregar TP no email: rosklinjuliano@gmail.com
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  O problema do caixeiro viajante simétrico.
+  É o prob. do caixeiro onde o caminho de ida e volta entre duas cidades tem o mesmo preço.
+  
+  min { sum (e € E) Xe Ce  tal que x pertença p intercessão com Binário de |E| dimensões }
+  
+  Onde P é dada por:
+  
+    sum (e € ð(i)) Xe = 2, para todo i pertencente a N
+  
+    sum e € E(S) onde Xe <= |S|-1, para todo S contido em N,S != ø
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Outra relaxação possível:
+  
+  relaxação 1-tree
+  
+  min { sum (e € E) Xe Ce  tal que x pertença p intercessão com Binário de |E| dimensões }
+  
+  (9') sum(e € ð(1) Xe = 2
+  
+  (10') sum Xe <= 1 para todo S contido em N-{1} (conjunto com o vertice 1)
+        Com e € E(S)
+        S != ø
+  
+  sum Xe <= |S|-1 com e € E(s), para todo S onde 1 € S e S != N
+  
+  min sum Ce Xe com e € ð(1) + sum Ce Xe com e € E-ð(1)
+  
+  
+  R1-tree = min sum Ce Xe e € ð(1) + min sum Ce Xe com e € E-ð(1)
+  sum Xe = 2 com e € ð(1)            sum Xe <= |S|-1 com e € E(S), para todo s com 1 !€ S e S != N
+  Xe € {0,1}, e € ð(1)               Xe € {0,1} e € E-ð(1)
+  
+  Note que temos dois problemas um a direita e um a esquerda.
+  
+  Agora note, o objetivo (somando os 2 lados) é o mesmo do problema original do caixeiro, o min de todas as arestas.
+  A restrição da esquerda é escolha as duas menores arestas do vertice 1.
+  A do segundo é ache uma arvore geradora pra sub-arvore sem o vertice 1.
+  
+  Juntando o conjunto de arestas dos 2 problemas apesar de termos um mesmo objetivo.
+  Não temos uma solução viável.
+  
+  O que ganhamos com essa solução não viável?
+   -> Sabemos um limite inferior para o objetivo.
+  
+  O exemplo do professor foi:
+  
+  1 --- O                 O
+   \     \               /
+    \     \             /
+     O --- 0 --- O --- O --- O
+  
+  Assim temos uma arvore geradora união com o vertice {1} e suas duas arestas.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Vamos considerar o prob. inteiro:
+  
+  x = {max cx: Ax <= b, x € S contido em inteiros de n dimensões.}
+  
+  Interprete o S grande como uma simplificação das restrições de um problema qualquer.
+  
+    Z=max cTx
+  
+    Ax <= b
+  
+    x € S
+    x € inteiros*
+  
+  Relaxação:
+  
+    Z0=max cTx
+  
+    x € S
+    x € inteiros*
+  
+  É uma relaxação. 
+  
+  O ótimo dele é um limite superior.
+  
+  Vamos escolher um vetor u qualquer não negativo.
+  
+  z(u) = max cTx + uT (b-Ax)
+  X € S
+  X € inteiros^n
+  
+  Note que para u = 0 => Z(u) = Z0
+  E que otimizar uT (b-Ax)
+  é se aproximar da igualdade: Ax = b ( que era o prob. otimo )
+  
+  Para qualquer outro valor de u teremos um valor Z(u) > Z0
+  
+  Na prática o que nós queremos é encontrar o melhor valor de u, onde o valor de max Z(u) é mais baixo.
+  
+  Já que o max Z(u) é o limite superior o menor max Z(u) pode vir a ser a sol. ótima.
+  
+  Queremos então:
+  
+  min { max Z(u) } 
+  
+  O que é isso?
+  
+  É um problema dual.
+  Perceba que uma característica do dual é o limite superior, onde o ótimo é o melhor limite.
+  Nós não garantimos no entanto a dualidade Forte, somente a Fraca.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Acabamos de construir um dual para o nosso problema de otimização original.
+  
+  que era o problema Z = max cTx
+  Ax <= b
+  x€S <= Z^n
+  
+  cTx <= cTx* <= z(u*) <= z(u)
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Vamos tentar fazer o mesmo encima do nosso problema da relaxação 1-tree?
+ 
+  Ele nos deu um limite inferior que pode ser muito distante do original.
+  
+  Lembrando nossa relaxação:
+  
+    R1-tree = min sum Ce Xe e € ð(1) + min sum Ce Xe com e € E-ð(1)
+    sum Xe = 2 com e € ð(1)            sum Xe <= |S|-1 com e € E(S), para todo s com 1 !€ S e S != N
+    Xe € {0,1}, e € ð(1)               Xe € {0,1} e € E-ð(1)
+  
+  Vamos então adicionar um vetor u para otimizar/aproximar uma restrição que não existia na relaxação mas sim no original
+  A restrição de que cada vertice só pode ter duas arestas.
+  
+  min sum Ce Xe + sum Ce Xe + sum Ui ( 2 - sum Xe )
+  e € ð(1) e € E - ð(1)       i!=1      e € ð(i)
+  
+  
+  Note então que aprendemos a construir Duais para problemas bem diferentes do que estamos acostumados.
+  
+  E essa solução nos garante dualidade Fraca.
+  
+  E a dualidade Forte?
+  Garantida somente para problemas de otimização convexa.
+  
+  Note no entanto que ainda não falamos de como escolher o melhor u.
+  (isso pode ser complicado porque o dual é não diferenciavel)
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Questão Central:
+  
+  Obter boas relaxações (limites mais próximos do ótimo) em tempos de CPU aceitáveis.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  // Fim da aula!
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

@@ -1,0 +1,233 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  // O professor começou a aula falando sobre a data do exame especial.
+  
+  Exame Especial: 27 dez
+  
+  Horário: 13hs - 14:40.
+  
+  Novo monitor: Roselin
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Vamos discutir hoje sobre o que faltava para utilizarmos o método simplex.
+  Já sabemos como caminhar pelo Dominio do problema até encontrar a solução ótima.
+  Porém nos exemplos anteriores, nós chutamos o primeiro vertice cegamente.
+  
+  Na prática o algoritmo só funciona se nosso chute inicial estiver dentro do campo de soluções viáveis.
+  
+  Vamos então aprender um jeito de pegar um vertice qualquer, (mesmo um não viável) e caminhar
+  com ele até chegarmos em um vertice viável. E só então usar o simplex para resolver o problema.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  Vamos começar com um exemplo de um problema que seja dificil chutar uma base inicial viável:
+  
+    min x1 - 2 x2
+     x1 + x2 >= 2
+    -x1 + x2 >= 1
+          x2 <= 3
+     x1,x2 >= 0
+  
+  Note que tem duas desigualdades >=.
+  
+  Para colocar no formato padrão temos de fazer assim:
+  
+    min x1 - 2x2
+     x1 + x2 - x3 = 2
+    -x1 + x2 - x4 = 1
+     x2 + x5      = 3
+     x1,x2 >= 0
+  
+  Note que na desigualdade >= eu subtraí x3 e x4 para representa-las.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  O professor sugeriu trocar (temporariamente)
+  a variável -x3 por x'3 de forma que x'3 seja <= 0
+ 
+    min x1 - 2x2
+     x1 + x2 + x'3 = 2
+    -x1 + x2 + x'4 = 1
+     x2 + x5       = 3
+     x1,x2 >= 0
+     x'3, x'4 <= 0
+  
+  Qual a vantagem de enchergar o problema assim?
+  
+  Agora o ponto (0,0) tornou-se uma solução viável já que não existem mais desigualdades ">=".
+  Ou seja basta pegarmos como sol. básica as variáveis de folga x'3 e x'4 e x5 zerando x1 e x2.
+  
+  Porém esse problema é artificial pois o simplex trabalha sobre variáveis positivas né?
+   
+  Agora vamos voltar para a forma padrão:
+  
+  x'3 = x6-x7
+  x'4 = x8-x9
+  
+    min x1 - 2x2
+     x1 + x2 + (x6-x7) = 2
+    -x1 + x2 + (x8-x9) = 1
+     x2 + x5           = 3
+     x1,x2,x5 >= 0
+     x6,x7,x8,x9 >= 0
+  
+  Agora note que se pegarmos x6, x8 e x5 como soluções basicas, temos uma solução viável =].
+  Pegando todas as variáveis de folga positivas, como feito acima, é como pegar o ponto 0.
+  
+  Porém esse problema não é igual ao problema anterior, pois adicionamos duas variáveis com coeficientes negativos
+  
+  Agora que já temos uma solução viável, queremos voltar para o problema inicial como fazer isso?
+  Bem é só trocar nosso objetivo:
+  
+    min x6 + x7
+     x1 + x2 + (x6-x3) = 2
+    -x1 + x2 + (x7-x4) = 1
+     x2 + x5           = 3
+     x1,x2 >= 0
+     x6,x7,x8,x9 >= 0
+  
+  Uma vez que x6 e x7 for igual à 0, nosso problema será identico ao nosso problema original.
+  
+  Se isso não for possível significa que o problema original não tem solução viável.
+  
+  E pronto =].
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Vamos agora resolver esses dois problemas com o método simplex:
+  
+  Primeira interação do método:
+  Vamos re-escrever tudo expondo as variáveis básicas:
+  
+  min 3 - 2x2 + x3 + x4
+    x6 = 2 - x1 - x2 + x3
+    x7 = 1 + x1 - x2 + x4
+    x5 = 3 - x2
+  
+  Como temos variáveis negativas no objetivo, ainda podemos iterar sobre o método.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Pelo teste da razão, notamos que crescer x2 infringe primeiramente a regra do x7.
+  
+  Assim vamos trocar x7 com x2 nas variáveis básicas.
+  
+    min 1 - 2x1 - x4 + 2x7 + x3
+    x6 = 1 - 2x1 + x3 + x7 - x4
+    x2 = 1 + x1 - x7 + x4
+    x5 = 2 - x1 + x7 - x4
+  
+// NOTA: Existem 3 tipos de nomeclaturas de variáveis:
+//         Variáveis estruturais (as originais) 
+//         Variáveis de folga    (para denotar as desigualdades)
+//         Variáveis artificais  (para encontrar a solução viável inicial)
+  
+  Agora temos duas variáveis negativas vamos escolher qual delas para sair da base?
+  Por padrão escolhemos aquela com maior coeficiente. No caso x1 tem coeficiente 2 enquanto x4 tem coeficiente 1.
+  
+  Porém o professor disse que tem outro critério, disse que vai escolher o x1 por ele ser a variável de menor indice.
+  
+  Isso não alterou nossa escolha então vamos continuar.
+  
+  Vamos fazer outra operação de pivoteamento.
+  
+
+  
+  // Continuando o pivoteamento de x1:
+  
+    min 1 - 2x1 - x4 + 2x7 + x3
+    x6 = 1 - 2x1 + x3 + x7 - x4
+    x2 = 1 + x1 - x7 + x4
+    x5 = 2 - x1 + x7 - x4
+  
+  O crescimento de x1 infringe primeiro a restrição de x6.
+  Então trocaremos x1 com x6.
+  
+    min  1x6 + 1x7 
+    x1 = 1/2 - 1/2 x6 + 1/2 x3 - 1/2 x4 + 1/2 x7
+    x2 = 3/2 + 1/2 x4 - 1/2 x7 - 1/2 x6 + 1/2 x3
+    x5 = 3/2 + 1/2 x6 - 1/2 x3 - 1/2 x4 + 1/2 x7
+  
+  Agora note que o nosso objetivo não tem mais uma constante diferente de 0 e x6 e x7 tem o valor 0 (não-básicas)
+  Com isso cumprimos nossa meta de zerar x6 e x7.
+  
+  Note também que por coincidencia x6 e x7 são não básicas, o que já facilita nossa vida.
+  Se x6 e/ou x7 ainda fossem básicas no momento em que zeramos elas, agente teria de forçar a saida delas da base.
+  Para isso bastaria fazer alguma troca que resolvesse o problema.
+  
+  Para voltar para o problema original, agora que x6 e x7 são não-básicas, é só remover elas da equação:
+
+    min  1x6 + 1x7 
+    x1 = 1/2 + 1/2 x3 - 1/2 x4
+    x2 = 3/2 + 1/2 x4 + 1/2 x3
+    x5 = 3/2 - 1/2 x3 - 1/2 x4
+  
+  E agora falta só re-escrever o objetivo original:
+  
+    min x1 - 2x2
+    x1 = 1/2 + 1/2 x3 - 1/2 x4
+    x2 = 3/2 + 1/2 x4 + 1/2 x3
+    x5 = 3/2 - 1/2 x3 - 1/2 x4
+  
+  E voilá, problema original e solução viável!
+  
+  Super interessante não? Não vou terminar o cálculo já que é só aplicar o simplex normalmente.
+  
+  Mas agora já sabemos como fazer quando o ponto (0,0) não for uma solução viável,
+  é só brincar um pouquinho de criar novas variáveis.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Para encerrar a aula, e encerrar tudo o que temos de saber sobre o simplex puro
+  vamos falar da Regra de Blond:
+
+  Agente só aceita que o método simplex termina quando todas as variáveis do objetivo tem sinal positivo(min) ou negativo(max) certo?
+  
+  Porém é possível o método entrar em loop infinito. Chamamos esse processo de "Ciclagem"
+  
+  A Regra de Blond garante que não haverá ciclagem!
+  
+CONCEITO:
+  Critério Regra de Blond delimita que sempre que formos escolher qual variável não básica sair (quando temos mais de uma opção)
+  devemos escolher sempre a que tem o menor indice, tipo entre x2 e x7 escolho sempre o x2.
+  
+  Essa regra é contrária a idéia que tinhamos até agora de escolher a variável com maior coeficiente né?
+  Escolher o maior coeficiente talvez seja um pouco mais eficiente, mas pode gerar ciclagem, então é melhor usar sempre a Regra de Blond.
+  (principalmente por ela ser muito simples de entender né)
+  
+  // NOTA: Um PPL Degenerado é quando uma das variáveis básicas está presa no valor 0 e ainda não temos o atestado de otimalidade.
+  //       e consequentemente temos mais de uma solução básica ótima e entramos em loop infinito entre elas.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  O professor está mostrando um slide que exemplifica a degeneração do método simplex.
+  
+  O site dos slides é:
+  www.dcc.ufmg.br/~acunha/linear/simplex.pdf
+  (ps: nao consegui acessar o endereço =P, fazer o que =P)
+  
+  Nesse slide haviam duas variáveis básicas com o valor 0 e sem certificado de otimalidade.
+  Ou seja esse é um exemplo degenerado.
+  
+  porém ao fazer o pivoteamento obvio, ainda há variáveis positivas no objetivo, e pior agora temos duas variáveis positivas.
+  
+  E então fazemos mais pivoteamentos, e novamente temos variáveis positivas no pivoteamento.
+  
+  A partir daí utilizando o critério de maior coeficiente e chegamos em outro resultado com variáveis positivas no objetivo.
+  
+  Seguindo com esse critério continuamente, vamos após alguns loops voltar exatamente ao conjunto de variaveis básicas originais, ou seja loop infinito.
+  
+  Esse é o processo de ciclagem.
+  
+  Como evitar? Basta trocar o critério de escolher a variável com o maior coeficiente e escolher sempre a variável com menor indice (Regra de Blond).
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+  // Fim da aula!
+  

@@ -1,0 +1,200 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Problema do transporte.
+
+  É um caso particular do problema do transbordo onde não há vertices intermediários.
+
+Definição do problema:
+
+  É um problema onde nenhum vertice é ofertante e demandante ao mesmo tempo.
+
+  Então eu tenho um conjunto V1 de vertices que fornecem material para
+  um conjunto V2 de vertices demandantes.
+
+  Cada vertice fornecedor é equilibrado e portanto ele oferece tudo o que ele tem mesmo que exceda a demanda.
+
+  Nosso objetivo então é:
+
+    min sum (i€v1, j€v2) cij xij
+
+    sum(j=1,n) xij = Si para todo i€v1
+    sum(i=1,m) xij = Dj para todo j€v2
+
+    xij >= 0
+
+  O professor desenhou então uma solução básica.
+  Uma solução básica é uma escolha de arcos entre V1 e V2.
+
+  Vamos especializar o Simplex para o problema do transporte.
+
+  Vamos assumir que Dispomos de uma sol. Básica Viável Inicial para o problema.
+
+  Passos básicos:
+
+  1) Det. Custos Reduzidos das variáveis não básicas.
+  2) Pivoteamento.
+
+  Vamos escrever o dual desse problema.
+
+  max sum(i=1,m) si vi  + sum(j=1,n) dj wj
+
+  vi + wj <= cij (i,j) € A ( A=i,j tal que i € v1 e j€ v2 )
+
+  vi ilimitado e i € v1 wj ilimitado.
+
+  Seja B contido em A o conjunto de arcos às variáveis básica atual na iteração atual do método simplex.
+
+  Cij^T = cij - vi  wj = 0, (i,j) € B
+
+  Assim temos n+m variáveis e n+m-1 restrições.
+  Fixamos uma variável em um valor e temos o sistema linear resultante.
+
+  Com isso obtemos os Vs e Ws que são variáveis duais.
+
+  2) Cálculamos o custo reduzido e
+
+  3) Escolhemos a variável que vai sair.
+
+  Quando vamos escolher qual arco devera ter seu fluxo acrescido (a partir de 0) temos que escolher um para sair.
+  Ou seja essa é a troca de variáveis.
+
+  O professor desenhou um quadro para expressar o problema:
+
+  Matriz de custos abaixo:
+     |       |       |       |       |  Si  |  Vi  |  i  |
+     |2) 6   |3)     |11)    |7)     |  6   |      |  1  |
+     |1)     |0) 1   |6)     |1)     |  1   |      |  2  |
+     |5) 1   |8) 4   |15) 3  |9) 2   |  10  |      |  3  |
+
+  Dj |   7   |   5   |   3   |   2   |      |      |     |
+  wj |       |       |       |       |      |      |     |
+  j= |   1   |   2   |   3   |   4   |      |      |     |
+
+  Notem que na tabela acima, eu coloquei valor de fluxo em 6 celulas da tabela de custos.
+  Logo as demais celulas são zero.
+
+  Isso significa que tenho 6 variáveis básicas.
+
+  As variáveis duais indicam o fluxo nos arcos.
+
+  Cálculando a dual:
+
+  B: (1,1) (3,1), (2,2), (3,2), (3,3), (3,4)
+
+  c11 = c11 - v1 - w1 = 0 para todo i,j € B
+
+  (1,1): 2 - v1 - w1 = 0
+  (3,1): 5 - v3 - w1 = 0
+  (2,2): 0 - v2 - w2 = 0
+  (3,2): 8 - v3 - w2 = 0
+  (3,3): 15 - v3 - w3 = 0
+  (3,4): 9 - v3 - w4 = 0
+
+  O professor decidiu zerar v3.
+  Assim v1 = -3
+        v2 = -8
+
+  Vamos escrever:
+
+     |       |       |       |       |  Si  |  Vi  |  i  |
+     |2) 6   |3)     |11)    |7)     |  6   |  -3  |  1  |
+     |1)     |0) 1   |6)     |1)     |  1   |  -8  |  2  |
+     |5) 1   |8) 4   |15) 3  |9) 2   |  10  |   0  |  3  |
+
+  Dj |   7   |   5   |   3   |   2   |      |      |     |
+  wj |   5   |   8   |  15   |   9   |      |      |     |
+  j= |   1   |   2   |   3   |   4   |      |      |     |
+
+
+  O professor cálculou o custo reduzido de todo mundo.
+  Assim cada celula da tabela de custos ganhou mais um número (3 agora)
+
+  vou re-escrever embaixo:
+
+
+  (CRed)
+  0 | -2 | -1 | 1
+  4 |  0 | -1 | 0
+  0 |  0 |  0 | 0
+
+  Agora decidimos aumentar o cara que tem o custo -2.
+
+  Assim vamos ter que diminuir a posição 1,1, aumentar a 3,1 e diminuir a 3,2
+
+  Isso gera algumas equações limitantes:
+
+  6-teta >= 0
+  4-teta >= 0
+  logo:
+  teta* <= 4
+
+  Então o máximo que podemos aumentar o coeficiente -2 (posição 1,2) é 4 (antes ele era 0).
+
+  Assim a posição 3,2 agora fica com fluxo 0.
+  Vamos re-escrever:
+
+     |       |       |       |       |  Si  |  Vi  |  i  |
+     |2) 2   |3) 4   |11)    |7)     |  6   |  -3  |  1  |
+     |1)     |0) 1   |6)     |1)     |  1   |  -8  |  2  |
+     |5) 5   |8)     |15) 3  |9) 2   |  10  |   0  |  3  |
+
+  Dj |   7   |   5   |   3   |   2   |      |      |     |
+  wj |   5   |   8   |  15   |   9   |      |      |     |
+  j= |   1   |   2   |   3   |   4   |      |      |     |
+
+  Agora podemos apagar os calculos que fizemos na tabela (CRed)
+  E os outros valores que calculamos:
+
+     |       |       |       |       |  Si  |  Vi  |  i  |
+     |2) 2   |3) 4   |11)    |7)     |  6   |      |  1  |
+     |1)     |0) 1   |6)     |1)     |  1   |      |  2  |
+     |5) 5   |8)     |15) 3  |9) 2   |  10  |      |  3  |
+
+  Dj |   7   |   5   |   3   |   2   |      |      |     |
+  wj |       |       |       |       |      |      |     |
+  j= |   1   |   2   |   3   |   4   |      |      |     |
+
+  Zerando v3 e calculando os valores das demais variaveis duais temos:
+
+     |       |       |       |       |  Si  |  Vi  |  i  |
+     |2) 2   |3) 4   |11)    |7)     |  6   |  -3  |  1  |
+     |1)     |0) 1   |6)     |1)     |  1   |  -6  |  2  |
+     |5) 5   |8)     |15) 3  |9) 2   |  10  |   0  |  3  |
+
+  Dj |   7   |   5   |   3   |   2   |      |      |     |
+  wj |   5   |   6   |  15   |   9   |      |      |     |
+  j= |   1   |   2   |   3   |   4   |      |      |     |
+
+  Calculando o custo reduzido:
+
+  ~c13 = c13 - v1 - w3 = -1
+  ~c14 = c14 - v1 - w4 =  1
+  ~c21 = c21 - v2 - w1 =  2
+  ~c23 = c23 - v2 - w3 = -3
+  ~c24 = c24 - v2 - w4 = -2
+  ~c32 = c32 - v3 - w2 =  2
+
+  (CRed)
+     |   0   |   0   |  -1   |   1   |
+     |   2   |   0   |  -3   |  -2   |
+     |   0   |   2   |   0   |   0   |
+
+  Vamos escolher alguém para sair da base e alguém para entrar.
+  Vamos escolher a 1,3 (não sei porque dessa escolha)
+
+  Assim os caras que vão ser afetados serão 1,1 3,1 e 3,3
+
+  2-teta >= 0 => teta <= 2
+  3-teta >= 0 => teta <= 3
+  logo:
+  teta* = 2
+
+  A próxima iteração ficou de para casa.
+
+  // Fim da aula!
+

@@ -1,0 +1,231 @@
+??? daqui até ???FIM linhas podem ter sido inseridas/excluídas
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Hoje estamos falando das linguagens que utilizaremos no tp.
+  // A linguagem se chama GLPK e é uma biblioteca de C.
+  
+  O tp terá como foco a materia de "decomposição de Dantes Wolf.
+  
+  (nota Dantes Wolf, cai na segunda prova)
+  
+  // Estude essa materia até a prox aula 13/11, pois ajudará a compreende-la
+  
+  O TP é portanto resolver o problema de corte de chapas (otimização inteira)
+  utilizando a biblioteca GLPK em C.
+  
+  (nota solta: o professor segue mais ou menos o livro do Dimitris Bertsimas)
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Problema do Fluxo Máximo. (maxFlow)
+  
+  A entrada é uma rede D formada com vertices V e arcos A
+  
+  Existem dois vertices especiais de V: s - origem do fluxo, e t - destino do fluxo.
+  
+  Os arcos são limitados pela capacidade cij que é o limite de fluxo que pode passar por eles.
+  // Note que isso é a capacidade e não o custo.
+  
+  Objetivo:
+  Encontrar o máximo fluxo que pode ser enviado da origem s à t respeitando as capacidades dos arcos.
+  
+  Variáveis de decisão:
+  
+    xij = quantidade de fluxo que efetivamente passa pelo arco (i,j).
+  
+  Restrições:
+  
+    xij >= 0 e xij <= cij (I)
+  
+  A última restrição é a de balanço de fluxo.
+  
+  Cada nó intermediario (todos exceto s e t) tem de dar saída a tudo que recebem de entrada.
+  
+  // Lembrando:
+  // ð+(i) = conjunto de arcos que partem de i.
+  // ð-(i) = conjunto de arcos que chegam em i.
+  
+  Então:
+  
+    sum (j,i)€ð-(i) xji - sum (i,j)€ð+(i) = 0 para todo i (II)
+  
+  Agora vamos supor um arco artificial (t,s) indo do destino para origem.
+  
+  Vamos portanto assumir que tudo que chega em t, volta para s por este arco.
+  Logo o fluxo nesse arco é o fluxo em todo o sistema.
+  
+  A capacidade desse arco deve ser a maior possível.
+  Consideremos a maior possível a soma de todas as capacidades dos demais arcos.
+  
+  Dessa forma fica fácil definir nosso objetivo.
+  
+    max xts  = min -xts
+  
+  Com isso nosso problema se torna um problema de fluxo de custo mínimo.
+  
+  Outra vantagem muito interessante desse arco é que a lei de balanço se aplica também para s e t.
+  Já que eles também estão passando pra frente tudo que recebem.
+  
+  Vetor de fluxo x:
+  
+  É uma solução viável que satisfaz as duas restrições (I) e (II)
+  
+  Capacidade residual é o que sobra da capacidade do arco (i,j) uma vez que já exista um fluxo sobre ele.
+  
+  Um caminho residual é o caminho construído somente com os arcos cuja capacidade residual != 0.
+  
+  Se existe um caminho residual entre s e t logo voce não está na solução ótima.
+  
+  Algoritmo de Ford Fuckerson - Algoritmo de Caminhos de Aumento:
+  
+  a) Dado um vetor de fluxo x, construa a rede residual associada a x.
+  
+  b) Encontre um caminho na rede residual que conecte origem s ao destino t.
+  
+    Caso 1:
+    Existe um caminho.
+    Então: Ð (delta maiusculo) = capacidade do arco de menor capacidade residual neste caminho.
+    
+    Aumente essa capacidade alongo de todos os arcos deste caminho. Obtendo um novo vetor de fluxo.
+  
+    Isso significa que o fluxo máximo agora cresceu em Ð unidades.
+  
+    Caso 2:
+    Não existe um caminho.
+    Então voce já está no máximo.
+  
+  Teorema: Se não há caminho de aumento para o vetor de fluxo x. Então o vetor atual é ótimo.
+    
+  O algoritmo é portanto muito simples.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Exemplo:
+  
+  (O,A), (O,B), (O,C), (A,B), (A,D), (B,C), (B,D), (B,E), (C,E), (D,T), (E,D), (E,T)
+    5      7      4      1      3      2      4      5      4      9      1      6
+  
+  Busca em largura:
+  Lista L = {O}
+  
+  Vamos investigar recursivamente:
+  
+     |  {0}
+  O  |  {A,B,C}
+  A  |  {B,C,D}
+  B  |  {C,D,E}
+  C  |  {D,E}
+  D  |  {E,T}
+  T
+  
+  Pronto encontramos o nosso primeiro caminho até T.
+  O caminho passa por: {O,A,D,T}
+  
+  Observando nosso caminho o menor arco residual tem capacidade 3. logo:
+  
+  Na primeira busca encontramos um Ð de 3.
+  
+  Vamos incrementar todos os elementos nesse caminho de 3 unidades.
+  
+  Note que agora a nossa rede residual, que mostra só as capacidades residuais, perdeu o arco (A,D)
+  E ganhou 3 arcos no sentidos: (T,D), (D,A), (A,O).
+  Todos os 3 tem capacidade 3.
+  
+  Note que é importante isso de que sempre existe um caminho residual contrário ao sentido de qualquer fluxo.
+  
+  Isso permite que sempre exista um caminho entre O e T mesmo depois de exaurirmos a maior parte dos arcos, pois podemos desfazer um arco.
+  
+  Segunda iteração: vamos investigar um novo caminho:
+
+     |  {O}
+  O  |  {A,B,C}
+  A  |  {B,C}
+  B  |  {C,D,E}
+  C  |  {D,E}
+  D  |  {E,T}
+  T
+  
+  Segundo caminho encontrado: {O,B,D,T) onde a menor capacidade residual é Ð=4.
+  
+  Vamos atualizar nossa rede residual com um novo fluxo de 4 unidades no sentido desse caminho.
+  Isso gera uma rede contrária 
+  
+  // Note que o segundo caminho surgiu devido a inexitencia do arco residual (A,D)
+  
+     |  {O}
+  O  |  {A,B,C}
+  A  |  {B,C}
+  B  |  {C,E}
+  C  |  {E}
+  E  |  {D,T}
+  T
+  
+  Novo caminho: {O,B,E,T}
+  A menor capacidade residual é do arco: (O,B) com Ð=3
+  
+  Incrementamos o fluxo em todo nosso caminho em 3 unidades.
+  
+  Nova iteração:
+  
+     |  {O}
+  O  |  {A,C}
+  A  |  {B,C}
+  B  |  {C,E}
+  C  |  {B,E}
+  B  |  {E,C}
+  E  |  {C,D,T}
+  T
+  
+  Novo caminho: {O,C,E,T} com Ð = 3 em (E,T)
+  
+  Nova iteração:
+  
+     |  {O}
+  O  |  {A,C}
+  A  |  {B,C}
+  C  |  {B,E}
+  B  |  {E}
+  E  |  {D}
+  D  |  {T}
+  T
+  
+  Novo caminho: {O,C,E,D,T}
+  
+  Ð = 1 em 3 arcos: (O,C), (C,E), (E,D)
+  
+  Aumentamos o fluxo nestes 3 caminhos.
+  
+     |  {O}
+  O  |  {A}
+  A  |  {B}
+  B  |  {C,E}
+  C  |  {E}
+  E  |  
+  
+  Não encontramos mais um caminho pela rede residual.
+  Logo estamos no ótimo e o nosso vetor de fluxo está no estado ótimo.
+  
+  O último caminho que encontramos foi o {O,A,B,C,E}
+  Os que não encontramos foram: {D,T}
+  
+  Os arcos que estão no corte entre o primeiro grupo e o segundo somados dão 14.
+  
+  Esse é o valor do nosso corte mínimo.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  // E o dual desse problema é outro problema interessante:
+  Problema do Corte Mínimo em Rede
+  
+  Mas vamos falar de tudo isso ao fim da aula.
+  
+  // fim da aula!
+  
+  
+  
+  

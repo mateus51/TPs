@@ -5,7 +5,7 @@
   # notasdogarcia.blog.com  #
    # # # # # # # # # # # # #
 
-  Decomposição D.Wolfe:
+  Decomposição Dantzig Wolfe:
   (conhecido em computação também como programa de geração de colunas)
   
     min cTA
@@ -18,32 +18,36 @@
   
   Ou seja:
   
-  x = sum (j€R) lambda^j x^j + sum(i€D) teta^i d^i
-  lambda e teta >= 0
+    x = sum (j€R) lambda^j x^j + sum(i€D) teta^i d^i
+    
+    lambda e teta >= 0
+    
+    sum(j€R) lambda^j = 1
   
-  sum(j€R) l^j = 1
-  j € R
-  l^j >= 0
-  0^j >= 0
+    j € R
+    lambda^j >= 0
+    teta^j >= 0
   
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
   
   Problema mestre:
   
-  // Usarei l para denotar lambda e 0 para teta.
+    // Usarei l para denotar lambda e t para teta.
   
-    min sum(j€R) cT(l^j x^j) + sum(j€D) cT(0^i d^i)
+    min sum(j€R) cT(l^j x^j) + sum(j€D) cT(t^i d^i)
+    // Nota pessoal: o objetivo é associado a um vetor gradiente né?
+    //               pensando nele com base nas direções é como pensar no vetor gradiente. É fácil.
   
-    sum(j€R) E(l x^j) + sum(j€D) E(0^j d^j) = e
+    sum(j€R) E(l^j x^j) + sum(j€D) E(t^j d^j) = e
     
     sum(j€R) l^j = 1
     (combinação convexa)
   
   Podemos re-escrever:
   
-    min sum(j€R) (cT x^j) l^j + sum(j€D) (cT d^i) 0^i 
+    min sum(j€R) (cT x^j) l^j + sum(j€D) (cT d^i) t^i 
   
-    (ß) sum(j€R) (E x^j)l^j + sum(j€D) (E d^j)0^j = e
+    (ß) sum(j€R) (E x^j)l^j + sum(j€D) (E d^j)t^j = e
     
     (r) sum(j€R) l^j = 1
     (combinação convexa)
@@ -57,22 +61,22 @@
     RR contido em R
     DD contido em D
   
-  Com as variáveis l^j: j € RR, 0^j: j € DD
+  Com as variáveis l^j onde j € RR e t^j onde j € DD
   
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
   Problema mestre restrito de PL (RPMPL)
   
-    min sum(j€RR) (cT x^j) l^j + sum(j€DD) (cT d^i) 0^i 
+    min sum(j€RR) (cT x^j) l^j + sum(j€DD) (cT d^i) t^i 
   
-    sum(j€RR) (E x^j)l^j + sum(j€DD) (E d^j)0^j = e
+    sum(j€RR) (E x^j)l^j + sum(j€DD) (E d^j)t^j = e
     
     sum(j€RR) l^j = 1
     (combinação convexa)
   
   Resolvendo o RPMPL obteremos:
   
-    ll^j: j € RR, 00^j: j € DD
+    l^j*: j € RR, t^j*: j € DD
   
   Precisamos agora verificar se essa solução além de resolver o RPMPL
   também resolve o PMPL (o prob original).
@@ -82,6 +86,7 @@
   Podemos formular essa pergunta assim:
   
   Existe j cujo custo reduzido é menor que 0?
+  //xxx
   
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   

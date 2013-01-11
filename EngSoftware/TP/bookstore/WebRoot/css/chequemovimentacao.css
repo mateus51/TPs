@@ -1,0 +1,50 @@
+body{
+	background-color: #4682B4;
+}
+
+#corpojust .cabecalho {width: 550px; overflow: hidden;}
+#corpojust .cabecalho .logo{width: 250px; float: left; }
+#corpojust .cabecalho .cbl-just{width: 300px; float: right; text-align: right; color: #ffffff; font-family:arial; font-size: 11pt; font-weight: bold; padding-top: 12px; text-transform: uppercase; vertical-align: text-top;}
+
+#corpojust .conteudo{
+	font-family:arial;
+	font-size: 10pt;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	width: 680px;
+	background-color: #ffffff;
+	text-align: center;
+	height: 100%;
+}
+
+#cancelButton{
+	background-image: url("../imagens/icone/btnCancelar.png");
+	background-repeat: no-repeat;
+	background-position:0% 50%;
+	padding-left: 4%;
+	border: 0px;
+	background-color: transparent;
+	font-weight: bold;
+	font-size: 11px;
+	font-family: arial;
+	width: 75px;
+	height: auto;
+	cursor: pointer;
+}
+
+#btn_inverter {
+	background-image: url("../imagens/inverter.gif");
+	background-repeat: no-repeat;
+	background-position: 0% 50%;
+	padding-left: 20%;
+	background-color: transparent;
+	font-weight: bold;
+	font-size: 11px;
+	font-family: arial;
+	width: 85px;
+	height: auto;
+	cursor: pointer;
+	text-transform: none;
+	color: black;
+	border: none;
+}

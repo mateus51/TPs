@@ -1,0 +1,179 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Assunto do dia:
+
+    Fluxo em Redes.
+
+  São PPLs definidos em uma rede
+
+  Vamos definir o que entenderemos como rede:
+
+    Rede será um grafo direcionado D = (v,a).
+    v = vertice, a = arcos. Ambos podem ter propridades.
+    Porque falar de arco ao invés de aresta? porque um arco é orientado.
+
+  (i,j) €  A
+  (i,j) != (j,i)
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  Problema do transbordo:
+
+    Rede digrafo D = (v,a) // digrafo = grafo orientado
+    e demandas associadas a alguns vertices de V e ofertas associadas
+    a outros vertices de V.
+
+  Demandas: di € R i € Vd contidas em V
+  Ofertas:  oi € R i € Vo contidas em V
+
+    O ideal é que o somatorio das ofertas, sejam no minimo
+    maior que o somatorio das demandas.
+
+  Pois caso contrário o problema não teria solução.
+
+  Vamos assumir que para todo o problema
+
+    sum ofertas == sum demandas
+
+  Para isso nos daremos ao luxo de criar vertices artificiais
+  com capacidades artificiais (imagino que positivas ou negativas).
+
+  Dessa forma nossas soluções se aplicação à problemas de todos os tipos.
+  Problemas em que é impossível atender à todas as demandas.
+  E problemas em que acaba sobrando algumas ofertas.
+
+  Proposta do problema:
+    Definir de forma ótima uma minimização do custo total de transporte
+    dos fluxos de mercadoria na rede de forma a atender a demanda da mercadoria.
+
+  Vamos considerar que os valores de oferta  são positivos.
+                 e que os valores de demanda são negativos.
+
+  Logo nosso objetivo é somando as ofertas, demandas e vertices artificiais obter o somatório 0.
+
+  // NOTA: podem existir vertices sem capacidade nem demanda. Eles são chamados de vertices intermediários.
+  //       podem ser usado como caminho mas não são importantes para mais nada.
+
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+  Exercicio:
+
+    Modelar o problema usando o conjunto de variáveis sugerido pelo pedro.
+    xij é a quantidade de demanda do vertice j suprido pelo i.
+
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+  Modelar o problema:
+
+    A modelagem do professor foi com a seguinte idéia:
+
+    cada arco (aresta direcionada) (i,j) // que sai do i para o j
+    tem associado a ele um fluxo de mercadoria.
+
+  Quando houver dois fluxos, um em (i,j) e outro em (j,i)
+  eles serão expressos separadamente, e não devem ser subtraidos um do outro
+  apesar de terem sentido contrários.
+
+    Assim (i,j) será sempre >= 0
+
+  Assim nosso problema é:
+
+    min sum Cij * (i,j)
+
+  Balanço de Fluxo nos vertices:
+
+  // Ð=delta
+
+    Ð+(i) = arcos de a que partem de i. (oferta de i)
+    Ð-(i) = arcos de A que chegam  a i. (suprem a demanda de i)
+
+  Suponha em nosso grafo ( que ele desenhou no quadro ) tenhamos:
+
+    Ð+(3) = { (3,4), (3,5), (3,6), (3,2) }notasdogarcia.blog.com
+    Ð-(3) = { (1,3), (2,3), (4,3) }
+
+  assim a demanda de i deve ser:
+
+    di = Ð-(i) - Ð+(i)
+
+  Ou seja o que entra menos o que sai deve ser suficiente para suprir di.
+  idealmente igual à di.
+
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  Vamos tentar expressar isso no formato de um PPL:
+
+  min cTx
+
+    Ax  = b
+     x >= 0
+
+  Nesse caso a matriz A seria a matriz de incidencia nó
+  b é o vetor de ofertas
+
+  Assim a pode ter apenas 3 valores:
+
+    A = {0,1,-1}^(n×m)
+
+  Assim A(i,j) = 0 é quando nada acontece entre o vertice i e j.
+        A(i,j) = 1 é quando há oferta saindo   de i para j.
+        A(i,j) = 1 é quando há oferta entrando de j para i.
+
+  // NOTA: o posto é a ordem da maior sub-matriz de A com determinantes não nulo.
+  // Ou seja o maior numero de linhas e colunas linearmente independentes.
+
+  O posto(A) é <= n para qualquer matriz A construida para descrever um problema desse.
+
+  lembrando que n são os vertices.
+                m são os arcos (i,j).
+
+  A matriz fica:
+
+      (1,4) | (1,2) | (2,6) | (3,6) | (5,6) |
+    1   1       1
+    2          -1       1
+    3                           1
+    4  -1
+    5                                   1
+    6                   -1     -1      -1
+
+
+  Queremos encontrar um subconjunto de vertices que tenha
+  determinante != 0.
+
+  O professor removeu um dos vertieces o 5. (uma linha)
+
+  Assim temos o mesmo numero de linhas e colunas.
+
+  Agora precisamos de calcular o determinante, ele demonstrou por indução que o determinante é != 0.
+  mais especificamente = 1 ou = -1
+
+  A indução foi: se det!=0 matriz é conexa.
+                 então se eu remover uma folha do grafo.
+                 ou seja uma aresta e um vertice que não se liga em mais ninguém, e provar que o que sobrou for conexo
+                 então provei que o grafo completo é conexo.
+
+  Dessa forma removendo folha por folha podemos provar que o grafo é provando que o det de final é 1 ou -1.
+  Note que antes disso nós precisamos remover alguma das arestas que se conectam a um vertice que já tem mais de uma conecção.
+
+  A matriz A é chamada de Matriz de Fluxo
+
+  O professor provou que mais especificamente o posto(A) quando A = matriz de fluxo.
+  é sempre:
+
+    posto(A) = n-1
+    - n = vertices
+    - A = matriz de fluxo
+
+  Mas isso só vale se o grafo for conexo.
+
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+  // Fim da aula!
+

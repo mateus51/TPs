@@ -1,0 +1,202 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Hoje vai ser a última aula.
+  
+  Vamos inicar a aula relembrando algumas datas importantes:
+  
+  1° dia: 18/12 prova 2 + entrega do tp2
+  2° dia: 27/12 - exame especial.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+  Prova 2 vai cair:
+  
+    - Prob. de fluxo em redes:
+      (Caminho Mínimo, Transporte, Fluxo Máximo, Arvore Geradoras)
+    - Decomposição de Dantzig Wolf.
+    - Programação Inteira.
+      (Branch-and-bound, Planos de Corte, Relaxação Lagrangiana)
+  
+  // Nota o professor não disponibilizará mais o estudo dirigido.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Suponha o problema:
+  
+  para monitorar o clima de uma floresta, mantenho alguns sensores pela região da floresta.
+  
+  Eles são pequenos e com baixa capacidade de processamento.
+  
+  Eles podem se comunicar para dar saída para as informações.
+  Porém podem operar por tempo limitado antes de parar para recarregar com energia solar.
+  
+  Assim é preciso tranferir os dados calculados para o gate-way de saida de dados da floresta.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  A comunicação é via wireless e gasta energia proporcional a quantidade de energia.
+  A sensorização também gasta.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Hop-constrained Minimal Spawning Tree (to em dúvida sobre a palavra do meio)
+
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Suponha um sorvedor (ou mais), um robozinho que caminha pela região coletando informações dos sensores.
+  
+  A vantagem dessa nova estrutura é economizar a energia dos sensores, já que um sensor só precisa gastar sua energia para transmitir seus próprios dados.
+  
+  A desvantagem desse sistema é o delay de envio das informações.
+  
+  Esse é um problema de roteamento de veículos.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Para minímizar o delay, gostariamos que o caminho dos robôs fossem menores.
+  
+  Para fazer isso podemos assumir que basta um robo passar perto de um sensor e receber as informações via wireless.
+  
+  Em outras palavras, para atender todos os nós precisamos que em cada vizinhança de sensores, haja ao menos uma visita de um robo em um dos nós.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Do ponto de vista dessa rede é vantagem as rotas terem percursos de comprimento aproximadamente igual.
+  O motivo é que se um robô chegar muito antes do outro, ele ainda vai ter que esperar pelo outro para fazer a avaliação global da floresta.
+  
+  Assim nosso objetivo é minímizar a distancia do percurso mais longo.
+
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Problema do roteamento de veículos Min-Max seletivo.
+  
+  1) Dispomos de K veículos.
+  2) G = (V,E)
+     há um custo cij relacionado a cada aresta desse grafo (que é a distancia).
+  
+  3) O raio máximo de comunicação é predefinido no problema.
+     Vamos definir as vizinhanças de i dentro do raio r como w(i)
+  
+  Hipótese:
+  Distâncias satisfazem as desigualdades triangulares:
+  
+  Em palavras mais simples, não queremos distancias impossíveis:
+  
+    1) Uma aresta de um triangulo tem sempre de ser menor que a soma das outras duas arestas (ao menos no mundo real)
+    2) O caminho de ida tem de ter o mesmo comprimento do caminho de volta.
+    3) O caminho de i para i tem que ser igual à 0.
+  
+  Objetivo:
+  
+    K rotas, uma para cada veículo de forma que todo vertice seja vizitado ou vizinho de um vertice visitado.
+    Dentre as rotas possíveis, desejamos minimizar a rota de máximo comprimento.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Modelo Matemático:
+  
+  Variáveis de Decisão:
+  
+    xk-ij vai ser uma variável binária que diz se o veículo k passa pela aresta ij.
+  
+    yk-i também binária indica se o robo k visitou o vertice i.
+  
+    temos também uma variável w que corresponde ao comprimento da rota mais longa.
+  
+  ð(i) - conjunto de arestas incidentes à i.
+  
+  Restrições:
+  
+    Restrição de entrada e saída de cada vertice.
+    
+      sum xk-ij = 2yk-i para todo i e k.
+      ((i,j)€ð(i))
+  
+    Restrição de cobertura de todos os vertices:
+    
+      sum      sum yk-j >= 1, para todo i
+      (k=1,K)  (j€w(1))
+  
+  Por fim temos de garantir que w seja o comprimento da maior rota:
+  
+  w >= sum dij xk-ij, para todo k.
+       {i,j}€E
+  
+  Restrição de que dois robos não podem visitar o mesmo nó:
+  
+    sum yk-i <= 1, para todo i € V
+    (k=1,K)
+  
+  Restrição de que todas as rotas tem de passar no vertice 0 que é o gate-way de saida de dados.
+  Restrição de que para cada sub-conjunto de vertices, deve haver duas arestas (uma de entrada e uma de saida)
+  
+    sum xk-ij >= 2yk-i
+    {i,j}€ð((w)
+  
+  Para 0 € w
+       ¯w != ø
+        i € ¯w
+        para todo k=1,K
+        
+  onde ¯w é o conjunto disjunto de w.
+  
+  // Fim da formulação matemática.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Vamos sugerir uma relaxação linear:
+  
+  Vamos relaxar as restrições:
+  
+    xk-ij € {0,1} vira-> 0 <= xk-ij <= 1
+    yk-i  € {0,1} vira-> 0 <= yk-i <= 1
+  
+  O nosso último problema é a última restrição (a de planos de corte ter um número par).
+  Ela tem um número de restrições exponencial.
+  
+  Se removermos essa última restrição temos um problema mais viável.
+  
+  A solução dele seria: (x*,y*,w*) onde x* e y* são vetores e w um escalar com o valor máximo.
+  
+  Recuperando o prob. original:
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Problema de precificação:
+  Existe um subconjunto de vertices que infrinja a restrição de corte que despresamos?
+  
+  fixando o k:
+  
+  O professor calcula o fluxo máximo entre a origem, e todos os nós.
+  
+  Quando encontramos a resposta do fluxo máximo, temos também o problema do corte mínimo.
+  
+  Se o corte mínimo for <= 2yk-i significa que encontramos um contra exemplo infringindo a restrição de corte.
+  
+  Então basta adicionar essa restrição infringida no problema.
+  (note que a restrição de corte na verdade são um número enorme de restrições)
+  
+  Repita o processo até que não haja mais corte mínimo <= 2yk-i
+  
+  E note que isso é a geração de colunas para o problema dual.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  // Fim da aula!
+  // Fim do curso!
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

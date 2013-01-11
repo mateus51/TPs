@@ -1,0 +1,243 @@
+\documentclass[12pt]{article}
+
+\usepackage{sbc-template}
+
+\usepackage{graphicx,url}
+
+%\usepackage[brazil]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{graphicx}
+
+
+\sloppy
+
+\title{Construção de um Dataset para Análise da Evolução dos \textit{bugs} de Sistemas}
+
+\author{Pedro A. Pires\inst{1} }
+
+
+\address{Departamento de Ciência da Computação -- Universidade Federal de Minas Gerais
+  (UFMG)\\
+  Belo Horizonte -- MG -- Brazil
+  \email{ppires@dcc.ufmg.br}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This paper documents a time series dataset on the evolution
+of \textit{bugs} and seventeen object-oriented metrics extracted from nine open-
+source systems. This dataset is an extension to the dataset created by
+Marco Dambros to assess bug prediction techniques.
+\end{abstract}
+
+\begin{resumo}
+Este artigo documenta um dataset de séries temporais sobre a evolução
+de \textit{bugs} e de dezessete métricas orientadas a objetos, extraídas de nove sistemas open-source.
+Este conjunto de dados é uma extensão para o conjunto de dados criado por
+Marco Dambros para avaliar técnicas de predição de \textit{bugs}.
+\end{resumo}
+
+
+
+
+\section{Introdução}
+
+Estudar a evolução e entender a estrutura de sistemas legados são atividades conectadas
+pois:
+\begin{itemize}
+\item examinar a estrutura de subsistemas nos permite entender melhor a evolução do sistema como um todo.
+\item as informações das entidades de software podem revelar relacionamentos escondidos entre elas.
+\item analisar várias versões de um sistema melhora o nosso entendimento sobre ele.
+\end{itemize}
+
+Baseado nessas informações, este artigo propõe um dataset para análise da evolução dos \textit{bugs} de sistemas,
+além de dezessete métricas orientadas a objetos. Este dataset é uma extensão do dataset
+criado por \cite{dambros:2010}, aumentando não só o número de sistemas, mas também
+o número de versões analisadas de cada sistema.
+
+
+
+
+\section{Solução Proposta} \label{sec:firstpage}
+
+O dataset construído é composto pelas informações sobre \textit{bugs} e código fonte dos 9
+sistemas listados na Tabela \ref{tab:sistemas}. É fornecido, para cada sistema: os \textit{bugs} extraídos
+dos sistemas de issue tracking e os logs de commits extraídos dos repositórios de
+código fonte; Versões bissemanais dos sistemas representados de acordo com um
+modelo orientado a objetos; Valores da quantidade de \textit{bugs} em cada classe, para
+cada versão do sistema;  Valores de métricas de código fonte para cada classe,
+para cada versão dos sistemas. Todos os sistemas utilizam a linguagem Java, e as
+informações foram extraídas pelo mesmo parser, para evitar problemas devido a
+diferenças de comportamento entre os parser, um problema conhecido em ferramentas
+de engenharia reversa \cite{kollmann:02}.
+
+\begin{table}[ht]
+\centering
+\caption{Sistemas no dataset}
+\label{tab:sistemas}
+\includegraphics[width=.7\textwidth]{sistemas.png}
+\end{table}
+
+\subsection{Processo de Extração dos Dados}
+
+Para que fosse possível construir as séries temporais dos dados foram necessárias
+as seguintes informações: (1) logs de \textit{commits} dos repositórios de código
+fonte, para obter informações sobre arquivos modificados na resolução de um
+\textit{bug}; (2) informações sobre \textit{bugs} dos \textit{issue trackers}, para
+saber quais foram os \textit{bugs} que ocorreram nos sistemas no período analisado; e (3)
+código fonte dos sistemas, para computar as métricas.
+
+Para descobrir quais arquivos foram modificados durante a resolução de um bug,
+foram extraídos os logs dos commits de cada sistema em seus respectivos
+repositórios de código fonte. De cada commit foram extraídos os arquivos modificados,
+e a mensagem deixada pelo desenvolvedor no momento da transação. Todos os sistemas
+utilizam como repositório os sistemas SVN ou Git, e em cada um deles é uma tarefa
+trivial extrair esses dados.
+
+As informações sobre os \textit{bugs} dos sistemas foram buscadas nos sistemas de issue tracking
+utilizados. Todos os sistemas do dataset utilizam o Jira ou o Bugzilla, e nenhum
+desses sistemas oferece um web service para download das informações. Devido a isso,
+as informações tiveram de ser baixadas manualmente de cada website.
+
+Por último, o código fonte dos sistemas foi baixado dos repositórios, e o aplicativo
+VerveineJ foi utilizado para extrair um modelo orientado a objetos de acordo com
+o FAMIX, um meta-modelo independente de linguagem para códigos orientados a objetos.
+Como são necessárias várias versões dos sistemas, esse processo foi repetido em
+intervalos bi-semanais durante todo o período analisado dos sistemas.
+
+Para que possamos analisar a presença de \textit{bugs} em partes específicas do sistema,
+primeiramente é feita uma ligação entre cada bug extraido no issue tracker e as
+partes do sistema que foram afetadas por ele. Cada commit nos repositórios possui
+uma mensagem do desenvolvedor, que geralmente inclui uma referência a uma entrada
+no issue tracker (p. ex. "fixed bug 123"). Essas mensagens permitem que seja feita
+uma ligação entre \textit{bugs} e arquivos no controle de versão (e consequentemente,
+classes). \textit{bugs} que afetam classes de teste são desconsiderados.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.5\textwidth]{bug_linking_proccess.png}
+\caption{Processo de ligação entre \textit{bugs} e classes.}
+\label{fig:link_process}
+\end{figure}
+
+Após esse processo, as datas de abertura e resolução dos \textit{bugs} são analisadas, para
+que seja definido, além de quais classes foram afetadas, durante quais versões
+dos sistemas os \textit{bugs} estiveram presentes. Um bug é considerado presente em uma
+versão se sua data de abertura for anterior à da versão, e a data do commit que
+o resolveu for posterior.
+
+Até este ponto já temos um modelo que inclui informações de várias versões dos
+códigos fonte, e dados sobre o tempo de vida de \textit{bugs} nos sistemas. O último passo
+é extrair as métricas de código fonte, para que sejam analisadas em conjunto com
+as informações geradas nas etapas anteriores. A extração é feita para cada versão
+de cada sistema, e são criadas séries temporais para elas.
+
+\begin{table}[ht]
+\centering
+\caption{Métricas extraídas}
+\label{tab:metrics}
+\includegraphics[width=.7\textwidth]{metrics.png}
+\end{table}
+
+As séries temporais presentes no dataset (\textit{bugs} e métricas) são armazenadas no formato
+CSV, de forma que cada linha corresponde a uma classe do sistema, e cada coluna é
+o valor representado (valor da métrica ou quantidade de \textit{bugs}) em uma bissemana.
+
+\subsection{Ferramentas}
+
+Para a criação do dataset foram utilizadas as seguintes ferramentas:
+\begin{itemize}
+\item \textit{VerveineJ} (disponível em http://www.moosetechnology.org/tools/verveinej)
+        para a conversão de códigofonte Java em modelos FAMIX.
+\item \textit{Moose} (disponível em http://www.moosetechnology.org) para ler os
+        modelos FAMIX, e extrair as métricas de código fonte.
+\end{itemize}
+
+Além disso, duas outras ferramentas tiveram de ser desenvolvidas, para a geração das
+séries temporais.
+
+\begin{itemize}
+\item Uma ferramenta para pegar os valores das métricas fornecidos pela ferramenta
+        Moose e transformá-los em séries temporais.
+\item Uma ferramenta para transformar as informações dos \textit{bugs} em classes em
+        uma série temporal.
+\end{itemize}
+
+
+
+
+
+
+\section{Avaliação}
+
+Para a avaliação do dataset, os dados gerados foram utilizados para fazer uma análise
+em um dos sistemas. O sistema escolhido para a análise foi o Eclipse JDT Core. A
+Figura \ref{fig:jdtbugs} mostra um gráfico com a série temporal de \textit{bugs} do sistema.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.5\textwidth]{jdt_bug_series_chart.png}
+\caption{Série temporal completa de \textit{bugs} do Eclipse JDT Core}
+\label{fig:jdtbugs}
+\end{figure}
+
+Para que seja possível avaliar se as informações presentes no dataset são válidas
+para analisar a evolução dos sistemas, é necessário que essas informações reflitam
+os eventos ocorridos durante o desenvolvimento desses sistemas. Uma informação já
+verificada em muitos projetos é o fato de que, logo após o lançamento de uma versão
+de um software, há um aumento no número de \textit{bugs} reportados no sistema de issue
+tracking.
+
+A versão 2.0 da JDT foi lançada em 27 de Junho de 2002 (http://archive.eclipse.org/eclipse/downloads/index.php).
+Essa data corresponde à 26ª bissemana da história do sistema.
+Na Figura \ref{fig:jdtbugs20} é mostrada a série temporal de \textit{bugs} do JDT entre as
+bissemanas 24 e 48. Pelo gráfico é possível ver que, aproximadamente um mês depois
+do lançamento da versão 2.0, houve um aumento no número de \textit{bugs}, de acordo com o
+esperado.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.5\textwidth]{jdt_zoom_20.png}
+\caption{\textit{bugs} do Eclipse JDT Core entre as bissemanas 24 e 48}
+\label{fig:jdtbugs20}
+\end{figure}
+
+Após o lançamento da versão 2.0, foram lançadas mais duas versões, 2.0.1 e 2.0.2.
+Apesar de serem versões com o objetivo de corrigir \textit{bugs} da versão anterior, elas
+também estão associadas com um crescimento no número de \textit{bugs} do sistema. A versão 2.0.1
+foi lançada em 29 de Agosto de 2002, o que corresponde à bissemana 31 da vida do
+sistema, e a versão 2.0.2 foi lançada em 7 de Novembro de 2002, o que corresponde
+à bissemana 36. Os aumentos nos números de \textit{bugs} correspondentes aos lançamentos das versões 2.0.1 e 2.0.2
+podem ser vistos nas bissemanas 35 e 37, respectivamente.
+
+
+\section{Trabalhos Relacionados}
+
+\cite{dambros:2010} faz uma comparação entre várias técnicas de predição de \textit{bugs},
+e um dataset foi criado para fazer o estudo. Este dataset estende o dataset de
+Dambros de várias formas: (1) agregando novamente várias versões dos sistemas, e
+recalculando as métricas; (2) expandindo o número de versões dos sistemas, e
+consequentemente a tamanho das séries temporais, de pouco menos que 100 para 180;
+(3) incluindo informações sobre quatro novos sistemas: Geronimo, Hadoop MapReduce,
+TV-Browser e Hibernate.
+
+\cite{helix:2010} criaram um dataset (Helix, disponível em \textit{http://www.ict.swin.edu.au/research/projects/helix})
+com informações temporais sobre valores de métricas de código fonte. Porém, ele não
+possui informações sobre algumas das métricas inclusas neste dataset, incluindo as
+métricas CK (com exceção de NOC e DIT).
+
+\cite{qualitascorpus:2010} criou o Qualitas Corpus, um dataset bem conhecido para estudos empíricos em
+engenharia de software. Ele contém informações sobre 111 sistemas, mas somente
+provê informações evolucionárias sobre 14 deles, e somente 1 deles possui mais de 70
+versões. O Qualitas Corpus também não inclui informações temporais sobre métricas
+de código fonte.
+
+
+\bibliographystyle{sbc}
+\bibliography{sbc-template}
+
+\end{document}
+

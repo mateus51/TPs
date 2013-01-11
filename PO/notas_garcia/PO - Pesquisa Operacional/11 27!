@@ -1,0 +1,153 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Vamos aprender a trabalhar problemas de programação Linear Inteira
+  
+  Existem vários outras modelagens que podemos fazer.
+  
+  Z = max cTx
+  
+  x € X contido em Z^k (Inteiros)
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Seja um Prob. De programação Inteira.
+  
+  Com heurísticas podemos encontrar limites superiores.
+  Ou limites inferiores.
+  
+  Esses limites garantem que o valor ótimo é menor/maior ou igual à eles.
+  
+  Dessa forma se encontrarmos um limite superior igual ao inferior, teremos certeza de que obtivemos a sol. ótima.
+  
+  O limite inferior conseguimos com o primal, e o superior com o dual por exemplo.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  A dificuldade dos PPLs Inteiros é sua natureza NP-Completo.
+  
+  Para contornar esse problema, realizamos a Relaxação do problema.
+  de forma que conseguimos um novo PPL que não seja inteiro por exemplo.
+  
+  Nossas garantias quanto a esse novo problema são:
+  
+  1) O dominio do novo prob. contem o dominio original. (senão podemos perder a sol. ótima)
+  2) Substituimos a func. objetivo max ou min por outra que assuma um valor não menor/maior
+     que a original em qualquer ponto do problema original.
+  
+  3) Obtemos a sol. ótima desse novo problema.
+  
+  Essa nova sol. ótima nos dá um limite superior/inferior para o nosso problema.
+  
+  // Nota: O que significa seu novo prob. ser inviável? logicamente o prob. original também é.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Seja o Prob. inteiro:
+  
+  max 4x1 -x2
+   7x1 -2x2 <= 14
+         x2 <= 3
+  2x1 - 2x2 <= 3
+  
+  x € Z² positivo
+  
+  O vetor (2,1) é uma sol. viável, logo z>= 7.
+  
+  O valor ótimo da relaxação é 59/7 para x = (20/7,3)
+  
+  Como queremos uma sol. inteira temos que:
+  
+    z < 59/7 => z = 8
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Formulação 1:
+  
+  max cTx
+  
+  x € P1 intercessão Z^n positivo
+  
+  Formulação 2:
+  
+  max cTx
+  
+  x € P2 intercessão Z^n positivo
+  
+  Então estamos tentando solucionar um mesmo problema de duas formas diferentes.
+  
+  A relaxação do 1 é:
+  
+  max cTx
+  x € P1
+  
+  Relaxação 2:
+  
+  max cTx
+  x € P2
+  
+  Possibilidades:
+  
+  1) P1 contido em P2
+  2) P2 contido em P1
+  3) Existe um x em P1 tal que x não pertença à p2 e o contrário.
+  
+  Em casos genéricos (considere diversas instancia diferentes do problema)
+  iremos ter as seguinte relações de dominancia:
+  
+  Em (1) o limite de P1 <= limite de P2
+  Em (2) o limite de P1 >= limite de P2
+  Em (3) os limites podem ser diferentes para cada caso. -> não há dominancia.
+  
+  Agora vejam a sacada.
+  Supondo o caso (3). P1 e P2 contém a sol. ótima do original em seu dominio.
+  E ambos discartam partes do dominio do outro => essas partes não contém sol. do prob. original.
+  
+  Sabendo isso podemos juntar os dois problemas, obtendo um dominio que é a intercessão dos dominios de P1 e P2.
+  
+  E obteremos um novo dominio que é mais próximo das soluções inteiras do prob. original.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Problema de programação combinatória:
+  
+  max 7x1 + 4x2 + 5x3 + 2x4
+  3x1 + 3x2 + 4x3 + 2x4 <= 6
+  x € B⁴ (binário em 4 dimensões)
+  
+  Uma solução é: x = (1,1,0,0)
+  
+  Note que isso é um problema da mochila.
+  
+  Um jeito de de fazer a relaxação desse problema é assumir o seguinte:
+  Primeiro ordenamos as variáveis em ordem de eficiencia.
+  
+  Onde eficiencia é o tanto que é melhorado no objetivo (coeficiente) sobre tanto de espaço que ocupa coeficiente em A.
+  
+  Vamos preenchendo a mochila com os itens de melhor eficiencia até que um deles não vai caber completamente na mochila.
+  
+  Agora temos uma solução que não é a ótima do original mas é uma sol. da relaxação.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  // Fim da aula!
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

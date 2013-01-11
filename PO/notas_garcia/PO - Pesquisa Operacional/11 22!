@@ -1,0 +1,282 @@
+
+   # # # # # # # # # # # # #
+  # Pesquisa Operacional    #
+  # Prof. Alexandre Cunha   #
+  # notasdogarcia.blog.com  #
+   # # # # # # # # # # # # #
+
+  Problema da arvore geradora de custo mínimo (AEM):
+  
+  Dados:
+  
+  Arvore G=(V,E), grafo não direcionado, finito.
+  Pesos: {wij: }i,j € E 
+  
+  // Nota m é cardinalidade de V
+  //      n é cardinalidade de E
+  
+  Encontrar um subgrafo T=(V,Et) de G, gerador de V, aciclico de mínimo peso total.
+  
+  O peso de um sub-grafo G' é a soma dos pesos das arestas.
+  
+    sum((i,j) € E') wij
+  
+  Grafo:
+  
+  82-3 81-3
+  12-1 13-3
+  24-2 23-4 25-3
+  35-2
+  45-2 46-5 47-3
+  56-2
+  67-3
+  
+  Esse problema é interessante porque ele pode ser resolvido de forma inteira ou real.
+  E servirá de ilustração para nossa primeira solução de PPLs inteiros.
+  
+  Já existem algoritmos que resolvem:
+  
+    Prim O(n log n)
+    
+    Kruskal O(m log n)
+  
+  Vamos falar do Kruskal:
+  
+  - Ordenar as arestas por seus pesos de forma crescente.
+  
+  Vamos agora iterar o algoritimo:
+  i=1
+  Et = ø
+  
+  Enquanto |Et| != n-1 repita:
+  
+    Seleciono o item i da lista ordenada de arestas.
+    Se ele junto as demais arestas que selecionei gerarem um ciclo, descarto ele.
+    Caso contrário adiciono à Et.
+    i++;
+  
+    
+  Arvore geradores de G são matróides e como tal possuem a mesma cardinalidade máxima que é |v|-1 = n-1
+  
+  // Nota estamos assuminto que G é conexo.
+  
+  // Um sistema eficiente para guardar Et é o union_sets de Tarjan.
+  // Tem um livro legal network flows and data-structures (primeiro nome do tarjan é roberto eu acho)
+  
+  Ordenando as arestas:
+  
+  
+  12-1 56-2 35-2 45-2 24-2 67-3 47-3 13-3 82-3 81-3 25-3 23-4 46-5 
+  
+  (mais ou menos isso o professor ordenou diferente eu acho)
+  
+  ordenaçao do professor.
+  12 45 24 35 56 18 82 47 67 25 23 46
+  
+  O 82 gerá um ciclo e portanto não é adicionado.
+  o 47 é o último arco à ser adicionado.
+  
+  Agora veremos soluções alternativas para esse problema.
+  
+  Uma mais intuitiva outra menos.
+  
+  A menos envolverá adição de colunas no dual, em outras palavras:
+  adição de linhas no primal.
+  
+  // Nota:
+  // número de condição: C= ||A|| * ||A⁻¹||
+  // ||A|| = norma da matriz.
+  // Quanto maior mais dificil é fatorar essa matriz.
+  
+  Formulação do Problema da Arvore G. M.
+  como um PPL inteiro.
+  
+  Vamos fazer ele parecer um problema de fluxo de custo mínimo.
+  
+  Seja um grafo direcionado D = (V,A)
+  
+  A = {(i,j) + (j,i) para todo i,j € E }
+  // (+ = uniao)
+  
+  Cria-se um tipo de mercadoria por vetice.
+  Cada vertice tem uma demanda pela mercadoria de mesmo indice.
+  O único ofertante dessa mercadoria é o vertice raiz escolhido arbitráriamente.
+  
+  Modelagem: (essa é a modelagem de multiplas mercadorias)
+  Escolher o vertice raiz R.
+  Para cada vertice não raiz cria-se uma mercadoria.
+  Criamos uma demanda unitária em cada um dessa mercadoria.
+  Tudo será ofertado no vertice R.
+  
+  // Note: Não é preciso que sejam mercadorias distintas, o professor está modelando assim para facilitar as analogias que ele irá utilizar.
+  
+  Vamos utilizar variáveis binárias xij com (i,j) € A
+  (binárias ou seja € {0,1})
+  
+  x é portanto nossa matriz de escolha de arcos. é 1 em i,j se o arco é utilizado 0 se não.
+  
+  Variaveis reais+:
+  
+  fij-k para todo i,j € A e k € V-r (k representa as mercadorias)
+  
+  Representa a quantidade de fluxo da mercadoria k que passa pelo arco (i,j)
+  
+  Note que elas vão acabar sendo inteiras. Porque as demais variáveis são inteiras.
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  No grafo anterior com a solução:
+  
+    12 45 24 35 56 18 47
+  
+  teriamos
+  
+    f47-7 = 1
+    f24-7 = 1
+    f12-7 = 1
+    f81-7 = 1
+    
+  o fluxo da mercadoria 7, para as demais arestas é 0.
+  
+  A diferença desse problema para os demais é a discreção de decidir incluir ou não uma aresta.
+  Escolher o conjunto de arcos que irão compor a rede final.
+  
+  Balanço de Fluxo:
+  Balanço de cada mercadoria em cada vértice.
+  
+  // Lembrando a notação:
+  // ð+ partem de S ð- chegam em S
+  
+  // ð* ð° seria muito melhor não é?
+  // Vou usar essa notação é mais fácil de lembrar.
+                                                         {  1 para i=k e k!=r
+    sum((j,i) € ð°(i))fij-k - sum((i,j) € ð*(i)) fji-k = {  0 para todo i e r != i onde k € V\{r} (se i não for sub arvore de r minusculo eu acho)
+                                                         { -1 i=r, para todo k
+  
+  fij-k >= 0
+  
+  fij-k <= xij
+  
+  sum xij = n-1
+  
+  // Nota: No caso da modelagem com uma única mercadoria.
+  // A restrição de fluxo diria que sum fij - fji = 1 para todos os valores i,j.
+  // e fij <= (n-1) * xij
+  // Basicamente seriam estas as mudanças.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  Porque escolher um ou outro modelo?
+  
+  Seja o modelo multi-mercadoria o modleo 1 e o outro o modelo 2.
+  
+  Em ambos temos:
+  
+    xij € {0,1}  par todo (i,j) € A
+  
+  E se eu trocar isso por:
+  
+    0 <= xij <= 1 para todo (i,j) € A
+  
+  Isso é uma relaxação linear dos modelos.
+  
+  Suponha que tenhamos resolvido o problema com essa relaxação.
+  
+  Seja v(minusculo) = min sum wij*xij
+  (esse é o objetivo)
+  
+  A relaxação linear terá uma solução menor que a solução sem relaxamento.
+  
+  O limite do mod-1 é maior ou igual ao modelo 2.
+  
+  Em outras palavras, é mais próximo do mínimo real.
+  Mais próximo do nosso objetivo ótimo.
+  
+  E a noticia mais surpreentendente
+  é que na verdade o mod-1 uma vez solucionado resolve o problema inteiro.
+  É como se eu reduzisse meu espaço de busca somente para o espaço entre os números inteiros.
+  De forma que necessáriamente a solução será inteira apesar do relaxamento real das variáveis..
+  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  Terceiro modelo:
+  
+  Desigualdades de Eliminação de circuitos.
+  
+  Vamos utilizar aresats.
+  
+  Seja:
+  zij€{0,1} com ij€E
+  
+  zij = 1 => aresta {i,j} pertence à arvore.
+  else não pertence.
+  
+  min sum wij * zij
+  
+  sum zij = n-1
+  
+  Agora seja S um subgrafo da arvore geradora.
+  
+  Qual o máximo de combinações de arvores que posso fazer com estas arestas? |S|-1
+  
+  Podemos escrever então:
+  sum zij <= |s|-1 para todo s contido em V e diferente de ø
+  
+  Foi provado que a relaxação de Zij também gera vertices inteiros.
+  logo a solução ótima do modelo relaxado é igual a solução do modelo original.
+  
+  Porém voce pode ter um número ilimitado de linhas ou restrições, como resolver?
+  
+  Então utilizamos o sistema de eliminar restrições que não são interessantes.
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  PPLs inteiros são NP-Completos
+  
+  Os relaxamentos como os feitos acima permitem encontrar soluções ótimas de problemas NP-Completos de forma otimizada.
+  (ainda é NP-Completa no entanto)
+  
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  
+  // Fim da aula!
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

@@ -1,0 +1,27 @@
+\begin{thebibliography}{}
+
+\bibitem[D'Ambros et~al. 2010]{dambros:2010}
+D'Ambros, M., Lanza, M., and Robbes, R. (2010).
+\newblock An extensive comparison of bug prediction approaches.
+\newblock In {\em Proceedings of MSR 2010 (7th IEEE Working Conference on
+  Mining Software Repositories)}, pages 31 -- 41. IEEE CS Press.
+
+\bibitem[R.~Kollmann and Stroulia 2002]{kollmann:02}
+R.~Kollmann, P.~S. and Stroulia, E. (2002).
+\newblock A study on the current state of the art in toolsupported uml-based
+  static reverse engineering.
+\newblock In {\em Proceedings of WCRE 2002}, pages 22--32.
+
+\bibitem[Rajesh~Vasa and Jones 2010]{helix:2010}
+Rajesh~Vasa, M.~L. and Jones, A. (2010).
+\newblock {Helix - Software Evolution Data Set}.
+
+\bibitem[Tempero et~al. 2010]{qualitascorpus:2010}
+Tempero, E., Anslow, C., Dietrich, J., Han, T., Li, J., Lumpe, M., Melton, H.,
+  and Noble, J. (2010).
+\newblock Qualitas corpus: A curated collection of java code for empirical
+  studies.
+\newblock In {\em 2010 Asia Pacific Software Engineering Conference
+  (APSEC2010)}, pages 33 -- 345.
+
+\end{thebibliography}

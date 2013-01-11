@@ -30,7 +30,8 @@
   
   Por exemplo se o primal se tornar ilimitado o dual poderá ser inviável.
   
-  A nova coluna altera a viabilidade do dual, e deveria portanto entrar na base.
+  A nova coluna altera a viabilidade do dual, sse ela entrar na base.
+  Caso contrário nada muda.
   
   Note então que se o crescimento dessa nova variável diminuir o objetivo, e for um problema de maximização ela terá o valor 0.
   E nada será alterado, sendo a solução ótima de (P) também a solução ótima do novo problema.
@@ -39,7 +40,7 @@
   Se as demais restrições não limitarem o problema, haverá solução ilimitada.
   
   2° Pergunta:
-  O que acontece se alterarmos o custo/vetor tecnológico de uma variável existente?
+  O que acontece se alterarmos o custo ou vetor tecnológico de uma variável existente?
   
   a) Custo:
     variável considerada é básica: xj(básica)
@@ -48,9 +49,16 @@
   
   b) modificar o vetor tecnológico?
   
-  xj for básica: há chance de afetar a otimalidade primal ( na nova inversa da base ) e viabilidade dual ( otimalidade primal )
+  Se xj for básica: há chance de afetar a otimalidade primal e viabilidade dual
   nova base B, xb = ~B⁻¹ b >= 0 => viabilidade primal mantida.
                xb =  B⁻¹ b <  0 => viabilidade primal violada.
+  
+  Em outras palavras: Se a alteração de coeficiente tornar uma restrição inviável.
+  Estaremos em uma solução inviável e teremos de dar um jeito de encontrar uma solução viável novamente.
+  Havendo até o risco de não haver mais soluções viáveis, tornando o problema inviável.
+  
+  Essa alteração também (isso é pensamento meu e não do prof.) iria tornar necessário
+  re-calcular a solução ótima à partir do inicio usando o simplex. (ou não, talvez exista algum macete)
   
   3) Modificação no vetor b.
   ~xb B⁻¹ (b+ deltab) >= 0
